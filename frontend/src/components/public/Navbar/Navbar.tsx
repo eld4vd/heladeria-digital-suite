@@ -37,6 +37,7 @@ const Navbar = () => {
     { path: "/menu", label: "Nuestros Sabores" },
     { path: "/promos", label: "Ofertas" },
     { path: "/contacto", label: "Contáctanos" },
+    { path: "/faq", label: "Preguntas" },
   ], []);
 
   // Determinar si estamos en la página de inicio (hero con video)
@@ -62,11 +63,14 @@ const Navbar = () => {
               />
             </div>
             
-            {/* Texto de marca */}
+            {/* Texto de marca simple */}
             <div className="hidden sm:flex flex-col">
-              <span className={`text-2xl font-bold tracking-tight transition-colors ${
-                isHomePage && !isScrolled ? "text-white drop-shadow-md" : "text-gray-900"
-              }`}>
+              <span 
+                className={`text-3xl font-bold transition-colors ${
+                  isHomePage && !isScrolled ? "text-white drop-shadow-md" : "text-gray-900"
+                }`}
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
                 Delicias
               </span>
               <span className={`text-[10px] font-semibold tracking-wider uppercase transition-colors ${
@@ -82,7 +86,7 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `relative px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                  `relative px-4 py-2 text-xl font-semibold rounded-lg transition-all duration-200 ${
                     isHomePage && !isScrolled
                       ? isActive
                         ? "text-white bg-white/15"
@@ -92,6 +96,7 @@ const Navbar = () => {
                       : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                   }`
                 }
+                style={{ fontFamily: "'Dancing Script', cursive" }}
               >
                 {link.label}
               </NavLink>
@@ -224,12 +229,13 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors duration-200 ${
+                  `block px-4 py-2.5 text-xl font-semibold rounded-lg transition-colors duration-200 ${
                     isActive
                       ? "bg-cyan-50 text-cyan-600 border-l-4 border-cyan-600"
                       : "text-gray-700 hover:bg-gray-50"
                   }`
                 }
+                style={{ fontFamily: "'Dancing Script', cursive" }}
               >
                 {link.label}
               </NavLink>

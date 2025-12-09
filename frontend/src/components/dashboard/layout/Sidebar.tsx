@@ -1,6 +1,6 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../../context/useAuth';
-import { MdDashboard, MdShoppingCart, MdInventory, MdBarChart, MdCategory, MdLogout, MdClose, MdInfo } from 'react-icons/md';
+import { MdDashboard, MdShoppingCart, MdInventory, MdBarChart, MdCategory, MdLogout, MdClose } from 'react-icons/md';
 
 interface SidebarProps {
   className?: string;
@@ -12,7 +12,6 @@ interface SidebarProps {
 
 const Sidebar = ({ className = '', collapsed = false, mobile = false, open = false, onClose }: SidebarProps) => {
   const { logout } = useAuth();
-  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
@@ -25,33 +24,6 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
     { to: '/dashboard/categorias', icon: MdCategory, label: 'Categorías' },
     { to: '/dashboard/reportes', icon: MdBarChart, label: 'Reportes' },
   ];
-
-  // Información de ayuda contextual para cada sección
-  const helpInfo: Record<string, { title: string; description: string }> = {
-    '/dashboard': {
-      title: 'Panel de Control',
-      description: 'Vista general de tu negocio con métricas clave, ventas del día y productos más vendidos.'
-    },
-    '/dashboard/ventas': {
-      title: 'Gestión de Ventas',
-      description: 'Registra ventas en caja, procesa pedidos, gestiona métodos de pago y consulta el historial completo.'
-    },
-    '/dashboard/productos': {
-      title: 'Catálogo de Productos',
-      description: 'Agrega nuevos helados, actualiza precios, gestiona stock y organiza tu menú de sabores.'
-    },
-    '/dashboard/categorias': {
-      title: 'Organización',
-      description: 'Crea y administra categorías para clasificar tus productos (Clásicos, Premium, Veganos, etc.).'
-    },
-    '/dashboard/reportes': {
-      title: 'Análisis y Reportes',
-      description: 'Genera reportes de ventas, analiza tendencias, exporta datos y toma decisiones informadas.'
-    },
-  };
-
-  // Obtener información contextual según la ruta actual
-  const currentHelp = helpInfo[location.pathname] || helpInfo['/dashboard'];
 
   // Sidebar móvil (drawer)
   if (mobile) {
@@ -115,25 +87,6 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
               );
             })}
           </nav>
-
-          {/* Help Section - Mobile */}
-          <div className="px-4 pb-4">
-            <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
-                  <MdInfo className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">
-                    {currentHelp.title}
-                  </h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {currentHelp.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Logout Button */}
           <div className="p-4 border-t border-slate-200">
@@ -203,26 +156,8 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
         })}
       </nav>
 
-      {/* Help Section - Desktop (solo visible cuando no está colapsado) */}
-      {!collapsed && (
-        <div className="px-4 pb-4">
-          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
-                <MdInfo className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-bold text-slate-900 mb-1">
-                  {currentHelp.title}
-                </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  {currentHelp.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Spacer para empujar el logout al fondo */}
+      <div className="flex-1" />
 
       {/* Logout Button */}
       <div className={`p-4 border-t border-slate-200 ${collapsed ? 'px-2' : ''}`}>

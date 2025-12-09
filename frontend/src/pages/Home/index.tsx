@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import heroVideo from '../../assets/video/Hero.webm';
+import ScrollingIceCream from '../../components/public/ScrollingIceCream';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -110,6 +111,9 @@ const Home = () => {
           {ctaButtons}
         </div>
       </div>
+
+      {/* Sección de scroll con helado animado */}
+      <ScrollingIceCream />
     </div>
   );
 };

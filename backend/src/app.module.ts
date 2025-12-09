@@ -52,7 +52,7 @@ import { PagosSimuladosModule } from './pagos-simulados/pagos-simulados.module';
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           namingStrategy: new SnakeNamingStrategy(),
           synchronize: synchronizeFromEnv || seedOnBoot,
-          logging: configService.get<string>('DB_LOGGING', 'false') === 'true',
+          logging: false,
         };
       },
       inject: [ConfigService],

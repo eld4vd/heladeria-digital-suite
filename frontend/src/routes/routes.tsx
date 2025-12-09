@@ -10,6 +10,7 @@ const Contacto = lazy(() => import("../pages/Contacto"));
 const Error404 = lazy(() => import("../pages/Error/index"));
 const Detalle = lazy(() => import("../pages/Detalle"));
 const Promociones = lazy(() => import("../pages/Promos"));
+const FAQ = lazy(() => import("../pages/FAQ"));
 const Login = lazy(() => import("../pages/Login"));
 const DashboardHome = lazy(() => import("../pages/Dashboard/DashboardHome"));
 const DashboardOverview = lazy(
@@ -39,9 +40,10 @@ const MyRoutes = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="menu" element={<Menu />} />
+          <Route path="promos" element={<Promociones />} />
           <Route path="contacto" element={<Contacto />} />
           <Route path="detalle/:id" element={<Detalle />} />
-          <Route path="promos" element={<Promociones />} />
+          <Route path="faq" element={<FAQ />} />
         </Route>
 
         {/* Ruta PROTEGIDA para el dashboard */}

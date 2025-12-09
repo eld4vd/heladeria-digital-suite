@@ -1,11 +1,21 @@
 import { MdShoppingCart } from 'react-icons/md';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '../../context/CartContext';
 import CartDrawer from './CartDrawer';
 
 export default function FloatingCartButton() {
   const { itemCount } = useCart();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isFirstRender = useRef(true);
+
+  // Asegurarse de que el drawer nunca se abra automáticamente
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    // No hacer nada cuando cambia itemCount - el drawer solo se abre manualmente
+  }, [itemCount]);
 
   if (itemCount === 0) return null;
 
@@ -17,18 +27,44 @@ export default function FloatingCartButton() {
         aria-label="Ver carrito"
       >
         <div className="relative">
-          {/* Badge de contador */}
-          <div className="absolute -top-2 -right-2 bg-gradient-to-br from-rose-500 to-pink-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg animate-pulse z-10">
-            {itemCount}
+          {/* Badge de contador estilo premium */}
+          {itemCount > 0 && (
+            <div className="absolute -top-2 -right-2 z-10">
+              <div className="relative">
+                {/* Pulso de fondo */}
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full animate-ping opacity-75" />
+                {/* Badge principal */}
+                <div className="relative bg-gradient-to-br from-rose-500 to-pink-600 text-white text-xs font-black rounded-full min-w-[24px] h-6 px-2 flex items-center justify-center shadow-lg border-2 border-white">
+                  {itemCount}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Botón principal con diseño único */}
+          <div className="relative overflow-hidden">
+            {/* Fondo con gradiente animado */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-500" />
+            
+            {/* Brillo superior */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl" />
+            
+            {/* Contenido del botón */}
+            <div className="relative p-4 group-hover:scale-110 transition-transform duration-300">
+              <MdShoppingCart className="h-7 w-7 text-white drop-shadow-lg" />
+            </div>
+
+            {/* Sombra y borde */}
+            <div className="absolute inset-0 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-300 border border-white/20" />
           </div>
 
-          {/* Botón circular con gradiente */}
-          <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-4 rounded-full shadow-2xl group-hover:shadow-indigo-500/50 transition-all duration-300 group-hover:scale-110 relative z-0">
-            <MdShoppingCart className="h-6 w-6 text-white" />
+          {/* Texto flotante al hover */}
+          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+            <div className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-xl whitespace-nowrap font-semibold text-sm">
+              Ver mi pedido
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-slate-900" />
+            </div>
           </div>
-
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-pink-400 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300 -z-10" />
         </div>
       </button>
 

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { 
   FaFacebookF, 
@@ -12,6 +13,26 @@ import {
 } from 'react-icons/fa';
 
 const Footer = () => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  
+  // Palabras rotativas para el eslogan
+  const rotatingWords = [
+    "Artesanal",
+    "Premium",
+    "Italiano",
+    "Natural",
+    "Delicioso"
+  ];
+
+  // Efecto de rotación de palabras
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
+    }, 2500); // Cambia cada 2.5 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <footer
       role="contentinfo"
@@ -36,10 +57,29 @@ const Footer = () => {
               </p>
             </div>
             <div className="inline-flex items-center gap-3 px-4 py-2.5 rounded-lg bg-cyan-600/10 border border-cyan-500/30">
-              <div className="h-2.5 w-2.5 rounded-full bg-cyan-400" />
-              <span className="text-sm font-semibold text-cyan-300 uppercase tracking-wider">
-                Artesanal & Fresco
-              </span>
+              <div className="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-pulse" />
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-cyan-300 uppercase tracking-wider">
+                  Helado
+                </span>
+                {/* Palabra rotativa con animación */}
+                <div className="relative inline-block" style={{ width: '85px', height: '20px' }}>
+                  {rotatingWords.map((word, index) => (
+                    <span
+                      key={word}
+                      className={`absolute left-0 top-0 text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent transition-all duration-500 ${
+                        index === currentWordIndex
+                          ? "opacity-100 translate-y-0"
+                          : index === (currentWordIndex - 1 + rotatingWords.length) % rotatingWords.length
+                          ? "opacity-0 -translate-y-4"
+                          : "opacity-0 translate-y-4"
+                      }`}
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 

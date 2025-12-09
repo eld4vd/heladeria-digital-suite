@@ -60,6 +60,7 @@ const Reportes = () => {
   const month = currentMonth.getMonth() + 1;
   const [selectedDate, setSelectedDate] = useState<string>(() => new Date().toLocaleDateString('en-CA'));
   const [expandedVenta, setExpandedVenta] = useState<number | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const calendarQuery = useQuery<DiaCalendario[], Error>({
     queryKey: ['reportes', 'calendario', year, month],
@@ -268,39 +269,75 @@ const Reportes = () => {
     new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(v);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <section className="rounded-[28px] border border-slate-200/80 bg-white p-7 lg:p-8 shadow-lg shadow-slate-200/50">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 leading-none">Analítica</p>
-            <h2 className="mt-2.5 text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">Reportes de ventas</h2>
-            <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-              Explora el calendario mensual, analiza días específicos y exporta reportes detallados en segundos.
-            </p>
+    <div className="space-y-5">
+      {/* Header con selector de fecha integrado */}
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-md">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
+              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Reportes de Ventas</h2>
+              <p className="text-xs text-slate-500">Análisis y exportación de datos</p>
+            </div>
+          </div>
+
+          {/* Botón selector de fecha */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCalendar(!showCalendar)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-indigo-300 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              <svg className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="hidden sm:inline">
+                {new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { 
+                  day: 'numeric', 
+                  month: 'short',
+                  year: 'numeric'
+                })}
+              </span>
+              <span className="sm:hidden">Fecha</span>
+              <svg className={`h-4 w-4 text-slate-400 transition-transform ${showCalendar ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {loading && <span className="text-xs text-slate-500">Cargando...</span>}
           </div>
         </div>
-        {loading && <p className="mt-4 text-sm text-slate-500">Cargando calendario...</p>}
         {error && (
-          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+          <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
             <span className="font-semibold">Error:</span> {error}
           </div>
         )}
       </section>
 
-      {/* Calendario mejorado con información visual */}
-      <section className="rounded-[26px] border border-slate-200/80 bg-white shadow-lg shadow-slate-200/50 overflow-hidden">
-        <div className="bg-gradient-to-br from-slate-50 to-slate-100/60 px-6 py-4 border-b border-slate-200/80">
-          <h3 className="text-base font-bold text-slate-900">
-            Calendario de ventas - {currentMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
-          </h3>
-          <p className="mt-1 text-xs text-slate-600">Días con ventas marcados en índigo. Haz clic en un día para ver detalles.</p>
-        </div>
-        <div className="p-6">
+      {/* Calendario colapsable */}
+      {showCalendar && (
+        <section className="rounded-2xl border border-slate-200/80 bg-white shadow-md overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100/60 px-5 py-3 border-b border-slate-200/80 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900">
+              📅 Seleccionar fecha
+            </h3>
+            <button
+              onClick={() => setShowCalendar(false)}
+              className="text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label="Cerrar calendario"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="p-4">
           <div className="mx-auto max-w-2xl">
             <style>{`
               .rdp {
-                --rdp-cell-size: 48px;
+                --rdp-cell-size: 40px;
                 --rdp-accent-color: rgb(79 70 229);
                 --rdp-background-color: rgb(238 242 255);
                 margin: 0;
@@ -398,6 +435,7 @@ const Reportes = () => {
                 if (!date) return;
                 const isoLocal = date.toLocaleDateString('en-CA');
                 setSelectedDate(isoLocal);
+                setShowCalendar(false); // Cerrar calendario al seleccionar
               }}
               month={currentMonth}
               onMonthChange={setCurrentMonth}
@@ -415,36 +453,36 @@ const Reportes = () => {
             />
           </div>
           
-          {/* Leyenda visual compacta */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 rounded-xl bg-slate-50 px-4 py-3 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100"></div>
-              <span className="font-semibold text-slate-700">Con ventas</span>
+          {/* Leyenda compacta */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 rounded-lg bg-slate-50 px-3 py-2 text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="h-4 w-4 rounded border-2 border-indigo-200 bg-indigo-50"></div>
+              <span className="font-medium text-slate-700">Ventas</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-700"></div>
-              <span className="font-semibold text-slate-700">Seleccionado</span>
+            <div className="flex items-center gap-1.5">
+              <div className="h-4 w-4 rounded bg-indigo-600"></div>
+              <span className="font-medium text-slate-700">Selección</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-lg bg-slate-100 shadow-[0_0_0_2px_rgb(148_163_184)]"></div>
-              <span className="font-semibold text-slate-700">Hoy</span>
+            <div className="flex items-center gap-1.5">
+              <div className="h-4 w-4 rounded bg-slate-100 ring-2 ring-slate-400"></div>
+              <span className="font-medium text-slate-700">Hoy</span>
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* Detalles del día seleccionado */}
       {selectedDate && (
-        <section className="rounded-[28px] border border-slate-200/80 bg-white p-7 lg:p-8 shadow-lg shadow-slate-200/50">
-          {/* Header del día */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-slate-200 pb-6">
+        <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-md">
+          {/* Header del día compacto */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
             <div>
-              <div className="flex items-center gap-3">
-                <h3 className="text-2xl font-bold text-slate-900">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-900">
                   {new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { 
-                    weekday: 'long', 
                     day: 'numeric', 
-                    month: 'long', 
+                    month: 'short', 
                     year: 'numeric' 
                   })}
                 </h3>

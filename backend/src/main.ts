@@ -64,7 +64,7 @@ async function bootstrap() {
   const host = process.env.HOST || '0.0.0.0';
   await app.listen(port, host);
   const baseUrl = await app.getUrl();
-  console.log(`🚀 App corriendo en: ${baseUrl}`);
+  console.log(`App corriendo en: ${baseUrl}`);
 }
 bootstrap().catch((error) => {
   console.error('Error al iniciar la aplicación', error);
