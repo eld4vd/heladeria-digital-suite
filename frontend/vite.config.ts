@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/Heladeria-Simple-Project/',
+  base: '/heladeria-digital-suite/',
   plugins: [react()],
   
   build: {

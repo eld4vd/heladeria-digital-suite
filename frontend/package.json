@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://eld4vd.github.io/Heladeria-Simple-Project/",
+  "homepage": "https://eld4vd.github.io/heladeria-digital-suite/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
