@@ -9,6 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>Heladeria Delicias</title>
+  <!-- GitHub Pages SPA redirect script -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
   <!-- Si tu API está en otro dominio, añade aquí por ejemplo: -->
   <!-- <link rel="preconnect" href="https://api.midominio.com" crossorigin> -->
   <!-- Preload potencial de fuente (ejemplo comentado) -->
