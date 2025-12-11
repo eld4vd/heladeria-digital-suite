@@ -4,6 +4,9 @@ import type { CarritoItem, CreateCarritoItemDto, UpdateCarritoItemDto } from '..
 import type { CheckoutCarritoDto } from '../models/PagoSimulado';
 import type { Venta } from '../models/Venta';
 
+// Exportar el tipo para que pueda ser importado
+export type { CheckoutCarritoDto } from '../models/PagoSimulado';
+
 class CarritoService {
   // Crear carrito
   async crearCarrito(data: CreateCarritoDto): Promise<Carrito> {

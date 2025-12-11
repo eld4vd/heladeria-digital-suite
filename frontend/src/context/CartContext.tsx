@@ -23,6 +23,9 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Exportar el contexto para uso directo
+export { CartContext };
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 

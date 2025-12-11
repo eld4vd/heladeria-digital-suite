@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdAccessTime, MdStar, MdCardGiftcard, MdFlashOn, MdGroup, MdCalendarToday } from 'react-icons/md';
 
@@ -151,25 +150,7 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
   );
 }
 
-type FloatingElementProps = {
-  children: ReactNode;
-  delay: number;
-  prefersReducedMotion: boolean;
-};
-
-function FloatingElement({ children, delay, prefersReducedMotion }: FloatingElementProps) {
-  return (
-    <div
-      className={`absolute opacity-10 ${prefersReducedMotion ? '' : 'animate-bounce'} motion-reduce:animate-none`}
-      style={{
-        animationDelay: `${delay}ms`,
-        animationDuration: '3s',
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+// FloatingElement y usePrefersReducedMotion removidos (no se usan)
 
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -197,19 +178,7 @@ function usePrefersReducedMotion() {
 
 function Promociones() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const prefersReducedMotion = usePrefersReducedMotion();
-
-  const formattedTimestamp = useMemo(() => {
-    return new Intl.DateTimeFormat('es-BO', {
-      dateStyle: 'long',
-      timeStyle: 'short'
-    }).format(lastUpdated);
-  }, [lastUpdated]);
-
-  const refreshTimestamp = useCallback(() => {
-    setLastUpdated(new Date());
-  }, []);
 
   const promotions: Promotion[] = [
     {
