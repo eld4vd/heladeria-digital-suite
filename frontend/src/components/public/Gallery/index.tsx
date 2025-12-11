@@ -84,90 +84,100 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, isAddingToCar
   const stockCritico = producto.stock <= 5;
   
   return (
-    <article className={`group relative flex flex-col rounded-2xl bg-white border border-slate-200/60 shadow-sm hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 overflow-hidden hover:-translate-y-2 ${fullscreen ? 'h-full' : ''}`}>
-      {/* Link a detalles - toda la imagen es clickeable */}
-      <Link to={`/detalle/${producto.id}`} className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 block">
-        <img
-          src={producto.imagenUrl || "https://placehold.co/600x600/f3f4f6/9ca3af?text=Sin+Imagen"}
-          alt={producto.nombre}
-          width={600}
-          height={800}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
-          onError={(e) => {
-            e.currentTarget.src = "https://placehold.co/600x600/f3f4f6/9ca3af?text=Sin+Imagen";
-          }}
-        />
+    <article className={`group relative flex flex-col h-full ${fullscreen ? 'min-h-full' : ''}`}>
+      {/* Card container con borde limpio y sombra suave */}
+      <div className="relative flex flex-col h-full rounded-xl bg-white border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-slate-300 overflow-hidden transition-all duration-300">
         
-        {/* Overlay oscuro en hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
-        {/* Badge de categoría */}
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl text-xs font-bold text-cyan-700 shadow-lg border border-white/60">
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-          {producto.categoria.nombre}
-        </span>
-
-        {/* Botón "Agregar al Carrito" flotante - aparece en hover */}
-        <button
-          onClick={(e) => {
-            e.preventDefault(); // Evita que el link se active
-            e.stopPropagation();
-            onAddToCart(producto);
-          }}
-          disabled={isAddingToCart}
-          className="absolute inset-x-4 bottom-4 inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-700 text-white font-bold text-base shadow-2xl shadow-cyan-500/50 border-2 border-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-cyan-600 z-10"
-        >
-          {isAddingToCart ? (
-            <>
-              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Agregando...
-            </>
-          ) : (
-            <>
-              <MdShoppingCart className="h-5 w-5" />
-              Agregar al Carrito
-            </>
-          )}
-        </button>
-
-        {/* Icono sutil de "ver más" en la esquina superior derecha */}
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/90 backdrop-blur-xl text-xs font-semibold text-slate-700 shadow-lg border border-white/60">
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            Ver
-          </div>
-        </div>
-      </Link>
-
-      {/* Contenido compacto - también clickeable */}
-      <Link to={`/detalle/${producto.id}`} className="p-4 flex flex-col gap-2">
-        {/* Título */}
-        <h4 className="text-base font-bold leading-tight line-clamp-2 text-slate-900 group-hover:text-cyan-700 transition-colors duration-200">
-          {producto.nombre}
-        </h4>
-        
-        {/* Fila: Precio + Sabor */}
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-2xl font-black bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-            Bs {Number(producto.precio).toFixed(2)}
-          </span>
+        {/* Imagen con aspect ratio 4:3 (más compacto) */}
+        <Link to={`/detalle/${producto.id}`} className="relative aspect-[4/3] overflow-hidden bg-slate-50 block group/image">
+          <img
+            src={producto.imagenUrl || "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen"}
+            alt={producto.nombre}
+            width={600}
+            height={450}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-105"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen";
+            }}
+          />
           
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 flex-shrink-0">
-            <svg className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            </svg>
-            {producto.sabor}
+          {/* Overlay sutil en hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300" />
+          
+          {/* Badge de categoría minimalista */}
+          <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-sm text-[11px] font-semibold text-slate-700 shadow-sm border border-white/40">
+            {producto.categoria.nombre}
           </span>
+
+          {/* Badge de stock solo si es crítico (<=5) */}
+          {stockCritico && (
+            <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-md bg-rose-500/90 backdrop-blur-sm text-[11px] font-semibold text-white shadow-sm">
+              ¡Solo {producto.stock}!
+            </span>
+          )}
+        </Link>
+
+        {/* Contenido del card */}
+        <div className="flex flex-col flex-1 p-3">
+          {/* Título */}
+          <Link to={`/detalle/${producto.id}`} className="block mb-2">
+            <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-slate-900 group-hover:text-cyan-600 transition-colors">
+              {producto.nombre}
+            </h3>
+          </Link>
+          
+          {/* Sabor como tag discreto */}
+          <div className="mb-3">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 text-[11px] font-medium text-slate-600">
+              <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              {producto.sabor}
+            </span>
+          </div>
+
+          {/* Footer: Precio + CTA */}
+          <div className="mt-auto flex items-center justify-between gap-2">
+            {/* Precio limpio sin decoración excesiva */}
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+              Bs {Number(producto.precio).toFixed(2)}
+            </span>
+            
+            {/* Botón CTA siempre visible (icono en mobile, texto en desktop) */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onAddToCart(producto);
+              }}
+              disabled={isAddingToCart}
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white text-sm font-semibold shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Agregar al carrito"
+            >
+              {isAddingToCart ? (
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <>
+                  <MdShoppingCart className="h-4 w-4" />
+                  <span className="hidden sm:inline">Agregar</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Warning de stock bajo (opcional, solo si stock entre 6-10) */}
+          {stockBajo && !stockCritico && (
+            <p className="mt-2 text-[11px] text-amber-600 font-medium">
+              Stock limitado ({producto.stock} unidades)
+            </p>
+          )}
         </div>
-      </Link>
+      </div>
     </article>
   );
 };
@@ -212,6 +222,7 @@ const GaleriaHelados = () => {
   >("all");
   const [fullscreenMode, setFullscreenMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Carrito hooks
   const { clienteTempId, carritoId, setCarritoId } = useCart();
@@ -224,10 +235,10 @@ const GaleriaHelados = () => {
   const countsByCategory = productos?.countsByCategory ?? {};
   
   // Filtrar productos por búsqueda
-  const searchFilteredProductos = searchQuery.trim() 
+  const searchFilteredProductos = debouncedSearch.trim() 
     ? allProductos.filter(p => 
-        p.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.sabor.toLowerCase().includes(searchQuery.toLowerCase())
+        p.nombre.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        p.sabor.toLowerCase().includes(debouncedSearch.toLowerCase())
       )
     : allProductos;
 
@@ -284,6 +295,14 @@ const GaleriaHelados = () => {
 
   const isAddingToCart = crearCarrito.isPending || agregarItem.isPending;
 
+  // Debounce para búsqueda (evita lag)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Efecto para manejar ESC en modo fullscreen
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -295,16 +314,34 @@ const GaleriaHelados = () => {
     return () => window.removeEventListener('keydown', handleEscape);
   }, [fullscreenMode]);
 
-  // Estados base
+  // Estados base con skeleton loading
   if (loadingProductos || loadingCategorias) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-indigo-500 animate-bounce" />
-          <div className="w-3 h-3 rounded-full bg-cyan-500 animate-bounce [animation-delay:150ms]" />
-          <div className="w-3 h-3 rounded-full bg-teal-500 animate-bounce [animation-delay:300ms]" />
+      <div className="space-y-8">
+        {/* Skeleton para buscador */}
+        <div className="max-w-md mx-auto h-12 bg-slate-200 animate-pulse rounded-xl" />
+        {/* Skeleton para categorías */}
+        <div className="flex gap-2 overflow-hidden">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="h-10 w-24 bg-slate-200 animate-pulse rounded-lg flex-shrink-0" />
+          ))}
         </div>
-        <p className="text-sm font-semibold text-slate-600">Cargando deliciosos sabores...</p>
+        {/* Skeleton para productos */}
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <div key={i} className="rounded-xl bg-white border border-slate-200 overflow-hidden">
+              <div className="aspect-[4/3] bg-slate-200 animate-pulse" />
+              <div className="p-3 space-y-2">
+                <div className="h-4 bg-slate-200 animate-pulse rounded" />
+                <div className="h-4 bg-slate-200 animate-pulse rounded w-3/4" />
+                <div className="flex justify-between items-center">
+                  <div className="h-8 w-20 bg-slate-200 animate-pulse rounded-lg" />
+                  <div className="h-8 w-16 bg-slate-200 animate-pulse rounded-lg" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -346,7 +383,7 @@ const GaleriaHelados = () => {
 
   const galeriaContent = (
     <div className={fullscreenMode ? 'space-y-4' : 'space-y-8'}>
-      {/* Buscador sutil */}
+      {/* Barra de búsqueda */}
       {!fullscreenMode && (
         <div className="relative max-w-md mx-auto">
           <input
@@ -354,7 +391,7 @@ const GaleriaHelados = () => {
             placeholder="Buscar helados por nombre o sabor..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-11 pr-4 rounded-xl border-2 border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200 text-sm"
+            className="w-full px-4 py-3 pl-11 pr-10 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200 text-sm"
           />
           <svg 
             className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" 
@@ -368,6 +405,7 @@ const GaleriaHelados = () => {
             <button
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-colors"
+              aria-label="Limpiar búsqueda"
             >
               <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -377,9 +415,20 @@ const GaleriaHelados = () => {
         </div>
       )}
 
+      {/* Indicador de búsqueda activa */}
+      {!fullscreenMode && searchQuery && searchQuery !== debouncedSearch && (
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Buscando...
+        </div>
+      )}
+
       {/* Categorías - Solo en modo normal (en fullscreen van en el header) */}
       {!fullscreenMode && !searchQuery && (
-        <div className="sticky top-20 z-30 rounded-xl border-2 border-cyan-100 bg-gradient-to-b from-white to-cyan-50/30 backdrop-blur-xl shadow-lg shadow-cyan-100/50 px-4 py-4">
+        <div className="sticky top-[calc(4rem+1px)] z-30 rounded-xl border border-cyan-100 bg-gradient-to-b from-white to-cyan-50/30 backdrop-blur-xl shadow-lg shadow-cyan-100/50 px-4 py-4">
           {/* Indicador de scroll */}
           <div className="relative">
             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none z-10 rounded-l-lg" />
@@ -416,14 +465,14 @@ const GaleriaHelados = () => {
       {/* Vista búsqueda */}
       {searchQuery && (
         <section className="space-y-5" key="search">
-          <div className="flex items-center justify-between px-1 pb-3 border-b-2 border-slate-200">
+          <div className="flex items-center justify-between px-1 pb-3 border-b border-slate-200">
             <div className="space-y-1">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent">
                 Resultados de búsqueda
               </h2>
               <p className="text-sm text-slate-600">"{searchQuery}"</p>
             </div>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-cyan-50 to-cyan-100 border-2 border-cyan-200 text-sm font-bold text-cyan-700 shadow-md">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-cyan-50 to-cyan-100 border border-cyan-200 text-sm font-bold text-cyan-700 shadow-md">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
@@ -433,7 +482,7 @@ const GaleriaHelados = () => {
           {searchFilteredProductos.length > 0 ? (
             <ProductosGrid productos={searchFilteredProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 gap-4 rounded-xl bg-slate-50 border-2 border-slate-200">
+            <div className="flex flex-col items-center justify-center py-12 gap-4 rounded-xl bg-slate-50 border border-slate-200">
               <svg className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -446,14 +495,14 @@ const GaleriaHelados = () => {
       {/* Vista Todo */}
       {categoriaSeleccionada === "all" && !searchQuery && (
         <section className="space-y-5" key="all">
-          <div className="flex items-center justify-between px-1 pb-3 border-b-2 border-slate-200">
+          <div className="flex items-center justify-between px-1 pb-3 border-b border-slate-200">
             <div className="space-y-1">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent">
-                Todos los sabores 🍦
+                Todos los sabores
               </h2>
               <p className="text-sm text-slate-600">Descubre nuestra colección completa</p>
             </div>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-cyan-50 to-cyan-100 border-2 border-cyan-200 text-sm font-bold text-cyan-700 shadow-md">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-cyan-50 to-cyan-100 border border-cyan-200 text-sm font-bold text-cyan-700 shadow-md">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
@@ -469,7 +518,7 @@ const GaleriaHelados = () => {
         filtered.map((sec) => {
           return (
             <section key={sec.id} className="space-y-5">
-              <div className="flex items-center justify-between px-1 pb-3 border-b-2 border-slate-200">
+              <div className="flex items-center justify-between px-1 pb-3 border-b border-slate-200">
                 <div className="space-y-1">
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent">
                     {sec.nombre}
@@ -478,7 +527,7 @@ const GaleriaHelados = () => {
                 </div>
                 <button
                   onClick={() => setCategoriaSeleccionada("all")}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50 to-cyan-100 text-sm font-bold text-cyan-700 transition-all duration-200 hover:from-cyan-100 hover:to-cyan-200 hover:border-cyan-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-cyan-100 text-sm font-bold text-cyan-700 transition-all duration-200 hover:from-cyan-100 hover:to-cyan-200 hover:border-cyan-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
                   aria-label="Ver todos los productos"
                 >
                   Ver todo
@@ -639,10 +688,10 @@ const CategoriaButton = ({
     role="tab"
     aria-selected={active}
     aria-label={`${label}${count !== undefined ? ` (${count} productos)` : ''}`}
-    className={`group flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2
+    className={`group flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap border focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2
       ${
         active
-          ? "bg-cyan-600 text-white border-cyan-600 shadow-lg shadow-cyan-500/30 scale-[1.05]"
+          ? "bg-cyan-600 text-white border-cyan-600 shadow-lg shadow-cyan-500/30"
           : "bg-white hover:bg-cyan-50 text-slate-700 border-slate-200 hover:border-cyan-300 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
       }
     `}

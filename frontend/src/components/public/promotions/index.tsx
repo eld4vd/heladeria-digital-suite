@@ -81,17 +81,15 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
 
   return (
     <div
-      className={`relative group cursor-pointer transition-all duration-300 ${
-        prefersReducedMotion ? '' : 'hover:-translate-y-1'
-      } motion-reduce:transform-none motion-reduce:hover:translate-y-0`}
+      className="relative group cursor-pointer transition-all duration-300 hover:-translate-y-1"
       style={{ animationDelay: `${index * 100}ms` }}
       onMouseEnter={() => !prefersReducedMotion && setIsHovered(true)}
       onMouseLeave={() => !prefersReducedMotion && setIsHovered(false)}
     >
-      <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl hover:border-gray-300 transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200 hover:shadow-md hover:border-cyan-300 transition-all duration-300">
         {promotion.isHot && (
           <div className="absolute top-3 right-3 z-10">
-            <div className={`${style.badgeBg} text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm`}>
+            <div className="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm">
               <MdFlashOn className="w-3.5 h-3.5" />
               DESTACADO
             </div>
@@ -119,9 +117,9 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
           </div>
         </div>
 
-        <div className="p-5">
-          <div className="flex justify-between items-start mb-3 gap-3">
-            <h3 className="text-lg font-bold text-gray-900 group-hover:text-cyan-600 transition-colors duration-200 line-clamp-2">
+        <div className="p-4">
+          <div className="flex justify-between items-start mb-2 gap-3">
+            <h3 className="text-[15px] font-semibold text-slate-900 group-hover:text-cyan-600 transition-colors duration-200 line-clamp-2">
               {promotion.title}
             </h3>
             <div className={`text-xl font-bold ${style.textColor} shrink-0`}>
@@ -129,10 +127,10 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">{promotion.description}</p>
+          <p className="text-sm text-slate-600 mb-3 line-clamp-2">{promotion.description}</p>
 
           <div className="flex justify-between items-center gap-3">
-            <div className="flex items-center text-xs text-gray-500">
+            <div className="flex items-center text-xs text-slate-500">
               <MdAccessTime className="w-4 h-4 mr-1 shrink-0" />
               <span className="line-clamp-1">{promotion.validUntil}</span>
             </div>
@@ -141,7 +139,7 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
               to={`/contacto?promo=${promotion.id}`}
               className={`px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-200 ${
                 style.buttonBg
-              } ${style.buttonHover} shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-cyan-500 shrink-0`}
+              } ${style.buttonHover} shadow-sm hover:shadow-md shrink-0`}
               aria-label={`Solicitar información sobre ${promotion.title}`}
             >
               Ver más
@@ -286,46 +284,24 @@ function Promociones() {
     : promotions.filter(p => p.type === selectedFilter);
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden">
-      {/* Elementos flotantes decorativos */}
-      <FloatingElement delay={0} prefersReducedMotion={prefersReducedMotion}>
-        <div className="absolute w-20 h-20 rounded-full bg-indigo-200 top-10 left-10" />
-      </FloatingElement>
-      <FloatingElement delay={1000} prefersReducedMotion={prefersReducedMotion}>
-        <div className="absolute w-16 h-16 rounded-full bg-cyan-200 top-32 right-20" />
-      </FloatingElement>
-      <FloatingElement delay={2000} prefersReducedMotion={prefersReducedMotion}>
-        <div className="absolute w-12 h-12 rounded-full bg-teal-200 bottom-20 left-1/4" />
-      </FloatingElement>
-
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        {/* Header de la página */}
-        <div className="text-center mb-12 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-gray-900">
+    <div className="min-h-screen bg-slate-50">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-cyan-600 to-cyan-700 text-white py-16 md:py-20">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04em0wIDI4YzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04em0yOCAwYzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04ek0zNiAwYzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04ek0wIDE0YzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6bTAgMjhjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHpNMCAwYzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
             Promociones Especiales
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-            Descubre nuestras increíbles ofertas. ¡Cada día una nueva oportunidad para disfrutar más!
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+            Descubre nuestras increíbles ofertas
           </p>
-          
-          {/* Contador en vivo */}
-          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-3 bg-white rounded-lg px-5 py-3 shadow-sm border border-gray-200">
-            <MdAccessTime className="text-cyan-600 w-5 h-5" />
-            <span className="text-sm text-gray-700 font-medium">
-              Actualizado: {formattedTimestamp}
-            </span>
-            <button
-              type="button"
-              onClick={refreshTimestamp}
-              className="text-sm font-semibold text-cyan-600 hover:text-cyan-700 transition-colors"
-            >
-              Refrescar
-            </button>
-          </div>
         </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Filtros */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
           {filters.map(filter => {
             const Icon = filter.icon;
             const isActive = selectedFilter === filter.id;
@@ -333,10 +309,10 @@ function Promociones() {
               <button
                 key={filter.id}
                 onClick={() => setSelectedFilter(filter.id)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 border ${
                   isActive
-                    ? 'bg-cyan-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300'
+                    ? 'bg-cyan-600 text-white border-cyan-600 shadow-md'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50 hover:border-cyan-300'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -347,7 +323,7 @@ function Promociones() {
         </div>
 
         {/* Grid de promociones */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {filteredPromotions.map((promotion, index) => (
             <PromotionCard
               key={promotion.id}
@@ -358,36 +334,30 @@ function Promociones() {
           ))}
         </div>
 
-        {/* Sección de CTA final */}
-        <div className="bg-gradient-to-br from-cyan-600 to-indigo-700 rounded-2xl p-10 md:p-12 text-center text-white relative overflow-hidden shadow-xl">
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">¿Buscas algo más?</h2>
-            <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Síguenos en redes para promociones flash y ofertas exclusivas
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a
-                href="https://www.instagram.com/heladeriasimple"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white text-cyan-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-md"
-              >
-                📱 Instagram
-              </a>
-              <a
-                href="https://www.pedidosya.com.bo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white text-rose-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-md"
-              >
-                � PedidosYa
-              </a>
-            </div>
+        {/* CTA final */}
+        <div className="bg-white rounded-xl p-8 md:p-10 text-center border border-slate-200 shadow-sm">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-slate-900">¿Buscas algo más?</h2>
+          <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
+            Síguenos en redes para promociones flash y ofertas exclusivas
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href="https://www.instagram.com/heladeriasimple"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-sm"
+            >
+              📱 Instagram
+            </a>
+            <a
+              href="https://www.pedidosya.com.bo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-rose-700 transition-all duration-200 shadow-sm"
+            >
+              🍽️ PedidosYa
+            </a>
           </div>
-          
-          {/* Decoración de fondo */}
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/5 -translate-y-32 translate-x-32" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/5 translate-y-24 -translate-x-24" />
         </div>
       </div>
     </div>

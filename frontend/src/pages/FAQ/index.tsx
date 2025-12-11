@@ -108,30 +108,25 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
-        </div>
+      <section className="relative bg-gradient-to-br from-cyan-600 to-cyan-700 text-white py-16 md:py-20">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04em0wIDI4YzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04em0yOCAwYzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04ek0zNiAwYzAtNC40MTgtMy41ODItOC04LThzLTggMy41ODItOCA4IDMuNTgyIDggOCA4IDgtMy41ODIgOC04ek0wIDE0YzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6bTAgMjhjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHpNMCAwYzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10" />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 tracking-tight">
-              Preguntas Frecuentes
-            </h1>
-            <p className="text-lg sm:text-xl text-slate-300 leading-relaxed">
-              Encuentra respuestas rápidas a las dudas más comunes sobre nuestros productos y servicios
-            </p>
-          </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            Preguntas Frecuentes
+          </h1>
+          <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
+            Encuentra respuestas rápidas a tus dudas
+          </p>
         </div>
       </section>
 
       {/* Category Filter */}
-      <section className="sticky top-16 z-20 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200">
+      <section className="sticky top-[calc(4rem+1px)] z-20 bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
+          <div className="flex gap-2 overflow-x-auto pb-2">
             {categories.map((category) => (
               <button
                 key={category.id}
@@ -139,10 +134,10 @@ const FAQ = () => {
                   setSelectedCategory(category.id);
                   setOpenIndex(null);
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all duration-200 ${
+                className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all duration-200 border ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-cyan-600 text-white border-cyan-600 shadow-md'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50 hover:border-cyan-300'
                 }`}
               >
                 {category.label}
@@ -153,27 +148,27 @@ const FAQ = () => {
       </section>
 
       {/* FAQ Accordion */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="space-y-4">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="space-y-3">
           {filteredFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl border-2 border-slate-200 hover:border-cyan-300 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md"
+                className="bg-white rounded-xl border border-slate-200 hover:border-cyan-300 transition-all duration-200 overflow-hidden shadow-sm"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50 transition-colors"
                 >
-                  <span className="font-bold text-slate-900 text-base sm:text-lg pr-4">
+                  <span className="font-semibold text-slate-900 text-[15px] pr-4">
                     {faq.question}
                   </span>
                   <div className="flex-shrink-0">
                     {isOpen ? (
-                      <MdExpandLess className="w-6 h-6 text-cyan-600" />
+                      <MdExpandLess className="w-5 h-5 text-cyan-600" />
                     ) : (
-                      <MdExpandMore className="w-6 h-6 text-slate-400" />
+                      <MdExpandMore className="w-5 h-5 text-slate-400" />
                     )}
                   </div>
                 </button>
@@ -183,9 +178,9 @@ const FAQ = () => {
                     isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   } overflow-hidden`}
                 >
-                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
-                    <div className="border-t-2 border-slate-100 pt-4">
-                      <p className="text-slate-600 leading-relaxed">
+                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-2">
+                    <div className="border-t border-slate-100 pt-3">
+                      <p className="text-sm text-slate-600 leading-relaxed">
                         {faq.answer}
                       </p>
                     </div>
@@ -206,18 +201,18 @@ const FAQ = () => {
       </section>
 
       {/* Contact CTA */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 text-center">
-          <h2 className="text-2xl lg:text-3xl font-bold mb-4">
+      <section className="bg-white border-t border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+          <h2 className="text-2xl lg:text-3xl font-bold mb-3 text-slate-900">
             ¿No encuentras tu respuesta?
           </h2>
-          <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
-            Nuestro equipo está listo para ayudarte con cualquier consulta adicional
+          <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
+            Nuestro equipo está listo para ayudarte
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/contacto"
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+              className="inline-flex items-center justify-center px-6 py-3 bg-cyan-600 text-white font-semibold text-sm rounded-lg hover:bg-cyan-700 transition-all duration-200 shadow-sm"
             >
               Contáctanos
             </a>
@@ -225,7 +220,7 @@ const FAQ = () => {
               href="https://wa.me/59112345678"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-bold rounded-xl hover:bg-green-500 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+              className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-semibold text-sm rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
             >
               WhatsApp
             </a>

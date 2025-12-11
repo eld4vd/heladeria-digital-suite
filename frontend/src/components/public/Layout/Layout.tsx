@@ -2,7 +2,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navbar/Navbar";
 import ScrollToTop from "../../../hooks/ScrollToTop";
-import FloatingClock from "../FloatingClock";
 import FloatingCartButton from "../../Cart/FloatingCartButton";
 
 const Layout = () => {
@@ -17,7 +16,6 @@ const Layout = () => {
         <Outlet /> {/* Aquí se renderizan las páginas */}
       </main>
       <Footer /> {/* Aquí se pone el pie de página para que todas las páginas tengan la misma estructura */}
-      <FloatingClock /> { /* ← Reloj flotante en todas las páginas */ }
       <FloatingCartButton /> { /* ← Carrito de compras flotante */ }
     </div>
   );
