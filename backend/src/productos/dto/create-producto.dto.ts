@@ -105,8 +105,8 @@ export class CreateProductoDto {
 
   @IsOptional()
   @IsUrl({}, { message: 'La URL de la imagen no es válida' })
-  @MaxLength(255, {
-    message: 'La URL de la imagen no puede exceder 255 caracteres',
+  @MaxLength(500, {
+    message: 'La URL de la imagen no puede exceder 500 caracteres',
   })
   @Transform(({ value }) => toTrimmedStringOrNull(value))
   readonly imagenUrl?: string | null;

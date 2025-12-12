@@ -20,9 +20,12 @@ const Productos = () => {
 			const [modalEditar, setModalEditar] = useState(false);
 			const [productoEdit, setProductoEdit] = useState<Producto | null>(null);
 
+	// Consulta con actualización automática cada 5 segundos para reflejar cambios de stock en tiempo real
 	const { data: productos, isLoading, error } = useQuery({
 		queryKey: ['productos'],
 		queryFn: productService.getProductos,
+		refetchInterval: 5000, // Actualizar cada 5 segundos
+		refetchIntervalInBackground: true, // Seguir actualizando aunque la pestaña esté en segundo plano
 	});
 
 	const deleteMutation = useMutation({

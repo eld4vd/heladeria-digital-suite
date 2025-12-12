@@ -4,6 +4,7 @@ import type { Carrito, CreateCarritoDto } from '../models/Carrito';
 import type { CarritoItem, CreateCarritoItemDto } from '../models/CarritoItem';
 import type { CheckoutCarritoDto } from '../models/PagoSimulado';
 import { useCart } from '../context/CartContext';
+import { HELADOS_QUERY_KEY } from './useProductos';
 
 // Query key factory
 const carritoKeys = {
@@ -260,8 +261,14 @@ export function useCheckout() {
     onSuccess: () => {
       // Limpiar carrito local
       clearCart();
-      // Invalidar queries
+      // Invalidar queries del carrito
       queryClient.invalidateQueries({ queryKey: carritoKeys.all });
+      // Invalidar queries de productos para actualizar stock en tiempo real
+      queryClient.invalidateQueries({ queryKey: HELADOS_QUERY_KEY });
+      // Invalidar query del dashboard de admin para actualizar stock
+      queryClient.invalidateQueries({ queryKey: ['productos'] });
+      // Invalidar query de ventas para mostrar la nueva venta inmediatamente
+      queryClient.invalidateQueries({ queryKey: ['ventas'] });
     },
   });
 }

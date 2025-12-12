@@ -13,6 +13,7 @@ import { Carrito } from './entities/carrito.entity';
 import { Venta, EstadoVenta, MetodoPago } from '../ventas/entities/venta.entity';
 import { DetallesVenta } from '../detalles-ventas/entities/detalles-venta.entity';
 import { PagoSimulado } from '../pagos-simulados/entities/pago-simulado.entity';
+import { Producto } from '../productos/entities/producto.entity';
 
 @Injectable()
 export class CarritosService {
@@ -193,9 +194,32 @@ export class CarritosService {
       });
       const ventaGuardada = await manager.save(Venta, venta);
 
-      // 3. Crear detalles de venta desde items del carrito
+      // 3. Crear detalles de venta desde items del carrito Y descontar stock
       for (const detalleInfo of detallesCalculados) {
         const { item, precioUnitario, subtotalCalculado } = detalleInfo;
+        
+        // Verificar y descontar stock
+        const producto = await manager.findOne(Producto, {
+          where: { id: item.productoId },
+        });
+
+        if (!producto) {
+          throw new NotFoundException(
+            `Producto con ID ${item.productoId} no encontrado`,
+          );
+        }
+
+        if (producto.stock < item.cantidad) {
+          throw new BadRequestException(
+            `Stock insuficiente para ${producto.nombre}. Disponible: ${producto.stock}, Solicitado: ${item.cantidad}`,
+          );
+        }
+
+        // Descontar stock
+        producto.stock -= item.cantidad;
+        await manager.save(Producto, producto);
+
+        // Crear detalle de venta
         const detalle = manager.create(DetallesVenta, {
           ventaId: ventaGuardada.id,
           productoId: item.productoId,

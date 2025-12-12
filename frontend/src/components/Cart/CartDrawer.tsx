@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import { MdShoppingCart } from 'react-icons/md';
-import { useState } from 'react';
 import { useCarritoItems, useActualizarItem, useEliminarItem } from '../../hooks/useCarrito';
 import CheckoutModal from "./CheckoutModal";
 import toast from 'react-hot-toast';
@@ -14,6 +14,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const actualizarItem = useActualizarItem();
   const eliminarItem = useEliminarItem();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  // Controlar renderizado para evitar que el overlay bloquee la UI
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+    } else {
+      // Esperar a que termine la animación antes de dejar de renderizar
+      const timer = setTimeout(() => setShouldRender(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleUpdateQuantity = (itemId: number, currentQuantity: number, change: number) => {
     const newQuantity = currentQuantity + change;
@@ -43,6 +55,11 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const count = data?.count ?? 0;
+
+  // No renderizar el drawer si no debe mostrarse, pero siempre mantener el CheckoutModal disponible
+  if (!shouldRender && !isOpen) {
+    return null;
+  }
 
   return (
     <>
@@ -150,7 +167,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           <div className="relative flex-shrink-0">
                             <div className="w-16 h-16 bg-white p-1.5 rounded-lg shadow-md transform group-hover:scale-105 transition-transform">
                               <img
-                                src={item.producto?.imagenUrl || '/placeholder-ice-cream.jpg'}
+                                src={
+                                  item.producto?.imagenUrl ||
+                                  `${import.meta.env.BASE_URL}placeholder-ice-cream.jpg`
+                                }
                                 alt={item.producto?.nombre || 'Producto'}
                                 className="w-full h-full rounded object-cover"
                               />

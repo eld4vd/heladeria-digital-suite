@@ -33,6 +33,8 @@ const Ventas = () => {
     queryKey: ["ventas"],
     queryFn: ventaService.getVentas,
     staleTime: 60 * 1000,
+    refetchInterval: 5000, // Actualizar cada 5 segundos para ver nuevas ventas en tiempo real
+    refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
   });
 

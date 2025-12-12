@@ -8,6 +8,7 @@ import useCategorias from "../../../hooks/useCategorias";
 import { MdShoppingCart } from 'react-icons/md';
 import { useCart } from "../../../context/CartContext";
 import { useCrearCarrito, useAgregarItem, useCarritoItems, useActualizarItem } from "../../../hooks/useCarrito";
+import { isApiErrorResponse } from "../../../services/api.service";
 import toast from 'react-hot-toast';
 
 interface ProductoCardProps {
@@ -231,7 +232,7 @@ const GaleriaHelados = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Carrito hooks
-  const { clienteTempId, carritoId, setCarritoId } = useCart();
+  const { clienteTempId, carritoId, setCarritoId, clearCart, itemCount } = useCart();
   const crearCarrito = useCrearCarrito();
   const agregarItem = useAgregarItem();
   const actualizarItem = useActualizarItem();
@@ -285,29 +286,36 @@ const GaleriaHelados = () => {
         throw new Error('No se pudo obtener el carrito');
       }
 
+      const carritoIdNumber = targetCarritoId;
+
       const precio = Number(producto.precio);
       if (Number.isNaN(precio)) {
         throw new Error('Precio inválido para el producto');
       }
 
-      // Verificar si el producto ya está en el carrito
-      const itemExistente = carritoData?.items?.find(item => item.productoId === producto.id);
+      const agregarOActualizar = async (carritoIdForAction: number, options?: { forceAdd?: boolean }) => {
+        const forceAdd = options?.forceAdd ?? false;
 
-      if (itemExistente) {
-        // Si ya existe, incrementar cantidad
-        const nuevaCantidad = itemExistente.cantidad + 1;
-        await actualizarItem.mutateAsync({
-          id: itemExistente.id,
-          cantidad: nuevaCantidad,
-        });
-        toast.success(`Cantidad actualizada: ${nuevaCantidad}`, {
-          duration: 2000,
-        });
-      } else {
-        // Si no existe, agregar nuevo item
+        // Verificar si el producto ya está en el carrito (si hay datos)
+        const itemExistente = forceAdd
+          ? undefined
+          : carritoData?.items?.find(item => item.productoId === producto.id);
+
+        if (itemExistente) {
+          const nuevaCantidad = itemExistente.cantidad + 1;
+          await actualizarItem.mutateAsync({
+            id: itemExistente.id,
+            cantidad: nuevaCantidad,
+          });
+          toast.success(`Cantidad actualizada: ${nuevaCantidad}`, {
+            duration: 2000,
+          });
+          return;
+        }
+
         const subtotal = Number((precio * 1).toFixed(2));
         await agregarItem.mutateAsync({
-          carritoId: targetCarritoId,
+          carritoId: carritoIdForAction,
           productoId: producto.id,
           cantidad: 1,
           subtotal,
@@ -315,6 +323,21 @@ const GaleriaHelados = () => {
         toast.success('¡Producto agregado al carrito!', {
           duration: 2000,
         });
+      };
+
+      try {
+        await agregarOActualizar(carritoIdNumber);
+      } catch (innerError) {
+        // Si se reseteó la BD, puede quedar un carritoId viejo en localStorage.
+        // En ese caso, recreamos el carrito y reintentamos 1 vez.
+        if (carritoId && isApiErrorResponse(innerError) && innerError.status === 404) {
+          clearCart();
+          const nuevoCarrito = await crearCarrito.mutateAsync({ clienteTempId });
+          setCarritoId(nuevoCarrito.id);
+          await agregarOActualizar(nuevoCarrito.id, { forceAdd: true });
+        } else {
+          throw innerError;
+        }
       }
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
@@ -575,7 +598,7 @@ const GaleriaHelados = () => {
   // Modo Normal
   if (!fullscreenMode) {
     return (
-      <div className="relative">
+      <div className={itemCount > 0 ? "relative pb-28" : "relative"}>
         {galeriaContent}
         
         {/* Botón flotante para activar fullscreen - posición ajustada para no chocar con carrito */}
@@ -595,9 +618,9 @@ const GaleriaHelados = () => {
 
   // Modo Fullscreen
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-b from-slate-50 to-slate-100 overflow-y-auto">
+    <div className={itemCount > 0 ? "fixed inset-0 z-40 bg-gradient-to-b from-slate-50 to-slate-100 overflow-y-auto pb-28" : "fixed inset-0 z-40 bg-gradient-to-b from-slate-50 to-slate-100 overflow-y-auto"}>
       {/* Header Fullscreen Mejorado */}
-      <div className="sticky top-0 z-50 bg-white/98 backdrop-blur-xl border-b-2 border-cyan-100 shadow-lg">
+      <div className="sticky top-0 z-40 bg-white/98 backdrop-blur-xl border-b-2 border-cyan-100 shadow-lg">
         <div className="max-w-screen-2xl mx-auto px-4 py-4">
           {/* Primera fila: Logo + Info + Cerrar */}
           <div className="flex items-center justify-between gap-4 mb-3">

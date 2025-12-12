@@ -45,7 +45,7 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`${isHomePage ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      className={`${isHomePage ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-40 transition-all duration-200 ${
         isHomePage && !isScrolled
           ? "bg-transparent"
           : "bg-white shadow-sm"
