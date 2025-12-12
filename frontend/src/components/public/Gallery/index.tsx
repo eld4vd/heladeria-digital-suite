@@ -7,14 +7,14 @@ import useProductos, {
 import useCategorias from "../../../hooks/useCategorias";
 import { MdShoppingCart } from 'react-icons/md';
 import { useCart } from "../../../context/CartContext";
-import { useCrearCarrito, useAgregarItem } from "../../../hooks/useCarrito";
+import { useCrearCarrito, useAgregarItem, useCarritoItems, useActualizarItem } from "../../../hooks/useCarrito";
 import toast from 'react-hot-toast';
 
 interface ProductoCardProps {
   producto: ProductoResumen;
   fullscreen?: boolean;
   onAddToCart: (producto: ProductoResumen) => void;
-  isAddingToCart?: boolean;
+  productoAgregandose: number | null;
 }
 
 const MaximizeIcon = ({ className = "" }: { className?: string }) => (
@@ -79,7 +79,8 @@ const CloseIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const ProductoCard = ({ producto, fullscreen = false, onAddToCart, isAddingToCart = false }: ProductoCardProps) => {
+const ProductoCard = ({ producto, fullscreen = false, onAddToCart, productoAgregandose }: ProductoCardProps) => {
+  const isAddingToCart = productoAgregandose === producto.id;
   const stockBajo = producto.stock <= 10;
   const stockCritico = producto.stock <= 5;
   
@@ -91,12 +92,20 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, isAddingToCar
         {/* Imagen con aspect ratio 4:3 (más compacto) */}
         <Link to={`/detalle/${producto.id}`} className="relative aspect-[4/3] overflow-hidden bg-slate-50 block group/image">
           <img
-            src={producto.imagenUrl || "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen"}
+            src={
+              producto.imagenUrl?.startsWith('http') 
+                ? producto.imagenUrl 
+                : "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen"
+            }
             alt={producto.nombre}
             width={600}
             height={450}
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Imagen+No+Disponible";
+            }}
             className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-105"
             onError={(e) => {
               e.currentTarget.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen";
@@ -186,12 +195,12 @@ const ProductosGrid = ({
   productos,
   fullscreen = false,
   onAddToCart,
-  isAddingToCart,
+  productoAgregandose,
 }: {
   productos: ProductoResumen[];
   fullscreen?: boolean;
   onAddToCart: (producto: ProductoResumen) => void;
-  isAddingToCart?: boolean;
+  productoAgregandose: number | null;
 }) => (
     <div className={`grid ${
       fullscreen 
@@ -199,7 +208,7 @@ const ProductosGrid = ({
         : 'grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6'
     }`}>
     {productos.map((p) => (
-      <ProductoCard key={p.id} producto={p} fullscreen={fullscreen} onAddToCart={onAddToCart} isAddingToCart={isAddingToCart} />
+      <ProductoCard key={p.id} producto={p} fullscreen={fullscreen} onAddToCart={onAddToCart} productoAgregandose={productoAgregandose} />
     ))}
   </div>
 );
@@ -217,6 +226,7 @@ const GaleriaHelados = () => {
     error: errorCategorias,
     refetch: refetchCategorias,
   } = useCategorias();
+  const [productoAgregandose, setProductoAgregandose] = useState<number | null>(null);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<
     number | "all"
   >("all");
@@ -228,6 +238,8 @@ const GaleriaHelados = () => {
   const { clienteTempId, carritoId, setCarritoId } = useCart();
   const crearCarrito = useCrearCarrito();
   const agregarItem = useAgregarItem();
+  const actualizarItem = useActualizarItem();
+  const { data: carritoData } = useCarritoItems();
 
   const sections = productos?.sections ?? [];
   const sectionsById = productos?.sectionsById ?? {};
@@ -256,6 +268,13 @@ const GaleriaHelados = () => {
 
   // Función para agregar al carrito
   const handleAddToCart = async (producto: ProductoResumen) => {
+    // Prevenir agregar si ya se está agregando este producto
+    if (productoAgregandose === producto.id) {
+      return;
+    }
+    
+    setProductoAgregandose(producto.id);
+    
     try {
       let targetCarritoId = carritoId;
 
@@ -274,26 +293,40 @@ const GaleriaHelados = () => {
       if (Number.isNaN(precio)) {
         throw new Error('Precio inválido para el producto');
       }
-      const subtotal = Number((precio * 1).toFixed(2));
 
-      // Ahora agregar el producto (se pasa el carritoId para evitar race conditions)
-      await agregarItem.mutateAsync({
-        carritoId: targetCarritoId,
-        productoId: producto.id,
-        cantidad: 1,
-        subtotal,
-      });
+      // Verificar si el producto ya está en el carrito
+      const itemExistente = carritoData?.items?.find(item => item.productoId === producto.id);
 
-      toast.success('¡Producto agregado al carrito!', {
-        duration: 2000,
-      });
+      if (itemExistente) {
+        // Si ya existe, incrementar cantidad
+        const nuevaCantidad = itemExistente.cantidad + 1;
+        await actualizarItem.mutateAsync({
+          id: itemExistente.id,
+          cantidad: nuevaCantidad,
+        });
+        toast.success(`Cantidad actualizada: ${nuevaCantidad}`, {
+          duration: 2000,
+        });
+      } else {
+        // Si no existe, agregar nuevo item
+        const subtotal = Number((precio * 1).toFixed(2));
+        await agregarItem.mutateAsync({
+          carritoId: targetCarritoId,
+          productoId: producto.id,
+          cantidad: 1,
+          subtotal,
+        });
+        toast.success('¡Producto agregado al carrito!', {
+          duration: 2000,
+        });
+      }
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
       toast.error('Error al agregar al carrito');
+    } finally {
+      setProductoAgregandose(null);
     }
   };
-
-  const isAddingToCart = crearCarrito.isPending || agregarItem.isPending;
 
   // Debounce para búsqueda (evita lag)
   useEffect(() => {
@@ -480,7 +513,7 @@ const GaleriaHelados = () => {
             </span>
           </div>
           {searchFilteredProductos.length > 0 ? (
-            <ProductosGrid productos={searchFilteredProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
+            <ProductosGrid productos={searchFilteredProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} productoAgregandose={productoAgregandose} />
           ) : (
             <div className="flex flex-col items-center justify-center py-12 gap-4 rounded-xl bg-slate-50 border border-slate-200">
               <svg className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -509,7 +542,7 @@ const GaleriaHelados = () => {
               {allProductos.length}
             </span>
           </div>
-          <ProductosGrid productos={allProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
+          <ProductosGrid productos={allProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} productoAgregandose={productoAgregandose} />
         </section>
       )}
 
@@ -536,7 +569,7 @@ const GaleriaHelados = () => {
                   </svg>
                 </button>
               </div>
-              <ProductosGrid productos={sec.items} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
+              <ProductosGrid productos={sec.items} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} productoAgregandose={productoAgregandose} />
             </section>
           );
         })}
@@ -654,7 +687,7 @@ const GaleriaHelados = () => {
         {/* Vista Todo */}
         {categoriaSeleccionada === "all" && (
           <section className="space-y-4" key="all">
-            <ProductosGrid productos={allProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
+            <ProductosGrid productos={allProductos} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} productoAgregandose={productoAgregandose} />
           </section>
         )}
 
@@ -663,7 +696,7 @@ const GaleriaHelados = () => {
           filtered.map((sec) => {
             return (
               <section key={sec.id} className="space-y-4">
-                <ProductosGrid productos={sec.items} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} isAddingToCart={isAddingToCart} />
+                <ProductosGrid productos={sec.items} fullscreen={fullscreenMode} onAddToCart={handleAddToCart} productoAgregandose={productoAgregandose} />
               </section>
             );
           })}

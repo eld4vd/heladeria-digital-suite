@@ -5,9 +5,8 @@ import { useMemo } from 'react';
 const iceCreamVariants = {
   hidden: { 
     opacity: 0, 
-    scale: 0.5,
-    rotate: -180,
-    y: 100
+    scale: 0.8,
+    y: 30
   },
   visible: { 
     opacity: 1, 
@@ -15,13 +14,8 @@ const iceCreamVariants = {
     rotate: 0,
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: "easeOut" as const,
-      scale: {
-        type: "spring" as const,
-        stiffness: 200,
-        damping: 15
-      }
+      duration: 0.3,
+      ease: "easeOut" as const
     }
   },
   hover: {
@@ -106,19 +100,19 @@ const ScrollingIceCream = () => {
   // Memoizar variantes de texto para evitar recreaciones
   const textVariants = useMemo(() => ({
     title: {
-      hidden: { opacity: 0, y: 20 },
+      hidden: { opacity: 0, y: 15 },
       visible: { 
         opacity: 1, 
         y: 0,
-        transition: { delay: 0.4, duration: 0.6 }
+        transition: { delay: 0.1, duration: 0.25 }
       }
     },
     description: {
-      hidden: { opacity: 0, y: 20 },
+      hidden: { opacity: 0, y: 15 },
       visible: { 
         opacity: 1, 
         y: 0,
-        transition: { delay: 0.5, duration: 0.6 }
+        transition: { delay: 0.15, duration: 0.25 }
       }
     }
   }), []);
@@ -131,7 +125,7 @@ const ScrollingIceCream = () => {
             key={index}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3, margin: "0px 0px -100px 0px" }}
+            viewport={{ once: true, amount: 0.2, margin: "0px 0px -200px 0px" }}
             className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-20 mb-32 last:mb-0`}
           >
             {/* Helado animado */}
