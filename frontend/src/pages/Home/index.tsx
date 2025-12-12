@@ -69,6 +69,12 @@ const Home = () => {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
+      {/* Banner DEMO - Solo visible en GitHub Pages */}
+      {typeof window !== 'undefined' && window.location.hostname.includes('github.io') && (
+        <div className="fixed top-16 left-0 right-0 z-50 bg-cyan-600 text-white py-2 px-4 text-center text-sm shadow-lg">
+          🎨 <strong>DEMO VISUAL</strong> - Frontend únicamente. Las funcionalidades requieren backend.
+        </div>
+      )}
       {/* Video Background con optimización - Ocupa toda la pantalla incluyendo navbar */}
       <div className="fixed inset-0 w-full h-full -z-10">
         {/* Fallback/Loading gradient - Colores Helado (Rosa Pastel + Azul Cielo + Turquesa) */}
