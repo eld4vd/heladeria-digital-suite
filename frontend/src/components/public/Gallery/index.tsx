@@ -102,13 +102,9 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, productoAgreg
             height={450}
             loading="lazy"
             decoding="async"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Imagen+No+Disponible";
-            }}
             className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-105"
             onError={(e) => {
-              e.currentTarget.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Sin+Imagen";
+              e.currentTarget.src = "https://placehold.co/600x450/f3f4f6/9ca3af?text=Imagen+No+Disponible";
             }}
           />
           
