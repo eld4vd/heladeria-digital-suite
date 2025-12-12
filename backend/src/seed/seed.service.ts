@@ -4,26 +4,18 @@ import { Repository } from 'typeorm';
 import { Empleado } from 'src/empleados/entities/empleado.entity';
 import { ConfigService } from '@nestjs/config';
 
-const describeUnknownError = (error: unknown): string => {
-  if (typeof error === 'string') {
-    return error;
-  }
-  if (typeof error === 'number' || typeof error === 'boolean') {
-    return error.toString();
-  }
-  if (typeof error === 'bigint') {
-    return error.toString();
-  }
-  if (error && typeof error === 'object') {
-    try {
-      return JSON.stringify(error);
-    } catch {
-      return '[object Error]';
-    }
-  }
-  return 'Unknown error';
-};
-
+/**
+ * Servicio de Seed para crear usuario administrador inicial
+ * 
+ * CÓMO FUNCIONA:
+ * - Se ejecuta automáticamente al iniciar la aplicación si SEED_ON_BOOT=true
+ * - Solo crea el admin si NO hay empleados en la base de datos
+ * - Útil para primer despliegue en producción o desarrollo
+ * 
+ * CONFIGURACIÓN:
+ * Local (.env.local): SEED_ON_BOOT=false (crea manualmente cuando quieras)
+ * Producción: SEED_ON_BOOT=true (crea admin automáticamente en primer inicio)
+ */
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
   private readonly logger = new Logger(SeedService.name);
@@ -36,48 +28,44 @@ export class SeedService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     try {
-      const seedEnabledEnv = this.configService.get<string>('SEED_ON_BOOT');
-      const nodeEnv = this.configService.get<string>('NODE_ENV');
+      // Por defecto: habilitado en desarrollo, deshabilitado en producción
+      // (en producción ponlo explícitamente en true si quieres auto-crear admin)
+      const shouldSeed = this.configService.get('SEED_ON_BOOT', 'false') === 'true';
 
-      // Habilitar por defecto solo en production (deshabilitado en dev/test)
-      const seedEnabledDefault = nodeEnv === 'production';
-      const seedEnabled =
-        seedEnabledEnv !== undefined
-          ? seedEnabledEnv === 'true'
-          : seedEnabledDefault;
-
-      if (!seedEnabled) {
-        this.logger.log(
-          'Seed deshabilitado por configuración (SEED_ON_BOOT=false).',
-        );
+      if (!shouldSeed) {
+        this.logger.log('🔒 Seed deshabilitado (SEED_ON_BOOT=false)');
         return;
       }
 
+      // Verificar si ya existen empleados
       const empleadosCount = await this.empleadosRepository.count();
       if (empleadosCount > 0) {
-        this.logger.log('Empleados ya existen, se omite seed inicial.');
+        this.logger.log(`✅ Ya existen ${empleadosCount} empleado(s), saltando seed`);
         return;
       }
 
-      const nombre =
-        this.configService.get<string>('SEED_ADMIN_NAME') || 'Administrador';
-      const email =
-        this.configService.get<string>('SEED_ADMIN_EMAIL') || 'admin@demo.com';
-      const password =
-        this.configService.get<string>('SEED_ADMIN_PASSWORD') || 'admin123';
+      // Obtener credenciales del admin desde variables de entorno
+      const nombre = this.configService.get('SEED_ADMIN_NAME', 'Administrador');
+      const email = this.configService.get('SEED_ADMIN_EMAIL', 'admin@heladeria.com');
+      const password = this.configService.get('SEED_ADMIN_PASSWORD', 'admin123');
 
-      const empleado = new Empleado();
-      empleado.nombre = nombre;
-      empleado.email = email;
-      empleado.password = password; // Será hasheado por el hook de la entidad
-      empleado.activo = true;
+      // Crear admin (el password será hasheado automáticamente por @BeforeInsert)
+      const admin = this.empleadosRepository.create({
+        nombre,
+        email,
+        password,
+        activo: true,
+      });
 
-      await this.empleadosRepository.save(empleado);
-      this.logger.log(`Empleado por defecto creado: ${email}`);
+      await this.empleadosRepository.save(admin);
+      
+      this.logger.log('🎉 ========================================');
+      this.logger.log(`🎉 ADMIN CREADO EXITOSAMENTE`);
+      this.logger.log(`🎉 Email: ${email}`);
+      this.logger.log(`🎉 Password: ${password}`);
+      this.logger.log('🎉 ========================================');
     } catch (error) {
-      const stack = error instanceof Error ? error.stack : undefined;
-      const detail = describeUnknownError(error);
-      this.logger.error(`Error ejecutando seed inicial: ${detail}`, stack);
+      this.logger.error('❌ Error ejecutando seed inicial:', error);
     }
   }
 }
