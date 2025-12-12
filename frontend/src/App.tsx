@@ -41,7 +41,7 @@ const App = () => {
   const isDevEnvironment = (nodeProcess?.env?.NODE_ENV === 'development') || import.meta.env.DEV;
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
           <CartProvider>
             <Suspense fallback={<div className="p-6">Cargando…</div>}>
