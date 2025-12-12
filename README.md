@@ -1,205 +1,550 @@
-# Heladeria Digital Suite
+# 🍦 Heladeria Digital Suite
 
-Plataforma full stack para la gestión integral de una heladería. Ofrece un catálogo público con carrito anónimo, proceso de checkout simulado y un panel interno para empleados que habilita ventas asistidas, reportes diarios y administración básica del inventario. Incluye autenticación segura con JWT en doble cookie, protección CSRF de doble envío y limitación de peticiones.
+Sistema completo de gestión para heladerías con punto de venta web, carrito anónimo, checkout simulado y dashboard administrativo en tiempo real. Arquitectura full-stack moderna con seguridad reforzada y actualización automática de inventario.
 
-## Características principales
+## ✨ Características Principales
 
-- **Catálogo público** con categorías, búsqueda reactiva y carrito persistente por visitante (IDs temporales).
-- **Checkout web** con simulación de pagos QR o débito, registro de ventas y generación automática de detalles.
-- **Panel interno** (dashboard) para empleados con métricas en tiempo real, registro manual de ventas, editor de detalles y reportes diarios exportables (CSV/PDF).
-- **Seguridad reforzada**: JWT en cookies `httpOnly`, refresh transparente, CSRF middleware de doble cookie, Helmet con CSP/HSTS y rate limiting con `@nestjs/throttler`.
-- **Arquitectura desacoplada**: backend NestJS (REST + TypeORM/PostgreSQL) y frontend React 19 + Vite + React Query.
-- **Infraestructura Docker**: orquestación con `docker-compose.yml` (backend, frontend, PostgreSQL, Nginx) y variantes para producción.
+### 🌐 **Frontend Público**
+- **Catálogo interactivo** con categorías, búsqueda reactiva y filtros en tiempo real
+- **Carrito anónimo persistente** con localStorage (sin registro de usuario)
+- **Checkout simulado** con múltiples métodos de pago (QR, tarjeta, efectivo, transferencia)
+- **Actualización automática de stock** cada 30 segundos mediante polling
+- **UI/UX moderna** con Tailwind CSS, animaciones suaves y diseño responsive
 
-## Estructura del repositorio
+### 🔐 **Dashboard Administrativo**
+- **Panel de control en tiempo real** con métricas actualizadas automáticamente cada 5 segundos
+- **Gestión de productos** con actualización automática de stock al realizar ventas
+- **Sistema de ventas manuales** para atención en caja física
+- **Reportes exportables** (CSV/PDF) con filtros por fecha y método de pago
+- **Gestión de empleados** y categorías de productos
 
-```
-Heladeria-Simple-Project/
-├─ backend/      # API NestJS + TypeORM
-│  ├─ src/
-│  │  ├─ auth/              # Autenticación JWT doble cookie
-│  │  ├─ carrito-items/
-│  │  ├─ carritos/
-│  │  ├─ categorias/
-│  │  ├─ common/            # Middlewares, filtros, utils
-│  │  ├─ config/            # Validación de variables de entorno
-│  │  ├─ pagos-simulados/
-│  │  ├─ productos/
-│  │  ├─ reportes/
-│  │  ├─ seed/
-│  │  └─ ventas/
-│  └─ docs/, test/, Dockerfile, etc.
-├─ frontend/    # SPA React + Vite
-│  ├─ src/
-│  │  ├─ components/
-│  │  ├─ context/
-│  │  ├─ hooks/
-│  │  ├─ models/
-│  │  ├─ pages/
-│  │  └─ services/
-│  └─ public/, Dockerfile, docs/, etc.
-├─ docker-compose.yml
-└─ docker-compose.prod.yml
-```
+### 🛡️ **Seguridad Reforzada**
+- **Autenticación JWT** con doble cookie (access + refresh tokens, httpOnly)
+- **Protección CSRF** con doble envío de token en cookies y headers
+- **Rate limiting** global y específico en endpoints críticos
+- **Helmet.js** con CSP, HSTS, y headers de seguridad
+- **Actualización automática de inventario** con descuento de stock transaccional
 
-## Requisitos previos
+### 🔄 **Actualización en Tiempo Real**
+- **Stock sincronizado**: Cada venta descuenta automáticamente del inventario
+- **Polling inteligente**: 
+  - Frontend público: 30s
+  - Dashboard admin: 5s
+  - Ventas: 5s
+- **Invalidación de queries** en React Query al completar transacciones
 
-- Node.js 20.x (para desarrollo local sin Docker).
-- npm 10.x o superior.
-- Docker + Docker Compose (opcional pero recomendado para entorno completo).
-- PostgreSQL 14+ (si no se usa Docker).
-
-## Puesta en marcha rápida
-
-### Con Docker Compose
-
-```bash
-# Crear los archivos .env (ver sección "Variables de entorno")
-cp backend/.env backend/.env.local   # ajusta valores reales
-cp frontend/.env frontend/.env.local
-
-# Levantar toda la pila
-docker compose up --build
-
-# Frontend disponible en http://localhost:5173
-# Backend disponible en http://localhost:3000/api
-```
-
-### Entorno local (sin Docker)
-
-1. **Backend**
-   ```bash
-   cd backend
-   npm install
-   cp .env .env.local   # ajusta credenciales locales
-   npm run start:dev
-   ```
-
-2. **Frontend**
-   ```bash
-   cd frontend
-   npm install
-   cp .env .env.local
-   npm run dev
-   ```
-
-## Variables de entorno destacadas
-
-### Backend (`backend/.env`)
-
-- `PORT`: puerto del API (por defecto `3000`).
-- `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`: conexión PostgreSQL.
-- `DB_SYNCHRONIZE`: `true` en desarrollo para sincronizar entidades; `false` en producción (usar migraciones).
-- `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`: claves para los tokens.
-- `FRONTEND_URL`: origen permitido para CORS/CSRF.
-- `COOKIE_SECURE`, `COOKIE_SAMESITE`, `CSRF_ENABLED`: banderas de seguridad.
-- `THROTTLE_TTL`, `THROTTLE_LIMIT`: configuración del rate limiter global.
-- `SEED_ON_BOOT` + `SEED_*`: habilitan la carga de datos iniciales.
-
-### Frontend (`frontend/.env`)
-
-- `VITE_API_URL`: URL base del backend (por ejemplo `http://localhost:3000/api`).
-- `VITE_APP_NAME`: nombre de la aplicación mostrado en la UI.
-
-> Los `.env` de cada paquete ya están listados en sus respectivos `.gitignore`.
-
-## Seguridad y autenticación
-
-- **Doble cookie JWT**: `access_token` (15 minutos) y `refresh_token` (7 días), ambas `httpOnly`.
-- **Refresh automático**: el servicio `api.service.ts` reintenta y renueva tokens de forma transparente.
-- **CSRF Double Submit Cookie**: middleware compara cabecera `X-CSRF-Token` con cookie `csrf_token` en todas las mutaciones.
-- **Helmet**: CSP estricta, HSTS (en producción), desactivación de `x-powered-by`, políticas COEP/CORP.
-- **Rate limiting**: guard global (`ThrottlerGuard`) + reglas específicas en login/refresh.
-
-## Flujos clave
-
-1. **Visitante web**
-   - Explora categorías/productos (público).
-   - Añade items al carrito (se crea `clienteTempId`).
-   - En checkout elige QR o débito, se registra la venta, detalles y pago simulado.
-
-2. **Empleado autenticado**
-   - Inicia sesión (`/auth/login`) → panel dashboard.
-   - Registra ventas manuales desde cajas (con control de stock y totales).
-   - Consulta reportes diarios; exporta CSV/PDF.
-
-## Scripts útiles
+## 🏗️ Stack Tecnológico
 
 ### Backend
-- `npm run start:dev`: modo desarrollo con hot reload.
-- `npm run lint`: lint con ESLint.
-- `npm run test`: pruebas unitarias.
-- `npm run test:e2e`: pruebas e2e con Jest.
-- `npm run build`: compila a `dist/`.
+- **NestJS 10** - Framework Node.js progresivo
+- **TypeORM** - ORM con soporte para PostgreSQL
+- **PostgreSQL 17** - Base de datos relacional
+- **JWT** - Autenticación con tokens
+- **bcrypt** - Hash de contraseñas (salt 10)
+- **Helmet** - Seguridad HTTP
 
 ### Frontend
-- `npm run dev`: Vite en modo desarrollo.
-- `npm run build`: build de producción.
-- `npm run preview`: vista previa del build.
-- `npm run lint`: lint con ESLint y TypeScript.
+- **React 19** - Biblioteca UI moderna
+- **Vite 6** - Build tool ultrarrápido
+- **TanStack Query (React Query)** - Gestión de estado servidor
+- **Tailwind CSS** - Framework CSS utility-first
+- **TypeScript 5** - Tipado estático
+- **React Router 7** - Navegación SPA
 
-## Endpoints principales
+### Infraestructura
+- **Docker + Docker Compose** - Contenerización
+- **Nginx** - Servidor web y proxy inverso
+- **Multi-stage builds** - Optimización de imágenes Docker
 
-- `POST /auth/login` – Login con throttling por IP.
-- `POST /auth/refresh` – Refresh token (requiere cookie y CSRF token).
-- `GET /auth/me` – Perfil del empleado actual.
-- `POST /carritos`, `POST /carritos/checkout` – Flujo público del carrito.
-- `GET /categorias`, `GET /productos` – Catálogo público.
-- `GET /reportes/calendario`, `GET /reportes/dia` – Reportes diarios.
-- `POST /ventas` y `PATCH /ventas/:id` – Registro/actualización manual desde el panel.
+## 📁 Estructura del Proyecto
 
+```
+heladeria-digital-suite/
+├── backend/                    # API REST con NestJS
+│   ├── src/
+│   │   ├── auth/              # Sistema de autenticación JWT
+│   │   ├── carritos/          # Gestión de carritos anónimos
+│   │   ├── carrito-items/     # Items individuales del carrito
+│   │   ├── categorias/        # Categorías de productos
+│   │   ├── productos/         # CRUD de productos con stock
+│   │   ├── ventas/            # Registro y gestión de ventas
+│   │   ├── detalles-ventas/   # Detalles de cada venta
+│   │   ├── pagos-simulados/   # Simulación de pagos
+│   │   ├── empleados/         # Gestión de usuarios admin
+│   │   ├── reportes/          # Reportes y estadísticas
+│   │   ├── seed/              # Semilla de datos inicial
+│   │   ├── common/            # Middlewares, filtros, utils
+│   │   └── config/            # Validación de variables de entorno
+│   ├── .env.local             # Configuración desarrollo local
+│   ├── .env.pruebas           # Configuración Docker local
+│   ├── .env.produccion        # Configuración producción
+│   ├── Dockerfile             # Build multi-etapa optimizado
+│   ├── docker-entrypoint.sh   # Script de inicio automático
+│ 
+│
+├── frontend/                   # SPA React + Vite
+│   ├── src/
+│   │   ├── components/        # Componentes reutilizables
+│   │   │   ├── Cart/          # Sistema de carrito
+│   │   │   ├── dashboard/     # Componentes del admin
+│   │   │   └── public/        # Componentes públicos
+│   │   ├── context/           # Context API (Auth, Cart)
+│   │   ├── hooks/             # Custom hooks con React Query
+│   │   ├── models/            # Interfaces TypeScript
+│   │   ├── pages/             # Páginas principales
+│   │   ├── routes/            # Configuración de rutas
+│   │   └── services/          # Servicios API
+│   ├── Dockerfile             # Build Nginx + React
+│   └── nginx.conf             # Configuración Nginx
+│
+├── docker-compose.yml         # Orquestación desarrollo
+├── docker-compose.prod.yml    # Orquestación producción
+└── README.md                  # Este archivo
+```
+
+## 🚀 Inicio Rápido
+
+### Prerrequisitos
+
+- **Node.js 20+** y **npm 10+** (para desarrollo local)
+- **Docker** y **Docker Compose** (recomendado)
+- **PostgreSQL 17** (si no usas Docker)
+
+### Opción 1: Docker Compose (Recomendado)
+
+```bash
+# 1. Clonar el repositorio
+git clone <tu-repo>
+cd heladeria-digital-suite
+
+# 2. Levantar toda la infraestructura
+docker-compose up -d
+
+# 3. El admin se crea automáticamente (seed habilitado en .env.pruebas)
+# Acceder a:
+# - Frontend: http://localhost
+# - Backend: http://localhost:3000/api
+# - Login: http://localhost/login
+#   Usuario: admin@heladeria.com
+#   Password: admin123
+
+# 4. Ver logs
+docker-compose logs -f backend
+
+# 5. Detener servicios
+docker-compose down
+```
+
+### Opción 2: Desarrollo Local (sin Docker)
+
+#### Backend
+
+```bash
+cd backend
+
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables de entorno
+cp .env.local .env
+# Edita .env con tus credenciales de PostgreSQL
+
+# 3. Habilitar seed para crear admin (primera vez)
+# En .env, cambia: SEED_ON_BOOT=true
+
+# 4. Iniciar servidor
+npm run start:dev
+
+# El backend corre en http://localhost:3000
+```
+
+#### Frontend
+
+```bash
+cd frontend
+
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables de entorno
+echo "VITE_API_URL=http://localhost:3000/api" > .env.local
+
+# 3. Iniciar servidor de desarrollo
+npm run dev
+
+# El frontend corre en http://localhost:5173
+```
+
+### 🔑 Crear Usuario Administrador
+
+#### Primera Vez
+
+El sistema incluye un **seed automático** que crea el usuario admin:
+
+1. **Configura el seed** en el archivo `.env` correspondiente:
+   ```bash
+   SEED_ON_BOOT=true
+   SEED_ADMIN_NAME=Administrador
+   SEED_ADMIN_EMAIL=admin@heladeria.com
+   SEED_ADMIN_PASSWORD=admin123
+   ```
+
+2. **Inicia la aplicación**: El admin se crea automáticamente
+
+3. **Inicia sesión** en: `http://localhost/login` o `http://localhost:5173/login`
+
+4. **(Opcional) Desactiva el seed** por seguridad:
+   ```bash
+   SEED_ON_BOOT=false
+   ```
+
+📖 **Para más detalles**: Lee [`backend/SEED_INSTRUCTIONS.md`](backend/SEED_INSTRUCTIONS.md)
+
+> ⚠️ **IMPORTANTE**: En producción, cambia las credenciales antes del deploy y desactiva el seed después del primer inicio.
+
+## ⚙️ Configuración
+
+### Variables de Entorno - Backend
+
+#### Archivos disponibles:
+- `.env.local` - Desarrollo local (sin Docker)
+- `.env.pruebas` - Docker Compose local
+- `.env.produccion` - Deployment en servidor
+
+#### Variables clave:
+
+```bash
+# Servidor
+PORT=3000
+NODE_ENV=development|production
+HOST=0.0.0.0
+
+# Base de datos
+DB_HOST=localhost              # 'db' en Docker
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=tu_password
+DB_NAME=heladeria_db
+DB_SYNCHRONIZE=true            # false en producción
+DB_LOGGING=true                # false en producción
+
+# CORS
+FRONTEND_URL=http://localhost:5173
+
+# JWT (genera secretos seguros en producción)
+JWT_ACCESS_SECRET=tu_secret_64_caracteres_minimo
+JWT_REFRESH_SECRET=otro_secret_64_caracteres
+
+# Seguridad
+COOKIE_SECURE=false            # true en producción (HTTPS)
+COOKIE_SAMESITE=lax            # strict en producción
+CSRF_ENABLED=true
+THROTTLE_TTL=60000
+THROTTLE_LIMIT=100
+
+# Seed (creación automática de admin)
+SEED_ON_BOOT=false             # true para primera vez
+SEED_ADMIN_NAME=Administrador
+SEED_ADMIN_EMAIL=admin@heladeria.com
+SEED_ADMIN_PASSWORD=admin123   # Cambiar en producción
+```
+
+### Variables de Entorno - Frontend
+
+```bash
+# API Backend
+VITE_API_URL=http://localhost:3000/api
+
+# Nombre de la aplicación
+VITE_APP_NAME="Heladería Digital"
+```
+
+### 🔐 Generar Secretos JWT Seguros
+
+```bash
+# Ejecuta en tu terminal:
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# Copia el resultado para JWT_ACCESS_SECRET
+
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# Copia el resultado para JWT_REFRESH_SECRET
+```
+
+## 🔒 Seguridad
+
+### Autenticación JWT de Doble Cookie
+- **Access Token**: 15 minutos, `httpOnly`, `secure` (en producción)
+- **Refresh Token**: 7 días, `httpOnly`, `secure`
+- **Renovación automática**: Transparente en el frontend con React Query
+
+### Protección CSRF
+- **Doble envío**: Cookie `csrf_token` + Header `X-CSRF-Token`
+- **Validación**: Middleware en todas las mutaciones (POST, PUT, DELETE, PATCH)
+- **Rotación**: Nuevo token en cada login/refresh
+
+### Seguridad HTTP (Helmet.js)
+- **CSP** (Content Security Policy): Políticas estrictas
+- **HSTS**: HTTP Strict Transport Security (producción)
+- **X-Frame-Options**: Prevención de clickjacking
+- **Deshabilitación de X-Powered-By**
+
+### Rate Limiting
+- **Global**: 100 peticiones por minuto
+- **Login**: 5 intentos por minuto por IP
+- **Refresh**: 10 peticiones por minuto por IP
+
+### Hash de Contraseñas
+- **bcrypt** con salt factor 10
+- **Prevención de rehashing**: Validación en hooks `@BeforeUpdate`
+- **No se devuelven passwords** en ningún endpoint
+
+## 🎯 Flujos de Usuario
+
+### 👤 Cliente Web (Público)
+
+1. **Explorar catálogo**: Navega categorías, busca productos, ve detalles
+2. **Agregar al carrito**: Sin necesidad de registro (cliente temporal UUID)
+3. **Checkout**: Elige método de pago (QR/tarjeta/efectivo/transferencia)
+4. **Confirmación**: Se registra la venta y se descuenta el stock automáticamente
+5. **Actualización**: El inventario se refleja en tiempo real (30s polling)
+
+### 👨‍💼 Empleado Admin
+
+1. **Login seguro**: Autenticación JWT con cookies httpOnly
+2. **Dashboard**: Métricas en tiempo real (actualización cada 5s)
+3. **Gestión de productos**: 
+   - CRUD completo
+   - Control de stock actualizado automáticamente
+   - Ver ventas en tiempo real
+4. **Ventas manuales**: Registro desde caja física con descuento de stock transaccional
+5. **Reportes**: Exportar ventas diarias en CSV/PDF con filtros avanzados
+6. **Gestión de empleados**: Crear/editar usuarios del sistema
+
+## 🛠️ Scripts de Desarrollo
+
+### Backend
+```bash
+npm run start:dev      # Desarrollo con hot-reload
+npm run build          # Compilar a dist/
+npm run start:prod     # Producción desde dist/
+npm run lint           # Lint con ESLint
+npm run test           # Tests unitarios con Jest
+npm run test:e2e       # Tests end-to-end
+```
+
+### Frontend
+```bash
+npm run dev            # Vite dev server (http://localhost:5173)
+npm run build          # Build de producción
+npm run preview        # Preview del build
+npm run lint           # Lint con ESLint + TypeScript
+```
+
+### Docker
+```bash
+# Desarrollo local
+docker-compose up -d                    # Levantar servicios
+docker-compose logs -f backend          # Ver logs del backend
+docker-compose logs -f frontend         # Ver logs del frontend
+docker-compose restart backend          # Reiniciar backend (recargar .env)
+docker-compose down                     # Detener servicios
+docker-compose down -v                  # Detener y borrar volúmenes (limpia BD)
+
+# Producción
+docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f docker-compose.prod.yml down
+```
+
+## 📡 API Endpoints Principales
+
+### Autenticación
+```
+POST   /api/auth/login          # Login con rate limiting
+POST   /api/auth/refresh        # Renovar tokens (requiere CSRF)
+POST   /api/auth/logout         # Cerrar sesión
+GET    /api/auth/me             # Perfil del usuario actual
+GET    /api/auth/csrf           # Obtener token CSRF
+```
+
+### Catálogo Público
+```
+GET    /api/categorias          # Listar categorías
+GET    /api/productos           # Listar productos con stock
+GET    /api/productos/:id       # Detalle de producto
+```
+
+### Carrito y Checkout
+```
+POST   /api/carritos            # Crear carrito anónimo
+GET    /api/carritos/:id        # Obtener carrito
+POST   /api/carritos/:id/items  # Agregar item
+PATCH  /api/carrito-items/:id   # Actualizar cantidad
+DELETE /api/carrito-items/:id   # Eliminar item
+POST   /api/carritos/:id/checkout # Finalizar compra (descuenta stock)
+```
+
+### Dashboard Admin (requiere autenticación)
+```
+GET    /api/productos           # Gestión de inventario
+POST   /api/productos           # Crear producto (requiere CSRF)
+PATCH  /api/productos/:id       # Actualizar producto
+DELETE /api/productos/:id       # Eliminar producto
+
+GET    /api/ventas              # Listar ventas (actualización cada 5s)
+POST   /api/ventas              # Crear venta manual
+GET    /api/ventas/:id          # Detalle de venta
+
+GET    /api/reportes/calendario # Calendario de ventas
+GET    /api/reportes/dia        # Reporte diario con exportación
+```
+
+
+## 🚢 Deployment en Producción
+
+### Preparación
+
+1. **Edita `backend/.env.produccion`**:
+   ```bash
+   # Cambiar TODAS estas variables:
+   DB_PASSWORD=una_password_muy_segura
+   JWT_ACCESS_SECRET=genera_un_secret_aleatorio_64_chars
+   JWT_REFRESH_SECRET=genera_otro_secret_aleatorio_64_chars
+   FRONTEND_URL=https://tudominio.com
+   SEED_ADMIN_EMAIL=admin@tudominio.com
+   SEED_ADMIN_PASSWORD=PasswordSegura123!
+   
+   # Primera vez: true, después: false
+   SEED_ON_BOOT=true
+   
+   # Producción
+   NODE_ENV=production
+   COOKIE_SECURE=true
+   COOKIE_SAMESITE=strict
+   DB_SYNCHRONIZE=false
+   ```
+
+2. **SSL/TLS**: Configura certificados en `/etc/letsencrypt/` (Let's Encrypt)
+
+### Deploy
+
+```bash
+# 1. En el servidor, clona el repositorio
+git clone <tu-repo>
+cd heladeria-digital-suite
+
+# 2. Edita .env.produccion con tus valores reales
+
+# 3. Levanta con Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
+
+# 4. Verifica que el admin se creó
+docker-compose -f docker-compose.prod.yml logs backend | grep "ADMIN"
+
+# 5. Accede y cambia la contraseña del admin
+
+# 6. IMPORTANTE: Desactiva el seed
+nano backend/.env.produccion
+# Cambia: SEED_ON_BOOT=false
+docker-compose -f docker-compose.prod.yml restart backend
+```
+
+### Mantenimiento
+
+```bash
+# Ver logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# Backup de base de datos
+docker exec -t postgres pg_dump -U postgres heladeria_db > backup_$(date +%Y%m%d).sql
+
+# Restaurar backup
+cat backup_20241212.sql | docker exec -i postgres psql -U postgres heladeria_db
+
+# Actualizar código
+git pull
+docker-compose -f docker-compose.prod.yml up -d --build
+```
 
 ---
 
-## Guía rápida: crear un empleado con Postman
+## 🧪 Testing con Postman/API
 
-1. **Preparar el entorno**
-    - Define una variable de entorno `baseUrl` con `http://localhost:3000/api` (ajusta el host/puerto si aplica).
-    - Asegúrate de que Postman tenga habilitado el manejo de cookies para persistir `csrf_token`, `access_token` y `refresh_token`.
+### Flujo de Autenticación
 
-2. **Obtener el token CSRF inicial**
-    - Método: `GET {{baseUrl}}/auth/csrf`
-    - En la pestaña *Tests* puedes guardar el token automáticamente:
-       ```javascript
-       const { csrfToken } = pm.response.json();
-       pm.environment.set('csrfToken', csrfToken);
-       ```
-    - Verifica en la pestaña *Cookies* que existe la cookie `csrf_token`; ese valor debe coincidir con el header `X-CSRF-Token` en las peticiones mutadoras.
+El sistema usa **cookies httpOnly** y **tokens CSRF**, por lo que es más fácil usar el frontend. Pero si necesitas testear con Postman:
 
-3. **Iniciar sesión para obtener las cookies JWT**
-    - Método: `POST {{baseUrl}}/auth/login`
-    - Headers: `Content-Type: application/json` y `X-CSRF-Token: {{csrfToken}}`
-    - Body:
-       ```json
-       {
-          "email": "admin@demo.com",
-          "password": "admin123"
-       }
-       ```
-    - Test sugerido para refrescar el header con el último token emitido:
-       ```javascript
-       pm.environment.set('csrfToken', pm.cookies.get('csrf_token'));
-       ```
-    - La respuesta establece las cookies `access_token`, `refresh_token` y un nuevo `csrf_token` (todas deben aparecer en Postman > Cookies).
+1. **Obtener CSRF Token**:
+   ```
+   GET http://localhost:3000/api/auth/csrf
+   ```
+   Guarda el `csrfToken` de la respuesta.
 
-4. **Crear el empleado (usuario) deseado**
-    - Método: `POST {{baseUrl}}/empleados`
-    - Headers: `Content-Type: application/json` y `X-CSRF-Token: {{csrfToken}}`
-    - Body de ejemplo:
-       ```json
-       {
-          "nombre": "Nuevo empleado",
-          "email": "nuevo@heladeria.com",
-          "password": "ClaveSegura123",
-          "activo": true
-       }
-       ```
-    - Respuesta esperada: `201 Created` con el JSON del nuevo empleado (el backend nunca devuelve la contraseña en claro).
+2. **Login**:
+   ```
+   POST http://localhost:3000/api/auth/login
+   Headers: 
+     Content-Type: application/json
+     X-CSRF-Token: <token-del-paso-1>
+   Body:
+   {
+     "email": "admin@heladeria.com",
+     "password": "admin123"
+   }
+   ```
+   Postman guardará las cookies automáticamente.
 
-5. **Verificar la sesión (opcional)**
-    - Método: `GET {{baseUrl}}/auth/me`
-    - Headers: `X-CSRF-Token: {{csrfToken}}`
-    - Debe retornar `200 OK` con los datos del empleado autenticado si las cookies siguen vigentes.
+3. **Endpoints protegidos**:
+   Incluye siempre `X-CSRF-Token` en el header para POST/PUT/DELETE/PATCH.
 
-- Si recibes `403 CSRF token inválido`, repite el paso 2 y confirma que el header `X-CSRF-Token` coincida con la cookie `csrf_token` que Postman envía.
-- Para limpiar la sesión, ejecuta `POST {{baseUrl}}/auth/logout` usando el mismo header `X-CSRF-Token`.
+> 💡 **Recomendación**: Usa el frontend para operaciones normales. Postman es útil solo para debugging de la API.
+
+---
+
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver archivo `LICENSE` para más detalles.
+
+---
+
+## 👨‍💻 Autor
+
+Desarrollado por [eld4vd](https://github.com/eld4vd)
+
+---
+
+## 🆘 Soporte y Problemas Comunes
+
+### ❓ "No puedo crear usuarios desde Postman"
+**Solución**: Usa el seed para crear el primer admin. El sistema usa cookies httpOnly que Postman no maneja bien.
+
+### ❓ "El admin no se crea con el seed"
+**Verifica**:
+1. `SEED_ON_BOOT=true` en el `.env` correcto
+2. La base de datos está vacía (no hay empleados)
+3. Los logs del backend: `docker-compose logs backend`
+
+### ❓ "Error CSRF token inválido"
+**Solución**: 
+1. Obtén un nuevo token con `GET /api/auth/csrf`
+2. Incluye el header `X-CSRF-Token` en todas las mutaciones
+3. Asegúrate de que Postman maneje cookies automáticamente
+
+### ❓ "Stock no se actualiza en tiempo real"
+**Verifica**:
+1. React Query está configurado con `refetchInterval: 5000`
+2. El backend descuenta stock en `carritos.service.ts`
+3. Las queries se invalidan después del checkout
+
+---
