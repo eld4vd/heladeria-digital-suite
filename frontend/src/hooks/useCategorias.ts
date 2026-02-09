@@ -23,15 +23,19 @@ const useCategorias = () => {
     gcTime: 600_000,
     refetchOnWindowFocus: true,
     select: (categorias) => {
-      const activas = categorias
-        .filter((categoria) => categoria.activo)
-        .map((categoria) => ({ id: categoria.id, nombre: categoria.nombre }))
-        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+      // Combinar filter+map en una sola iteración (rule 7.6) e inmutable sort (rule 7.12)
+      const activas: CategoriaResumen[] = [];
+      const byId: Record<number, CategoriaResumen> = {};
 
-      const byId = activas.reduce<Record<number, CategoriaResumen>>((acc, categoria) => {
-        acc[categoria.id] = categoria;
-        return acc;
-      }, {});
+      for (const categoria of categorias) {
+        if (categoria.activo) {
+          const resumen: CategoriaResumen = { id: categoria.id, nombre: categoria.nombre };
+          activas.push(resumen);
+          byId[categoria.id] = resumen;
+        }
+      }
+
+      activas.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
       return { list: activas, byId } satisfies CategoriasResult;
     },

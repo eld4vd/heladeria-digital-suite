@@ -73,8 +73,8 @@ const EditarCategoria = ({ abierto, onCerrar, categoria }: Props) => {
   if (!abierto) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-      <div className="bg-white p-8 rounded-2xl w-full max-w-md mx-4 shadow-xl transform transition-all duration-300">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 overscroll-contain">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-md mx-4 shadow-xl transform transition-[transform,opacity] duration-300">
         {/* Header del modal */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-pink-600">Editar Categoría</h3>
@@ -90,29 +90,33 @@ const EditarCategoria = ({ abierto, onCerrar, categoria }: Props) => {
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-800 mb-2">
+            <label htmlFor="edit-cat-nombre" className="block text-sm font-medium text-gray-800 mb-2">
               Nombre <span className="text-red-500">*</span>
             </label>
             <input
+              id="edit-cat-nombre"
               type="text"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="w-full p-3 bg-pink-50 border border-pink-200 rounded-lg focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition-all duration-200"
+              className="w-full p-3 bg-pink-50 border border-pink-200 rounded-lg focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition-colors duration-200"
               required
-              placeholder="Ej. Helados Clásicos"
+              autoComplete="off"
+              placeholder="Ej. Helados Clásicos…"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-800 mb-2">
+            <label htmlFor="edit-cat-desc" className="block text-sm font-medium text-gray-800 mb-2">
               Descripción
             </label>
             <textarea
+              id="edit-cat-desc"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               rows={4}
-              className="w-full p-3 bg-blue-50 border border-blue-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all duration-200"
-              placeholder="Ej. Categoría para helados tradicionales"
+              className="w-full p-3 bg-blue-50 border border-blue-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-colors duration-200"
+              autoComplete="off"
+              placeholder="Ej. Categoría para helados tradicionales…"
             />
           </div>
 
@@ -140,16 +144,16 @@ const EditarCategoria = ({ abierto, onCerrar, categoria }: Props) => {
             <button
               type="button"
               onClick={onCerrar}
-              className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium"
+              className="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={updateMutation.isPending}
-              className="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:from-pink-600 hover:to-purple-600 disabled:opacity-50 transition-all duration-200 font-medium"
+              className="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:from-pink-600 hover:to-purple-600 disabled:opacity-50 transition-colors duration-200 font-medium"
             >
-              {updateMutation.isPending ? "Guardando..." : "Actualizar"}
+              {updateMutation.isPending ? "Guardando…" : "Actualizar"}
             </button>
           </div>
 

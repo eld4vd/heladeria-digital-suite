@@ -20,6 +20,7 @@ interface ProductoCardProps {
 
 const MaximizeIcon = ({ className = "" }: { className?: string }) => (
   <svg
+    aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -58,6 +59,7 @@ const MaximizeIcon = ({ className = "" }: { className?: string }) => (
 
 const CloseIcon = ({ className = "" }: { className?: string }) => (
   <svg
+    aria-hidden="true"
     className={className}
     viewBox="0 0 24 24"
     fill="none"
@@ -86,9 +88,9 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, productoAgreg
   const stockCritico = producto.stock <= 5;
   
   return (
-    <article className={`group relative flex flex-col h-full ${fullscreen ? 'min-h-full' : ''}`}>
+    <article className={`group relative flex flex-col h-full cv-auto ${fullscreen ? 'min-h-full' : ''}`}>
       {/* Card container con borde limpio y sombra suave */}
-      <div className="relative flex flex-col h-full rounded-xl bg-white border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-slate-300 overflow-hidden transition-all duration-300">
+      <div className="relative flex flex-col h-full rounded-xl bg-white border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-slate-300 overflow-hidden transition-[box-shadow,border-color] duration-300">
         
         {/* Imagen con aspect ratio 4:3 (más compacto) */}
         <Link to={`/detalle/${producto.id}`} className="relative aspect-[4/3] overflow-hidden bg-slate-50 block group/image">
@@ -137,7 +139,7 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, productoAgreg
           {/* Sabor como tag discreto */}
           <div className="mb-3">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 text-[11px] font-medium text-slate-600">
-              <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
               {producto.sabor}
@@ -159,17 +161,19 @@ const ProductoCard = ({ producto, fullscreen = false, onAddToCart, productoAgreg
                 onAddToCart(producto);
               }}
               disabled={isAddingToCart}
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white text-sm font-semibold shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white text-sm font-semibold shadow-sm hover:shadow transition-[background-color,box-shadow] disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Agregar al carrito"
             >
               {isAddingToCart ? (
-                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <div className="animate-spin h-4 w-4">
+                  <svg aria-hidden="true" className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
               ) : (
                 <>
-                  <MdShoppingCart className="h-4 w-4" />
+                  <MdShoppingCart className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">Agregar</span>
                 </>
               )}
@@ -409,7 +413,7 @@ const GaleriaHelados = () => {
         </div>
         <button
           onClick={retry}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-br from-red-600 to-red-700 text-white font-bold shadow-lg shadow-red-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-br from-red-600 to-red-700 text-white font-bold shadow-lg shadow-red-200/50 transition-[box-shadow,transform] duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -443,7 +447,7 @@ const GaleriaHelados = () => {
             placeholder="Buscar helados por nombre o sabor..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-11 pr-10 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200 text-sm"
+            className="w-full px-4 py-3 pl-11 pr-10 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-[border-color,box-shadow] duration-200 text-sm"
           />
           <svg 
             className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" 
@@ -470,10 +474,12 @@ const GaleriaHelados = () => {
       {/* Indicador de búsqueda activa */}
       {!fullscreenMode && searchQuery && searchQuery !== debouncedSearch && (
         <div className="flex items-center gap-2 text-sm text-slate-500">
-          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
+          <div className="animate-spin h-4 w-4">
+            <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
           Buscando...
         </div>
       )}
@@ -579,7 +585,7 @@ const GaleriaHelados = () => {
                 </div>
                 <button
                   onClick={() => setCategoriaSeleccionada("all")}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-cyan-100 text-sm font-bold text-cyan-700 transition-all duration-200 hover:from-cyan-100 hover:to-cyan-200 hover:border-cyan-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-cyan-100 text-sm font-bold text-cyan-700 transition-[background-color,border-color,box-shadow,transform] duration-200 hover:from-cyan-100 hover:to-cyan-200 hover:border-cyan-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
                   aria-label="Ver todos los productos"
                 >
                   Ver todo
@@ -604,7 +610,7 @@ const GaleriaHelados = () => {
         {/* Botón flotante para activar fullscreen - posición ajustada para no chocar con carrito */}
         <button
           onClick={() => setFullscreenMode(true)}
-          className="fixed bottom-8 left-4 sm:left-8 z-40 group inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-br from-cyan-600 to-cyan-700 text-white font-bold shadow-xl shadow-cyan-500/30 hover:shadow-2xl hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-[1.05] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
+          className="fixed bottom-8 left-4 sm:left-8 z-40 group inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-br from-cyan-600 to-cyan-700 text-white font-bold shadow-xl shadow-cyan-500/30 hover:shadow-2xl hover:shadow-cyan-500/40 transition-[box-shadow,transform] duration-300 hover:scale-[1.05] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
           aria-label="Ver galería en pantalla completa"
           title="Presiona para ver la galería completa"
         >
@@ -642,7 +648,7 @@ const GaleriaHelados = () => {
             
             <button
               onClick={() => setFullscreenMode(false)}
-              className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-sm transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-sm transition-[background-color,border-color,box-shadow] duration-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
               aria-label="Cerrar galería completa (ESC)"
             >
               <CloseIcon className="w-4 h-4" />
@@ -662,7 +668,7 @@ const GaleriaHelados = () => {
             >
               <button
                 onClick={() => setCategoriaSeleccionada("all")}
-                className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap border-2 ${
+                className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-[background-color,color,border-color] duration-200 whitespace-nowrap border-2 ${
                   categoriaSeleccionada === "all"
                     ? "bg-gradient-to-br from-cyan-600 to-cyan-700 text-white border-cyan-600 shadow-lg shadow-cyan-500/30"
                     : "bg-white hover:bg-cyan-50 text-slate-700 border-slate-200 hover:border-cyan-300 hover:shadow-md"
@@ -681,7 +687,7 @@ const GaleriaHelados = () => {
                   <button
                     key={c.id}
                     onClick={() => setCategoriaSeleccionada(c.id)}
-                    className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap border-2 ${
+                    className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-[background-color,color,border-color] duration-200 whitespace-nowrap border-2 ${
                       categoriaSeleccionada === c.id
                         ? "bg-gradient-to-br from-cyan-600 to-cyan-700 text-white border-cyan-600 shadow-lg shadow-cyan-500/30"
                         : "bg-white hover:bg-cyan-50 text-slate-700 border-slate-200 hover:border-cyan-300 hover:shadow-md"
@@ -740,7 +746,7 @@ const CategoriaButton = ({
     role="tab"
     aria-selected={active}
     aria-label={`${label}${count !== undefined ? ` (${count} productos)` : ''}`}
-    className={`group flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap border focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2
+    className={`group flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-[background-color,color,border-color] duration-200 whitespace-nowrap border focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2
       ${
         active
           ? "bg-cyan-600 text-white border-cyan-600 shadow-lg shadow-cyan-500/30"

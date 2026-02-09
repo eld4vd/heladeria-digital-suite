@@ -96,7 +96,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
       >
         {/* Modal */}
         <div
-          className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto overscroll-contain"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -105,21 +105,21 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               <div className="flex items-center gap-3">
                 {step === 'method' && (
                   <div className="p-2 bg-slate-800 rounded-lg">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
                 )}
                 {step === 'form' && paymentMethod === 'qr' && (
                   <div className="p-2 bg-slate-800 rounded-lg">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                     </svg>
                   </div>
                 )}
                 {step === 'form' && paymentMethod === 'debito' && (
                   <div className="p-2 bg-slate-800 rounded-lg">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
@@ -140,7 +140,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                   onClick={handleClose}
                   className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -159,11 +159,11 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
 
                 <button
                   onClick={() => handleMethodSelect('qr')}
-                  className="w-full p-5 border-2 border-slate-200 rounded-xl hover:border-slate-900 hover:bg-slate-50 transition-all duration-200 group"
+                  className="w-full p-5 border-2 border-slate-200 rounded-xl hover:border-slate-900 hover:bg-slate-50 transition-[border-color,background-color] duration-200 group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-100 rounded-lg group-hover:bg-slate-900 transition-colors">
-                      <svg className="w-8 h-8 text-slate-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-slate-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                       </svg>
                     </div>
@@ -180,11 +180,11 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
 
                 <button
                   onClick={() => handleMethodSelect('debito')}
-                  className="w-full p-5 border-2 border-slate-200 rounded-xl hover:border-slate-900 hover:bg-slate-50 transition-all duration-200 group"
+                  className="w-full p-5 border-2 border-slate-200 rounded-xl hover:border-slate-900 hover:bg-slate-50 transition-[border-color,background-color] duration-200 group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-100 rounded-lg group-hover:bg-slate-900 transition-colors">
-                      <svg className="w-8 h-8 text-slate-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-slate-900 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                       </svg>
                     </div>
@@ -218,7 +218,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       onChange={(e) =>
                         setFormData({ ...formData, clienteNombre: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="name"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
 
                     <input
@@ -228,7 +229,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       onChange={(e) =>
                         setFormData({ ...formData, direccionEntrega: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="street-address"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
 
                     <input
@@ -238,7 +240,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       onChange={(e) =>
                         setFormData({ ...formData, telefono: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="tel"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
                   </div>
                 </div>
@@ -252,7 +255,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       </p>
                       <div className="bg-white p-6 rounded-lg inline-block border-2 border-slate-300 shadow-sm">
                         <div className="w-48 h-48 bg-slate-100 flex items-center justify-center rounded-lg">
-                          <svg className="w-32 h-32 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-32 h-32 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                           </svg>
                         </div>
@@ -278,7 +281,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       }
                       required
                       maxLength={16}
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="cc-number"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
 
                     <input
@@ -289,7 +293,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                         setFormData({ ...formData, nombreTitular: e.target.value })
                       }
                       required
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="cc-name"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
 
                     <input
@@ -301,7 +306,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       }
                       required
                       maxLength={3}
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                      autoComplete="cc-csc"
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-shadow"
                     />
 
                     <p className="text-xs text-slate-500 mt-2">
@@ -322,7 +328,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
 
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl font-semibold"
+                    className="flex-1 px-4 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-[background-color,box-shadow] shadow-lg hover:shadow-xl font-semibold"
                   >
                     Confirmar Pedido
                   </button>
@@ -335,7 +341,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-200 border-t-slate-900 mx-auto mb-4" />
                 <p className="text-lg font-semibold text-slate-900">
-                  Procesando tu pedido...
+                  Procesando tu pedido…
                 </p>
                 <p className="text-sm text-slate-500 mt-2">
                   Por favor espera un momento

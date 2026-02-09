@@ -5,10 +5,10 @@ import AgregarProducto from './AProducto';
 import EditarProducto from './EProducto';
 import type { Producto } from '../../../../models/Producto';
 
+// Cachear el formatter para evitar crear uno nuevo en cada llamada (rule 7.4)
+const currencyFmt = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
 const currency = (v: string | number) =>
-	new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(
-		typeof v === 'string' ? Number(v) : v,
-	);
+	currencyFmt.format(typeof v === 'string' ? Number(v) : v);
 
 const Productos = () => {
 	const queryClient = useQueryClient();
@@ -36,16 +36,17 @@ const Productos = () => {
 		},
 	});
 
-	const lista = (productos || [])
-		.filter((p) => (soloActivos ? p.activo : true))
-		.filter((p) =>
-			[p.nombre, p.sabor, p.descripcion || '', p.categoria?.nombre]
-				.join(' ')
-				.toLowerCase()
-				.includes(busqueda.toLowerCase()),
-		);
+	// Combinada en un solo .filter() para evitar iteración doble (rule 7.6)
+	const busquedaLower = busqueda.toLowerCase();
+	const lista = (productos || []).filter((p) => {
+		if (soloActivos && !p.activo) return false;
+		return [p.nombre, p.sabor, p.descripcion || '', p.categoria?.nombre]
+			.join(' ')
+			.toLowerCase()
+			.includes(busquedaLower);
+	});
 
-	if (isLoading) return <div className="p-8 text-sm text-slate-500">Cargando productos...</div>;
+	if (isLoading) return <div className="p-8 text-sm text-slate-500">Cargando productos…</div>;
 	if (error)
 		return (
 			<div className="p-6 rounded-[22px] border border-red-200 bg-red-50 text-sm text-red-700 shadow-sm">
@@ -65,7 +66,7 @@ const Productos = () => {
 					</div>
 					<button
 						onClick={() => setModalNuevo(true)}
-						className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+						className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
 					>
 						+ Nuevo producto
 					</button>
@@ -86,8 +87,10 @@ const Productos = () => {
 						<input
 							value={busqueda}
 							onChange={(e) => setBusqueda(e.target.value)}
-							className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all sm:w-80"
-							placeholder="Buscar por nombre, sabor o categoría..."
+							className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors sm:w-80"
+							placeholder="Buscar por nombre, sabor o categoría…"
+							aria-label="Buscar productos"
+							autoComplete="off"
 						/>
 						<div className="text-xs font-semibold text-slate-500">
 							{lista.length} {lista.length === 1 ? 'producto' : 'productos'}
@@ -124,7 +127,7 @@ const Productos = () => {
 						</thead>
 						<tbody className="divide-y divide-slate-100 bg-white">
 							{lista.map((p) => (
-								<tr key={p.id} className="group transition-all duration-200 hover:bg-slate-50/80">
+								<tr key={p.id} className="group transition-colors duration-200 hover:bg-slate-50/80">
 									{/* Producto con thumbnail */}
 									<td className="px-6 py-4">
 										<div className="flex items-center gap-4">
@@ -133,6 +136,9 @@ const Productos = () => {
 													<img
 														src={p.imagenUrl}
 														alt={p.nombre}
+														width={64}
+														height={64}
+														loading="lazy"
 														className="h-full w-full object-cover transition group-hover:scale-105"
 														onError={() =>
 															setFailedImages((prev) => {
@@ -173,13 +179,13 @@ const Productos = () => {
 									
 									{/* Precio */}
 									<td className="px-6 py-4 whitespace-nowrap text-right">
-										<span className="text-sm font-bold text-slate-900">{currency(p.precio)}</span>
+										<span className="text-sm font-bold text-slate-900 tabular-nums">{currency(p.precio)}</span>
 									</td>
 									
 									{/* Stock con indicador visual */}
 									<td className="px-6 py-4 whitespace-nowrap text-center">
 										<div className="inline-flex flex-col items-center gap-1">
-											<span className={`text-base font-bold ${
+											<span className={`text-base font-bold tabular-nums ${
 												Number(p.stock) === 0 
 													? 'text-rose-600' 
 													: Number(p.stock) <= 5 
@@ -241,7 +247,7 @@ const Productos = () => {
 			{lista.length === 0 && (
 				<div className="rounded-[26px] border border-slate-200/80 bg-white p-12 text-center shadow-lg shadow-slate-200/50">
 					<div className="mx-auto max-w-sm">
-						<svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
 						</svg>
 						<p className="mt-4 text-base font-semibold text-slate-700">No hay productos para mostrar</p>
@@ -252,7 +258,7 @@ const Productos = () => {
 						</p>
 						<button
 							onClick={() => setModalNuevo(true)}
-							className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+							className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
 						>
 							+ Agregar primer producto
 						</button>
@@ -262,7 +268,7 @@ const Productos = () => {
 
 			{/* Modal de confirmación */}
 			{confirmId !== null && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4 overscroll-contain">
 					<div className="w-full max-w-md rounded-[22px] border border-slate-200 bg-white p-7 shadow-2xl">
 						<h3 className="text-xl font-bold text-slate-900">Confirmar eliminación</h3>
 						<p className="mt-3 text-sm text-slate-600 leading-relaxed">
@@ -271,16 +277,16 @@ const Productos = () => {
 						<div className="mt-6 flex justify-end gap-3">
 							<button
 								onClick={() => setConfirmId(null)}
-								className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+								className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-colors duration-200 hover:bg-slate-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
 							>
 								Cancelar
 							</button>
 							<button
 								onClick={() => deleteMutation.mutate(confirmId)}
 								disabled={deleteMutation.isPending}
-								className="rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-all duration-200 hover:shadow-xl disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+								className="rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-colors duration-200 hover:shadow-xl disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
 							>
-								{deleteMutation.isPending ? 'Eliminando...' : 'Eliminar'}
+								{deleteMutation.isPending ? 'Eliminando…' : 'Eliminar'}
 							</button>
 						</div>
 					</div>

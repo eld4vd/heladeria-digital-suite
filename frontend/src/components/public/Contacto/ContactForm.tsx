@@ -212,10 +212,10 @@ function ContactForm({ initialType, initialMessage }: ContactFormProps) {
           <button
             disabled={sending}
             type="submit"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-semibold shadow-sm hover:bg-cyan-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-cyan-600 text-white text-sm font-semibold shadow-sm hover:bg-cyan-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,box-shadow] duration-200"
           >
-            <MdSend className={`w-4 h-4 ${sending ? "animate-pulse" : ""}`} />
-            {sending ? "Enviando..." : "Enviar"}
+            <MdSend className={`w-4 h-4 ${sending ? "animate-pulse" : ""}`} aria-hidden="true" />
+            {sending ? "Enviando…" : "Enviar"}
           </button>
         </div>
       </form>

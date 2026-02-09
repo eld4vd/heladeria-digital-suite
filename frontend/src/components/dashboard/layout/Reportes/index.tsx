@@ -53,6 +53,21 @@ interface VentaAutoTableRow {
   total_venta: string;
 }
 
+// Helpers hoisted fuera del componente — no dependen de state/props (rule 6.3)
+// Cachear el formatter para no crearlo en cada llamada (rule 7.4)
+const currencyFmt = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
+
+const downloadFile = (blob: Blob, fileName: string) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+};
+
 const Reportes = () => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -99,7 +114,8 @@ const Reportes = () => {
             subtotal: Number(detalle.subtotal ?? 0),
           })),
         }))
-        .sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
+        // Inmutable sort para evitar mutar datos del cache de React Query (rule 7.12)
+        .toSorted((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
 
       const fallbackTotals = (() => {
         const ventasCount = ventasNormalizadas.length;
@@ -127,18 +143,6 @@ const Reportes = () => {
   const dayError = dayQuery.error?.message ?? null;
 
   const computedTotals = dayData?.computedTotals ?? null;
-
-  // Helpers de exportación
-  const downloadFile = (blob: Blob, fileName: string) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
 
   const exportSelectedDayToCSV = () => {
     if (!selectedDate || !dayData) return;
@@ -265,8 +269,8 @@ const Reportes = () => {
     doc.save(`reporte_${selectedDate}.pdf`);
   };
 
-  const currency = (v: number) =>
-    new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(v);
+  // Usar el formatter cacheado a nivel de módulo (rule 7.4)
+  const currency = (v: number) => currencyFmt.format(v);
 
   return (
     <div className="space-y-5">
@@ -275,7 +279,7 @@ const Reportes = () => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
-              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
@@ -288,10 +292,10 @@ const Reportes = () => {
           {/* Botón selector de fecha */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowCalendar(!showCalendar)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-indigo-300 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              onClick={() => setShowCalendar((prev) => !prev)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-indigo-300 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
-              <svg className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span className="hidden sm:inline">
@@ -302,11 +306,11 @@ const Reportes = () => {
                 })}
               </span>
               <span className="sm:hidden">Fecha</span>
-              <svg className={`h-4 w-4 text-slate-400 transition-transform ${showCalendar ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className={`h-4 w-4 text-slate-400 transition-transform ${showCalendar ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            {loading && <span className="text-xs text-slate-500">Cargando...</span>}
+            {loading && <span className="text-xs text-slate-500">Cargando…</span>}
           </div>
         </div>
         {error && (
@@ -328,7 +332,7 @@ const Reportes = () => {
               className="text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Cerrar calendario"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -488,11 +492,13 @@ const Reportes = () => {
                 </h3>
                 {dayLoading && (
                   <div className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
-                    <svg className="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Cargando...
+                    <div className="animate-spin h-3 w-3">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                    Cargando…
                   </div>
                 )}
               </div>
@@ -511,9 +517,9 @@ const Reportes = () => {
               <button
                 onClick={exportSelectedDayToPDF}
                 disabled={!dayData || dayLoading}
-                className="inline-flex items-center gap-2 justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                className="inline-flex items-center gap-2 justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
                 PDF
@@ -521,9 +527,9 @@ const Reportes = () => {
               <button
                 onClick={exportSelectedDayToCSV}
                 disabled={!dayData || dayLoading}
-                className="inline-flex items-center gap-2 justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="inline-flex items-center gap-2 justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 CSV
@@ -534,11 +540,11 @@ const Reportes = () => {
           {/* Tarjetas de métricas principales */}
           {computedTotals && (
             <div className="mt-6 grid gap-5 sm:grid-cols-3">
-              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/0 to-indigo-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative">
                   <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 leading-none">Transacciones</p>
-                  <p className="mt-3 text-4xl font-bold bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
+                  <p className="mt-3 text-4xl font-bold tabular-nums bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
                     {computedTotals.ventasCount}
                   </p>
                   <p className="mt-2 text-xs text-slate-500">
@@ -547,22 +553,22 @@ const Reportes = () => {
                 </div>
               </div>
               
-              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative">
                   <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 leading-none">Ingresos totales</p>
-                  <p className="mt-3 text-4xl font-bold bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                  <p className="mt-3 text-4xl font-bold tabular-nums bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-700 bg-clip-text text-transparent">
                     {currency(computedTotals.importeTotal)}
                   </p>
                   <p className="mt-2 text-xs text-slate-500">En bolivianos (BOB)</p>
                 </div>
               </div>
               
-              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+              <div className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 shadow-md hover:shadow-xl transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/0 to-indigo-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative">
                   <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 leading-none">Productos vendidos</p>
-                  <p className="mt-3 text-4xl font-bold bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
+                  <p className="mt-3 text-4xl font-bold tabular-nums bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
                     {computedTotals.itemsVendidos}
                   </p>
                   <p className="mt-2 text-xs text-slate-500">Unidades en total</p>
@@ -598,11 +604,11 @@ const Reportes = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {Object.entries(dayData.resumenPorEmpleado)
-                      .sort((a, b) => b[1].importeTotal - a[1].importeTotal)
+                      .toSorted((a, b) => b[1].importeTotal - a[1].importeTotal)
                       .map(([nombre, r], idx) => {
                         const promedio = r.ventasCount > 0 ? r.importeTotal / r.ventasCount : 0;
                         return (
-                          <tr key={nombre} className="transition-all duration-200 hover:bg-slate-50/80">
+                          <tr key={nombre} className="transition-colors duration-200 hover:bg-slate-50/80">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 text-sm font-bold text-indigo-700">
@@ -612,15 +618,15 @@ const Reportes = () => {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-700">
+                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-bold text-slate-700 tabular-nums">
                                 {r.ventasCount}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <span className="text-base font-bold text-emerald-700">{currency(r.importeTotal)}</span>
+                              <span className="text-base font-bold text-emerald-700 tabular-nums">{currency(r.importeTotal)}</span>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <span className="text-sm font-semibold text-slate-600">{currency(promedio)}</span>
+                              <span className="text-sm font-semibold text-slate-600 tabular-nums">{currency(promedio)}</span>
                             </td>
                           </tr>
                         );
@@ -670,10 +676,10 @@ const Reportes = () => {
                       
                       return (
                         <Fragment key={`venta-${v.id}`}>
-                          <tr className="group transition-all duration-200 hover:bg-slate-50/80">
+                          <tr className="group transition-colors duration-200 hover:bg-slate-50/80">
                             <td className="px-6 py-4">
                               <span className="inline-flex items-center gap-2 text-sm font-mono font-semibold text-slate-700">
-                                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 {hora}
@@ -688,7 +694,7 @@ const Reportes = () => {
                               <span className="text-sm font-semibold text-slate-900">{v.empleadoNombreSnapshot}</span>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <span className="text-base font-bold text-slate-900">{currency(Number(v.total))}</span>
+                              <span className="text-base font-bold text-slate-900 tabular-nums">{currency(Number(v.total))}</span>
                             </td>
                             <td className="px-6 py-4 text-center">
                               <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${
@@ -705,10 +711,10 @@ const Reportes = () => {
                               {hasDetalles ? (
                                 <button
                                   onClick={() => setExpandedVenta(isExpanded ? null : v.id)}
-                                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition-colors duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                                 >
                                   {isExpanded ? 'Ocultar' : 'Ver'}
-                                  <svg className={`h-3 w-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <svg className={`h-3 w-3 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                   </svg>
                                 </button>
@@ -739,9 +745,9 @@ const Reportes = () => {
                                           <td className="py-2 pr-4 text-slate-700 font-medium">
                                             {d.producto?.nombre ?? `Producto #${d.productoId}`}
                                           </td>
-                                          <td className="py-2 text-right text-slate-700 font-semibold">{d.cantidad}</td>
-                                          <td className="py-2 text-right text-slate-700">{currency(Number(d.precioUnitario))}</td>
-                                          <td className="py-2 text-right font-bold text-slate-900">{currency(Number(d.subtotal))}</td>
+                                          <td className="py-2 text-right text-slate-700 font-semibold tabular-nums">{d.cantidad}</td>
+                                          <td className="py-2 text-right text-slate-700 tabular-nums">{currency(Number(d.precioUnitario))}</td>
+                                          <td className="py-2 text-right font-bold text-slate-900 tabular-nums">{currency(Number(d.subtotal))}</td>
                                         </tr>
                                       ))}
                                     </tbody>
@@ -757,7 +763,7 @@ const Reportes = () => {
                     <tr>
                       <td className="px-6 py-12 text-center" colSpan={6}>
                         <div className="flex flex-col items-center justify-center">
-                          <svg className="h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                           <p className="text-base font-semibold text-slate-700">Sin ventas en este día</p>

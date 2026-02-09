@@ -19,17 +19,17 @@ function QuickSupportCard() {
       </p>
       <div className="space-y-3 text-sm font-semibold">
         <a
-          className="flex items-center gap-3 rounded-lg bg-white/15 px-4 py-3 transition-all hover:bg-white/25 hover:scale-[1.02]"
+          className="flex items-center gap-3 rounded-lg bg-white/15 px-4 py-3 transition-[background-color,transform] hover:bg-white/25 hover:scale-[1.02]"
           href="tel:+59177712345"
         >
-          <MdPhone className="h-5 w-5" />
+          <MdPhone className="h-5 w-5" aria-hidden="true" />
           <span>(+591) 777-12345</span>
         </a>
         <a
-          className="flex items-center gap-3 rounded-lg bg-white/15 px-4 py-3 transition-all hover:bg-white/25 hover:scale-[1.02]"
+          className="flex items-center gap-3 rounded-lg bg-white/15 px-4 py-3 transition-[background-color,transform] hover:bg-white/25 hover:scale-[1.02]"
           href="mailto:relaciones@heladeria-simple.com?subject=Soporte%20personalizado"
         >
-          <MdEmail className="h-5 w-5" />
+          <MdEmail className="h-5 w-5" aria-hidden="true" />
           <span>relaciones@heladeria-simple.com</span>
         </a>
       </div>

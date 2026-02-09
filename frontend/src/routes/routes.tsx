@@ -23,14 +23,17 @@ const Productos = lazy(() => import("../components/dashboard/layout/Productos"))
 const Ventas = lazy(() => import("../components/dashboard/layout/Ventas"));
 const Reportes = lazy(() => import("../components/dashboard/layout/Reportes"));
 
+// Hoist static fallback JSX fuera del componente (rule 6.3)
+const routesFallback = (
+  <div className="min-h-screen flex items-center justify-center p-6 text-sm text-gray-500">
+    Cargando…
+  </div>
+);
+
 const MyRoutes = () => {
   return (
     <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center p-6 text-sm text-gray-500">
-          Cargando…
-        </div>
-      }
+      fallback={routesFallback}
     >
       <Routes>
         {/* Ruta pública de login */}

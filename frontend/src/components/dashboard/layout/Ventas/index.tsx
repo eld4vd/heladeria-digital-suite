@@ -5,10 +5,10 @@ import type { Venta, MetodoPago } from "../../../../models/Venta";
 import AVenta from "./AVenta";
 import PanelDetallesVenta from "./DetallesVenta/Panel";
 
+// Cachear el formatter para no crear uno nuevo en cada llamada (rule 7.4)
+const currencyFmt = new Intl.NumberFormat("es-BO", { style: "currency", currency: "BOB" });
 const currency = (v: number | string) =>
-  new Intl.NumberFormat("es-BO", { style: "currency", currency: "BOB" }).format(
-    typeof v === "string" ? Number(v) : v
-  );
+  currencyFmt.format(typeof v === "string" ? Number(v) : v);
 
 const pagoLabel: Record<MetodoPago, string> = {
   efectivo: "Efectivo",
@@ -38,7 +38,7 @@ const Ventas = () => {
     refetchOnWindowFocus: false,
   });
 
-  const ventas = useMemo(() => data ?? [], [data]);
+  const ventas = data ?? [];
 
   // Filtrar solo ventas del día actual (zona horaria local)
   const todayKey = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
@@ -67,7 +67,7 @@ const Ventas = () => {
   // Exportar PDF removido a petición: si se requiere de nuevo, implementar aquí con import("jspdf")/import("jspdf-autotable") bajo demanda.
 
   if (isLoading) {
-    return <div className="p-6 text-sm text-slate-500">Cargando ventas...</div>;
+    return <div className="p-6 text-sm text-slate-500">Cargando ventas…</div>;
   }
   if (error) {
     return (
@@ -91,7 +91,7 @@ const Ventas = () => {
         <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
@@ -108,31 +108,42 @@ const Ventas = () => {
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
               disabled={isFetching}
             >
-              <svg className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              {isFetching ? "..." : "Refrescar"}
+              {isFetching ? (
+                <div className="animate-spin h-4 w-4">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </div>
+              ) : (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              )}
+              {isFetching ? "…" : "Refrescar"}
             </button>
           </div>
         </div>
 
         <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full sm:max-w-sm">
-            <label className="block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <label htmlFor="ventas-buscar" className="block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
               Buscar
             </label>
             <input
+              id="ventas-buscar"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Cliente, notas o monto"
+              placeholder="Cliente, notas o monto…"
+              autoComplete="off"
               className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
             />
           </div>
           <div className="w-full sm:max-w-xs">
-            <label className="block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <label htmlFor="ventas-metodo" className="block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
               Método de pago
             </label>
             <select
+              id="ventas-metodo"
               value={metodo}
               onChange={(e) => setMetodo((e.target.value || "") as MetodoPago | "")}
               className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
@@ -184,7 +195,7 @@ const Ventas = () => {
                 {lista.map((v, idx) => {
                   return (
                     <tr key={v.id} className="transition hover:bg-slate-50">
-                      <td className="px-4 py-3 text-sm font-semibold text-slate-600">
+                      <td className="px-4 py-3 text-sm font-semibold text-slate-600 tabular-nums">
                         {idx + 1}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-700">
@@ -206,7 +217,7 @@ const Ventas = () => {
                           {pagoLabel[v.metodoPago]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-sm font-semibold text-slate-900">
+                      <td className="px-4 py-3 text-right text-sm font-semibold text-slate-900 tabular-nums">
                         {currency(v.total)}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-500">

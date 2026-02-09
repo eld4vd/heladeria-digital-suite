@@ -4,6 +4,18 @@
 
 /* Fondos globales: sin tema forzado aquí; el modo oscuro se aplica sólo en el dashboard */
 
+/* content-visibility para listas largas — difiere renderizado off-screen (rule 6.2) */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 320px;
+}
+
+/* content-visibility para filas de tablas del dashboard */
+.cv-auto-row {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 56px;
+}
+
 /* Animación fade-in para hero */
 @keyframes fade-in {
   from {

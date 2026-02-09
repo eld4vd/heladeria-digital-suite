@@ -23,6 +23,9 @@ const metodoOptions: { value: MetodoPago; label: string }[] = [
   { value: 'qr', label: 'QR' },
 ];
 
+// Generador de IDs locales — hoisted fuera del componente (rule 6.3)
+const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
 const AVenta = ({ abierto, onCerrar }: Props) => {
   const qc = useQueryClient();
   const { user: authUser, empleado: authEmpleado } = useAuth();
@@ -45,11 +48,10 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
     subtotal: number;
   }
   const [detalles, setDetalles] = useState<LineaLocal[]>([]);
-  const totalCalculado = useMemo(() => detalles.reduce((acc, d) => acc + Number(d.subtotal || 0), 0), [detalles]);
+  // Derivado directamente — reduce con resultado primitivo no necesita useMemo (rule 5.3)
+  const totalCalculado = detalles.reduce((acc, d) => acc + Number(d.subtotal || 0), 0);
   const [modalDetalle, setModalDetalle] = useState(false);
   const [editLinea, setEditLinea] = useState<LineaLocal | null>(null);
-
-  const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
   const eliminarLinea = (id: string) => setDetalles(prev => prev.filter(l => l.id !== id));
   const editarLinea = (l: LineaLocal) => setEditLinea(l);
@@ -181,12 +183,13 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
             <button onClick={onCerrar} className="text-gray-500 hover:text-gray-700 text-2xl" aria-label="Cerrar">×</button>
           </div>
 
-          <div className="p-6 overflow-y-auto flex-1">
+          <div className="p-6 overflow-y-auto flex-1 overscroll-contain">
             <form id="form-venta" onSubmit={onSubmit} className="grid grid-cols-1 gap-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Empleado</label>
+                <label htmlFor="venta-empleado" className="block text-sm font-medium text-gray-700 mb-1">Empleado</label>
                 <input
-                  value={perfil ? (perfil.nombre || authUser?.nombre || 'Empleado') : cargandoPerfil ? 'Cargando...' : 'No disponible'}
+                  id="venta-empleado"
+                  value={perfil ? (perfil.nombre || authUser?.nombre || 'Empleado') : cargandoPerfil ? 'Cargando…' : 'No disponible'}
                   readOnly
                   className="w-full px-3 py-2 border rounded-md bg-gray-50 text-gray-700"
                 />
@@ -194,8 +197,9 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Total (calculado)</label>
+                  <label htmlFor="venta-total" className="block text-sm font-medium text-gray-700 mb-1">Total (calculado)</label>
                   <input
+                    id="venta-total"
                     type="number"
                     step="0.01"
                     min="0"
@@ -205,8 +209,9 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Método de pago *</label>
+                  <label htmlFor="venta-metodo" className="block text-sm font-medium text-gray-700 mb-1">Método de pago *</label>
                   <select
+                    id="venta-metodo"
                     value={metodo}
                     onChange={(e) => setMetodo(e.target.value as MetodoPago)}
                     className="w-full px-3 py-2 border rounded-md bg-white"
@@ -220,19 +225,22 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cliente (opcional)</label>
+                <label htmlFor="venta-cliente" className="block text-sm font-medium text-gray-700 mb-1">Cliente (opcional)</label>
                 <input
+                  id="venta-cliente"
                   value={cliente}
                   onChange={(e) => setCliente(e.target.value)}
                   className="w-full px-3 py-2 border rounded-md"
-                  placeholder="Nombre del cliente"
+                  placeholder="Nombre del cliente…"
+                  autoComplete="off"
                   maxLength={100}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de la venta</label>
+                <label htmlFor="venta-fecha" className="block text-sm font-medium text-gray-700 mb-1">Fecha de la venta</label>
                 <input
+                  id="venta-fecha"
                   type="datetime-local"
                   value={fechaVenta}
                   readOnly
@@ -244,13 +252,14 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+                <label htmlFor="venta-notas" className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
                 <textarea
+                  id="venta-notas"
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 border rounded-md"
-                  placeholder="Observaciones adicionales (opcional)"
+                  placeholder="Observaciones adicionales (opcional)…"
                 />
               </div>
 
@@ -280,16 +289,16 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
                             <td className="px-3 py-2">
                               <div className="flex items-center gap-2">
                                 {d.productoImagenUrl ? (
-                                  <img src={d.productoImagenUrl} alt={d.productoNombre} className="h-10 w-10 rounded object-cover" />
+                                  <img src={d.productoImagenUrl} alt={d.productoNombre} width={40} height={40} loading="lazy" className="h-10 w-10 rounded object-cover" />
                                 ) : (
                                   <div className="h-10 w-10 rounded bg-gray-100 flex items-center justify-center text-gray-400 text-xs">No img</div>
                                 )}
                                 <span>{d.productoNombre}</span>
                               </div>
                             </td>
-                            <td className="px-3 py-2 text-right">{d.cantidad}</td>
-                            <td className="px-3 py-2 text-right">{Number(d.precioUnitario).toFixed(2)}</td>
-                            <td className="px-3 py-2 text-right font-semibold">{Number(d.subtotal).toFixed(2)}</td>
+                            <td className="px-3 py-2 text-right tabular-nums">{d.cantidad}</td>
+                            <td className="px-3 py-2 text-right tabular-nums">{Number(d.precioUnitario).toFixed(2)}</td>
+                            <td className="px-3 py-2 text-right font-semibold tabular-nums">{Number(d.subtotal).toFixed(2)}</td>
                             <td className="px-3 py-2">
                               <button type="button" onClick={() => editarLinea(d)} className="px-2 py-1 text-xs rounded border bg-white hover:bg-gray-50 mr-2">Editar</button>
                               <button type="button" onClick={() => eliminarLinea(d.id)} className="px-2 py-1 text-xs rounded border border-red-300 text-red-700 hover:bg-red-50">Quitar</button>
@@ -300,7 +309,7 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
                       <tfoot>
                         <tr className="bg-gray-50">
                           <td className="px-3 py-2 font-medium" colSpan={3}>Total</td>
-                          <td className="px-3 py-2 text-right font-semibold">{totalCalculado.toFixed(2)}</td>
+                          <td className="px-3 py-2 text-right font-semibold tabular-nums">{totalCalculado.toFixed(2)}</td>
                           <td />
                         </tr>
                       </tfoot>
@@ -321,7 +330,7 @@ const AVenta = ({ abierto, onCerrar }: Props) => {
               disabled={createMutation.isPending || cargandoPerfil || !perfil?.id || detalles.length === 0}
               className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-60"
             >
-              {createMutation.isPending ? 'Guardando...' : 'Guardar'}
+              {createMutation.isPending ? 'Guardando…' : 'Guardar'}
             </button>
           </div>
         </div>
@@ -398,14 +407,10 @@ function AVentaDetalleModal({
     return Number(p?.precio || 0);
   }, [productos, productoId]);
   const [cantidad, setCantidad] = useState<number>(inicial?.cantidad || 1);
-  const [precio, setPrecio] = useState<number>(inicial?.precioUnitario ?? basePrecio);
+  // Derivar precio directamente de basePrecio en lugar de sincronizar via useEffect (rule 5.1)
+  const precio = basePrecio;
 
-  // Mantener el precio sincronizado con el producto seleccionado (no editable manualmente)
-  useEffect(() => {
-    setPrecio(basePrecio);
-  }, [basePrecio]);
-
-  const subtotal = useMemo(() => Number(((precio || 0) * (cantidad || 0)).toFixed(2)), [precio, cantidad]);
+  const subtotal = Number(((precio || 0) * (cantidad || 0)).toFixed(2));
 
   const validar = () => {
     if (!productoId) return 'Producto inválido';
@@ -436,7 +441,7 @@ function AVentaDetalleModal({
   const prodSel = (productos || []).find(p => p.id === productoId);
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4 overscroll-contain">
       <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10">
           <h3 className="text-lg font-semibold">Agregar helado</h3>
@@ -444,29 +449,29 @@ function AVentaDetalleModal({
         </div>
         <form onSubmit={onSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
-            <select value={productoId} onChange={e => setProductoId(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md bg-white">
+            <label htmlFor="detmod-producto" className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+            <select id="detmod-producto" value={productoId} onChange={e => setProductoId(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md bg-white">
               {(productos || []).map(p => (
                 <option key={p.id} value={p.id}>{p.nombre}</option>
               ))}
             </select>
             {prodSel?.imagenUrl && (
               <div className="mt-2 flex items-center gap-2">
-                <img src={prodSel.imagenUrl} alt={prodSel.nombre} className="h-14 w-14 rounded object-cover" />
+                <img src={prodSel.imagenUrl} alt={prodSel.nombre} width={56} height={56} loading="lazy" className="h-14 w-14 rounded object-cover" />
                 <span className="text-xs text-gray-500">Vista previa</span>
               </div>
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
-              <input type="number" min={1} step={1} value={cantidad} onChange={e => setCantidad(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md" />
+              <label htmlFor="detmod-cantidad" className="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+              <input id="detmod-cantidad" type="number" min={1} step={1} value={cantidad} onChange={e => setCantidad(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md" autoComplete="off" />
               {prodSel && (
                 <p className="mt-1 text-xs text-gray-500">Stock disponible: {prodSel.stock}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Precio unitario</label>
+              <label htmlFor="detmod-precio" className="block text-sm font-medium text-gray-700 mb-1">Precio unitario</label>
               <input
                 type="text"
                 value={precio}
@@ -477,7 +482,7 @@ function AVentaDetalleModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>
+              <label htmlFor="detmod-subtotal" className="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>
               <input
                 readOnly
                 disabled

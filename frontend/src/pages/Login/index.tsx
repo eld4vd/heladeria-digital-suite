@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../../context/useAuth";
 import { Link } from "react-router-dom";
-import { MdLock, MdPerson, MdVisibility, MdVisibilityOff, MdHome } from "react-icons/md";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 const Login = () => {
   const [usuario, setUsuario] = useState("");
@@ -19,81 +19,76 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-cyan-50 flex items-center justify-center p-4">
-      {/* Decoración de fondo */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
-      </div>
-
-      <div className="relative w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl shadow-lg mb-4">
-            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/>
-            </svg>
+    <div className="min-h-screen bg-[#FFFBF0] flex items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        {/* Brand minimalista */}
+        <div className="mb-12 text-center">
+          <div className="inline-block mb-3">
+            <div className="text-[#3E2723] text-sm font-medium tracking-wide uppercase">
+              Heladería Digital
+            </div>
+            <div className="h-px bg-[#8B7355]/20 mt-2" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">Bienvenido</h1>
-          <p className="text-slate-600">Accede al panel de administración</p>
+          <h1 className="text-2xl font-medium text-[#3E2723] tracking-tight">
+            Acceso al sistema
+          </h1>
         </div>
 
-        {/* Card principal */}
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-          {/* Header con gradiente */}
-          <div className="h-2 bg-gradient-to-r from-cyan-500 via-cyan-600 to-teal-500" />
-          
-          <form onSubmit={handleSubmit} className="p-8">
+        {/* Formulario como papel */}
+        <div className="bg-[#FFF8E7] border border-[#8B7355]/10 rounded-sm p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Campo Usuario */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <div>
+              <label 
+                htmlFor="login-usuario" 
+                className="block text-sm font-medium text-[#6B5B4F] mb-2 tracking-wide"
+              >
                 Usuario
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdPerson className="w-5 h-5 text-slate-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Ingresa tu usuario"
-                  value={usuario}
-                  onChange={(e) => setUsuario(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white transition-all duration-200"
-                  autoFocus
-                  required
-                  minLength={4}
-                  maxLength={20}
-                />
-              </div>
+              <input
+                id="login-usuario"
+                type="text"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                className="w-full px-0 py-2.5 bg-[#F5F1E8] border-b border-[#8B7355]/20 text-[#3E2723] placeholder-[#8B7355]/40 focus:outline-none focus:border-[#8B7355]/60 focus:bg-[#F5F1E8] transition-[border-color,background-color] duration-200 text-base"
+                placeholder="ej: admin"
+                autoComplete="username"
+                autoFocus
+                required
+                minLength={4}
+                maxLength={20}
+              />
             </div>
 
             {/* Campo Contraseña */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+            <div>
+              <label 
+                htmlFor="login-clave" 
+                className="block text-sm font-medium text-[#6B5B4F] mb-2 tracking-wide"
+              >
                 Contraseña
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdLock className="w-5 h-5 text-slate-400" />
-                </div>
                 <input
+                  id="login-clave"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Ingresa tu contraseña"
                   value={clave}
                   onChange={(e) => setClave(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-0 pr-10 py-2.5 bg-[#F5F1E8] border-b border-[#8B7355]/20 text-[#3E2723] placeholder-[#8B7355]/40 focus:outline-none focus:border-[#8B7355]/60 focus:bg-[#F5F1E8] transition-[border-color,background-color] duration-200 text-base"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-0 bottom-2 text-[#8B7355]/50 hover:text-[#6B5B4F] transition-colors"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 >
                   {showPassword ? (
-                    <MdVisibilityOff className="w-5 h-5" />
+                    <MdVisibilityOff className="w-5 h-5" aria-hidden="true" />
                   ) : (
-                    <MdVisibility className="w-5 h-5" />
+                    <MdVisibility className="w-5 h-5" aria-hidden="true" />
                   )}
                 </button>
               </div>
@@ -101,11 +96,8 @@ const Login = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-                <svg className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm text-red-700 flex-1">{error}</p>
+              <div className="p-3 bg-[#FFFBF0] border border-[#B76E79]/30 rounded-sm">
+                <p className="text-sm text-[#8B4049] leading-relaxed">{error}</p>
               </div>
             )}
 
@@ -113,57 +105,32 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 text-white py-3.5 rounded-xl font-semibold hover:from-cyan-700 hover:to-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/40 active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full bg-[#4A3933] text-[#FFF8E7] py-3 rounded-sm font-medium hover:bg-[#3E2723] disabled:opacity-60 disabled:cursor-not-allowed transition-[background-color] duration-200 text-base tracking-wide"
             >
-              {loading ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  <span>Ingresando...</span>
-                </>
-              ) : (
-                <>
-                  <MdLock className="w-5 h-5" />
-                  <span>Iniciar Sesión</span>
-                </>
-              )}
+              {loading ? "Ingresando…" : "Iniciar sesión"}
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="px-8 pb-8 pt-4 border-t border-slate-100">
-            <p className="text-center text-sm text-slate-500">
-              Sistema de gestión de heladería
+          {/* Footer discreto */}
+          <div className="mt-8 pt-6 border-t border-[#8B7355]/10">
+            <p className="text-center text-xs text-[#8B7355]/60 tracking-wide">
+              Sistema de gestión · {new Date().getFullYear()}
             </p>
           </div>
         </div>
 
-        {/* Botón volver al inicio */}
-        <Link
-          to="/"
-          className="mt-6 flex items-center justify-center gap-2 text-slate-600 hover:text-cyan-600 font-semibold transition-colors"
-        >
-          <MdHome className="w-5 h-5" />
-          <span>Volver al inicio</span>
-        </Link>
+        {/* Link volver */}
+        <div className="mt-6 text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6B5B4F] hover:text-[#4A3933] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Volver al inicio</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

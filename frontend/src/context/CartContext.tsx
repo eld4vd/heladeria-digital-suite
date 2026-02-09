@@ -1,9 +1,51 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
-// Generador simple de UUID v4
+// ── Helpers de localStorage con try-catch y versionado (rule 4.4, 7.5) ──
+const STORAGE_VERSION = 'v1';
+const STORAGE_KEYS = {
+  clienteTempId: `cart:${STORAGE_VERSION}:clienteTempId`,
+  carritoId: `cart:${STORAGE_VERSION}:carritoId`,
+  itemCount: `cart:${STORAGE_VERSION}:itemCount`,
+  total: `cart:${STORAGE_VERSION}:total`,
+} as const;
+
+// Cache en memoria para evitar lecturas repetidas a localStorage (rule 7.5)
+const storageCache = new Map<string, string | null>();
+
+function safeGetItem(key: string): string | null {
+  if (storageCache.has(key)) return storageCache.get(key)!;
+  try {
+    const value = window.localStorage.getItem(key);
+    storageCache.set(key, value);
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+    storageCache.set(key, value);
+  } catch {
+    // Ignora errores en modo incógnito o quota excedida
+  }
+}
+
+function safeRemoveItem(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+    storageCache.set(key, null);
+  } catch {
+    // Ignora errores
+  }
+}
+
+// Generador simple de UUID v4 — RegExp hoisted a nivel de módulo (rule 7.9)
+const UUID_PATTERN = /[xy]/g;
 function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(UUID_PATTERN, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -27,77 +69,72 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export { CartContext };
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+  // Lazy state initialization desde localStorage (rule 5.10)
+  const [clienteTempId, setClienteTempId] = useState<string>(() => {
+    const stored = safeGetItem(STORAGE_KEYS.clienteTempId);
+    if (stored) return stored;
+    const newId = generateUUID();
+    safeSetItem(STORAGE_KEYS.clienteTempId, newId);
+    return newId;
+  });
 
-  const [clienteTempId, setClienteTempId] = useState<string>(() => generateUUID());
-  const [carritoId, setCarritoIdState] = useState<number | null>(null);
-  const [itemCount, setItemCountState] = useState<number>(0);
-  const [total, setTotalState] = useState<number>(0);
+  const [carritoId, setCarritoIdState] = useState<number | null>(() => {
+    const stored = safeGetItem(STORAGE_KEYS.carritoId);
+    return stored ? parseInt(stored, 10) : null;
+  });
 
-  // Inicializar estado desde localStorage en cliente
+  const [itemCount, setItemCountState] = useState<number>(() => {
+    const stored = safeGetItem(STORAGE_KEYS.itemCount);
+    return stored ? parseInt(stored, 10) : 0;
+  });
+
+  const [total, setTotalState] = useState<number>(() => {
+    const stored = safeGetItem(STORAGE_KEYS.total);
+    return stored ? parseFloat(stored) : 0;
+  });
+
+  // Sincronizar con localStorage cuando haya cambios
   useEffect(() => {
-    if (!isBrowser) return;
+    safeSetItem(STORAGE_KEYS.clienteTempId, clienteTempId);
+  }, [clienteTempId]);
 
-    setClienteTempId((current) => {
-      const stored = window.localStorage.getItem('clienteTempId');
-      if (stored) return stored;
-      const newId = current || generateUUID();
-      window.localStorage.setItem('clienteTempId', newId);
-      return newId;
-    });
-
-    const storedCarritoId = window.localStorage.getItem('carritoId');
-    setCarritoIdState(storedCarritoId ? parseInt(storedCarritoId, 10) : null);
-
-    const storedItemCount = window.localStorage.getItem('carritoItemCount');
-    setItemCountState(storedItemCount ? parseInt(storedItemCount, 10) : 0);
-
-    const storedTotal = window.localStorage.getItem('carritoTotal');
-    setTotalState(storedTotal ? parseFloat(storedTotal) : 0);
-  }, [isBrowser]);
-
-  // Sincronizar con localStorage cuando haya cambios (sólo en cliente)
   useEffect(() => {
-    if (!isBrowser) return;
     if (carritoId !== null) {
-      window.localStorage.setItem('carritoId', carritoId.toString());
+      safeSetItem(STORAGE_KEYS.carritoId, carritoId.toString());
     } else {
-      window.localStorage.removeItem('carritoId');
+      safeRemoveItem(STORAGE_KEYS.carritoId);
     }
-  }, [carritoId, isBrowser]);
+  }, [carritoId]);
 
   useEffect(() => {
-    if (!isBrowser) return;
-    window.localStorage.setItem('carritoItemCount', itemCount.toString());
-  }, [itemCount, isBrowser]);
+    safeSetItem(STORAGE_KEYS.itemCount, itemCount.toString());
+  }, [itemCount]);
 
   useEffect(() => {
-    if (!isBrowser) return;
-    window.localStorage.setItem('carritoTotal', total.toString());
-  }, [total, isBrowser]);
+    safeSetItem(STORAGE_KEYS.total, total.toString());
+  }, [total]);
 
-  const setCarritoId = (id: number | null) => {
+  // Callbacks estables con functional setState (rule 5.9)
+  const setCarritoId = useCallback((id: number | null) => {
     setCarritoIdState(id);
-  };
+  }, []);
 
-  const setItemCount = (count: number) => {
+  const setItemCount = useCallback((count: number) => {
     setItemCountState(count);
-  };
+  }, []);
 
-  const setTotal = (newTotal: number) => {
+  const setTotal = useCallback((newTotal: number) => {
     setTotalState(newTotal);
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCarritoIdState(null);
     setItemCountState(0);
     setTotalState(0);
-    if (isBrowser) {
-      window.localStorage.removeItem('carritoId');
-      window.localStorage.setItem('carritoItemCount', '0');
-      window.localStorage.setItem('carritoTotal', '0');
-    }
-  };
+    safeRemoveItem(STORAGE_KEYS.carritoId);
+    safeSetItem(STORAGE_KEYS.itemCount, '0');
+    safeSetItem(STORAGE_KEYS.total, '0');
+  }, []);
 
   const value: CartContextType = {
     clienteTempId,

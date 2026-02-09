@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useMemo } from "react";
+import { useState, useEffect, useCallback, memo, useMemo } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/useAuth";
 import logo from "../../../assets/images/ice-cream-logo.png";
@@ -10,15 +10,16 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  // Functional setState evita dependencias y closures obsoletas (rule 5.9)
+  const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);
 
-  // Detectar scroll para cambiar estilo del navbar
+  // Detectar scroll para cambiar estilo del navbar — passive listener (rule 4.2)
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -45,7 +46,7 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`${isHomePage ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-40 transition-all duration-200 ${
+      className={`${isHomePage ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-40 transition-[background-color,box-shadow] duration-200 ${
         isHomePage && !isScrolled
           ? "bg-transparent"
           : "bg-white shadow-sm"
@@ -59,6 +60,8 @@ const Navbar = () => {
               <img 
                 src={logo} 
                 alt="Delicias" 
+                width={48}
+                height={48}
                 className="h-12 w-12 transition-transform duration-200 group-hover:scale-105" 
               />
             </div>
@@ -86,7 +89,7 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `relative px-4 py-2 text-xl font-semibold rounded-lg transition-all duration-200 ${
+                  `relative px-4 py-2 text-xl font-semibold rounded-lg transition-colors duration-200 ${
                     isHomePage && !isScrolled
                       ? isActive
                         ? "text-white bg-white/15"
@@ -109,7 +112,7 @@ const Navbar = () => {
               <>
                 <button
                   onClick={handleGoToDashboard}
-                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
                     isHomePage && !isScrolled
                       ? "text-white bg-white/15 border border-white/30 hover:bg-white/25"
                       : "text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100"
@@ -120,6 +123,7 @@ const Navbar = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -133,7 +137,7 @@ const Navbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 ${
                     isHomePage && !isScrolled
                       ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
                       : "text-gray-700 bg-gray-100 border border-gray-200 hover:bg-gray-200"
@@ -144,6 +148,7 @@ const Navbar = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -169,8 +174,7 @@ const Navbar = () => {
                     className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                    stroke="currentColor"                    aria-hidden="true"                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -188,7 +192,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className={`inline-flex items-center justify-center p-2 rounded-lg transition-all duration-200 focus:outline-none ${
+              className={`inline-flex items-center justify-center p-2 rounded-lg transition-colors duration-200 focus:outline-none ${
                 isHomePage && !isScrolled
                   ? "text-white hover:bg-white/15"
                   : "text-gray-700 hover:bg-gray-100"
@@ -197,17 +201,17 @@ const Navbar = () => {
             >
               <div className="w-6 h-5 flex flex-col justify-between">
                 <span
-                  className={`h-0.5 bg-current rounded-full transition-all duration-200 ${
+                  className={`h-0.5 bg-current rounded-full transition-transform duration-200 ${
                     isOpen ? "rotate-45 translate-y-2" : ""
                   }`}
                 ></span>
                 <span
-                  className={`h-0.5 bg-current rounded-full transition-all duration-200 ${
+                  className={`h-0.5 bg-current rounded-full transition-opacity duration-200 ${
                     isOpen ? "opacity-0" : ""
                   }`}
                 ></span>
                 <span
-                  className={`h-0.5 bg-current rounded-full transition-all duration-200 ${
+                  className={`h-0.5 bg-current rounded-full transition-transform duration-200 ${
                     isOpen ? "-rotate-45 -translate-y-2" : ""
                   }`}
                 ></span>
@@ -218,7 +222,7 @@ const Navbar = () => {
 
         {/* Menú móvil */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ${
+          className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ${
             isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
@@ -256,6 +260,7 @@ const Navbar = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -278,6 +283,7 @@ const Navbar = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -301,6 +307,7 @@ const Navbar = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"

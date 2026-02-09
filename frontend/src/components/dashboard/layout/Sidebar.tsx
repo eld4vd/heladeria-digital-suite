@@ -10,6 +10,15 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
+// Hoisted fuera del componente — datos estáticos que no dependen de props/state (rule 6.3)
+const links = [
+  { to: '/dashboard', icon: MdDashboard, label: 'Resumen', end: true },
+  { to: '/dashboard/ventas', icon: MdShoppingCart, label: 'Ventas' },
+  { to: '/dashboard/productos', icon: MdInventory, label: 'Productos' },
+  { to: '/dashboard/categorias', icon: MdCategory, label: 'Categorías' },
+  { to: '/dashboard/reportes', icon: MdBarChart, label: 'Reportes' },
+] as const;
+
 const Sidebar = ({ className = '', collapsed = false, mobile = false, open = false, onClose }: SidebarProps) => {
   const { logout } = useAuth();
 
@@ -17,20 +26,14 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
     await logout();
   };
 
-  const links = [
-    { to: '/dashboard', icon: MdDashboard, label: 'Resumen', end: true },
-    { to: '/dashboard/ventas', icon: MdShoppingCart, label: 'Ventas' },
-    { to: '/dashboard/productos', icon: MdInventory, label: 'Productos' },
-    { to: '/dashboard/categorias', icon: MdCategory, label: 'Categorías' },
-    { to: '/dashboard/reportes', icon: MdBarChart, label: 'Reportes' },
-  ];
-
   // Sidebar móvil (drawer)
   if (mobile) {
     return (
       <>
         {/* Overlay */}
-        <div
+        <button
+          type="button"
+          aria-label="Cerrar menú"
           className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity lg:hidden ${
             open ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
@@ -39,7 +42,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
         
         {/* Drawer */}
         <aside
-          className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-slate-200 z-50 transform transition-transform lg:hidden ${
+          className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-slate-200 z-50 transform transition-transform lg:hidden overscroll-contain ${
             open ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -59,7 +62,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
               className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               aria-label="Cerrar menú"
             >
-              <MdClose className="w-6 h-6" />
+              <MdClose className="w-6 h-6" aria-hidden="true" />
             </button>
           </div>
 
@@ -81,7 +84,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
                     }`
                   }
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-6 h-6" aria-hidden="true" />
                   <span className="font-medium">{link.label}</span>
                 </NavLink>
               );
@@ -92,9 +95,9 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
           <div className="p-4 border-t border-slate-200">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all"
+              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
             >
-              <MdLogout className="w-6 h-6" />
+              <MdLogout className="w-6 h-6" aria-hidden="true" />
               <span className="font-medium">Cerrar Sesión</span>
             </button>
           </div>
@@ -106,7 +109,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
   // Sidebar desktop
   return (
     <aside
-      className={`hidden lg:flex flex-col bg-white border-r border-slate-200 transition-all duration-300 sticky top-0 h-screen ${
+      className={`hidden lg:flex flex-col bg-white border-r border-slate-200 transition-[width] duration-300 sticky top-0 h-screen ${
         collapsed ? 'w-20' : 'w-64'
       } ${className}`}
     >
@@ -140,7 +143,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
               end={link.end}
               title={collapsed ? link.label : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                   collapsed ? 'justify-center' : ''
                 } ${
                   isActive
@@ -149,7 +152,7 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
                 }`
               }
             >
-              <Icon className="w-6 h-6 flex-shrink-0" />
+              <Icon className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
               {!collapsed && <span className="font-medium">{link.label}</span>}
             </NavLink>
           );
@@ -164,11 +167,11 @@ const Sidebar = ({ className = '', collapsed = false, mobile = false, open = fal
         <button
           onClick={handleLogout}
           title={collapsed ? 'Cerrar Sesión' : undefined}
-          className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all ${
+          className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors ${
             collapsed ? 'justify-center' : ''
           }`}
         >
-          <MdLogout className="w-6 h-6 flex-shrink-0" />
+          <MdLogout className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
           {!collapsed && <span className="font-medium">Cerrar Sesión</span>}
         </button>
       </div>

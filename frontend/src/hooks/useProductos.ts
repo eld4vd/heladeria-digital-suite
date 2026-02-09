@@ -68,7 +68,8 @@ const useProductos = (options: UseProductosOptions = {}) => {
             },
           } satisfies ProductoResumen;
         })
-        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+        // Inmutable sort para evitar mutar datos de React Query (rule 7.12)
+        .toSorted((a, b) => a.nombre.localeCompare(b.nombre));
 
       for (const producto of normalizados) {
         if (!map.has(producto.categoria.id)) {
@@ -81,7 +82,7 @@ const useProductos = (options: UseProductosOptions = {}) => {
         map.get(producto.categoria.id)!.items.push(producto);
       }
 
-      const sections = Array.from(map.values()).sort((a, b) =>
+      const sections = Array.from(map.values()).toSorted((a, b) =>
         a.nombre.localeCompare(b.nombre)
       );
       const countsByCategory = Object.fromEntries(

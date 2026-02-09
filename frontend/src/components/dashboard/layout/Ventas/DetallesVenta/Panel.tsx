@@ -20,10 +20,10 @@ interface Props {
   onCerrar: () => void;
 }
 
+// Cachear el formatter para no crear uno nuevo en cada llamada (rule 7.4)
+const currencyFmt = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
 const currency = (v: number | string) =>
-  new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(
-    typeof v === 'string' ? Number(v) : v,
-  );
+  currencyFmt.format(typeof v === 'string' ? Number(v) : v);
 
 export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerrar }: Props) {
   const qc = useQueryClient();
@@ -41,7 +41,8 @@ export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerr
     enabled: abierto,
   });
 
-  const suma = useMemo(() => (detalles || []).reduce((acc, d) => acc + (Number(d.subtotal) || 0), 0), [detalles]);
+  // Derivado directamente — reduce con resultado primitivo no necesita useMemo (rule 5.3)
+  const suma = (detalles || []).reduce((acc, d) => acc + (Number(d.subtotal) || 0), 0);
 
   // Mantener sincronizado el total de la venta en el backend cuando cambian los detalles
   const prevSumaRef = useRef<number | null>(null);
@@ -102,7 +103,7 @@ export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerr
 
   return (
     <div className="fixed inset-0 z-[60] flex">
-      <div className="flex-1 bg-black/40" onClick={onCerrar} />
+      <button type="button" aria-label="Cerrar panel" className="flex-1 bg-black/40" onClick={onCerrar} />
       <div className="w-full max-w-3xl h-full bg-white shadow-xl border-l flex flex-col">
     <div className="p-4 border-b flex items-center justify-between">
           <div>
@@ -116,13 +117,13 @@ export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerr
 
         <div className="p-4 flex items-center gap-3 border-b">
           <button onClick={() => setModalAdd(true)} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">+ Agregar detalle</button>
-          <button onClick={() => refetch()} disabled={isFetching} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">{isFetching ? 'Actualizando...' : 'Refrescar'}</button>
-          <div className="ml-auto text-sm text-gray-700">Total líneas: <span className="font-semibold">{currency(suma)}</span></div>
+          <button onClick={() => refetch()} disabled={isFetching} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">{isFetching ? 'Actualizando…' : 'Refrescar'}</button>
+          <div className="ml-auto text-sm text-gray-700">Total líneas: <span className="font-semibold tabular-nums">{currency(suma)}</span></div>
         </div>
 
-        <div className="p-4 overflow-auto">
+        <div className="p-4 overflow-auto overscroll-contain">
           {isLoading ? (
-            <div>Cargando detalles...</div>
+            <div>Cargando detalles…</div>
           ) : error ? (
             <div className="text-red-600">Error: {error.message}</div>
           ) : (
@@ -140,10 +141,10 @@ export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerr
               <tbody className="divide-y divide-gray-100 bg-white">
                 {(detalles || []).map((d, i) => (
                   <tr key={d.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-sm text-gray-600">{i + 1}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600 tabular-nums">{i + 1}</td>
                     <td className="px-4 py-2 text-sm text-gray-800 flex items-center gap-3">
                       {d.producto?.imagenUrl ? (
-                        <img src={d.producto.imagenUrl} alt={d.producto?.nombre || ''} className="w-10 h-10 rounded object-cover border" />
+                        <img src={d.producto.imagenUrl} alt={d.producto?.nombre || ''} width={40} height={40} loading="lazy" className="w-10 h-10 rounded object-cover border" />
                       ) : (
                         <div className="w-10 h-10 rounded bg-gray-100 border" />
                       )}
@@ -151,13 +152,13 @@ export default function PanelDetallesVenta({ ventaId, ventaInfo, abierto, onCerr
                         <div className="font-medium">{d.producto?.nombre || `Producto`}</div>
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-sm text-right">{d.cantidad}</td>
-                    <td className="px-4 py-2 text-sm text-right">{currency(d.precioUnitario)}</td>
-                    <td className="px-4 py-2 text-sm text-right font-semibold">{currency(d.subtotal)}</td>
+                    <td className="px-4 py-2 text-sm text-right tabular-nums">{d.cantidad}</td>
+                    <td className="px-4 py-2 text-sm text-right tabular-nums">{currency(d.precioUnitario)}</td>
+                    <td className="px-4 py-2 text-sm text-right font-semibold tabular-nums">{currency(d.subtotal)}</td>
                     <td className="px-4 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <button onClick={() => setEditTarget(d)} className="px-3 py-1.5 text-xs rounded-md border bg-white hover:bg-gray-50">Editar</button>
-                        <button onClick={() => delMut.mutate(d.id)} disabled={delMut.isPending} className="px-3 py-1.5 text-xs rounded-md border border-red-300 text-red-700 hover:bg-red-50">{delMut.isPending ? 'Eliminando...' : 'Eliminar'}</button>
+                        <button onClick={() => delMut.mutate(d.id)} disabled={delMut.isPending} className="px-3 py-1.5 text-xs rounded-md border border-red-300 text-red-700 hover:bg-red-50">{delMut.isPending ? 'Eliminando…' : 'Eliminar'}</button>
                       </div>
                     </td>
                   </tr>
@@ -224,7 +225,8 @@ function ModalDetalle({ ventaId, detalle, onClose, onSaved }: { ventaId: number;
     return isEdit ? precio : parsed;
   }, [productos, productoId, precio, isEdit]);
 
-  const subtotal = useMemo(() => round2((Number(derivedPrecio) || 0) * (Number(cantidad) || 0)), [derivedPrecio, cantidad]);
+  // Derivado directamente sin useMemo — es una operación simple (rule 5.3)
+  const subtotal = round2((Number(derivedPrecio) || 0) * (Number(cantidad) || 0));
 
   const createMut = useMutation({
     mutationFn: async (data: CreateDetalleVentaDto) => detalleVentaService.createDetalle(data),
@@ -329,7 +331,7 @@ function ModalDetalle({ ventaId, detalle, onClose, onSaved }: { ventaId: number;
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4 overscroll-contain">
       <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10">
           <h3 className="text-lg font-semibold">{isEdit ? 'Editar detalle' : 'Agregar detalle'}</h3>
@@ -337,8 +339,8 @@ function ModalDetalle({ ventaId, detalle, onClose, onSaved }: { ventaId: number;
         </div>
         <form onSubmit={onSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
-            <select value={productoId} onChange={e => setProductoId(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md bg-white">
+            <label htmlFor="det-producto" className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+            <select id="det-producto" value={productoId} onChange={e => setProductoId(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md bg-white">
               {(productos || []).map(p => (
                 <option key={p.id} value={p.id}>{p.nombre}</option>
               ))}
@@ -346,12 +348,13 @@ function ModalDetalle({ ventaId, detalle, onClose, onSaved }: { ventaId: number;
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
-              <input type="number" min={1} step={1} value={cantidad} onChange={e => setCantidad(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md" />
+              <label htmlFor="det-cantidad" className="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+              <input id="det-cantidad" type="number" min={1} step={1} value={cantidad} onChange={e => setCantidad(Number(e.target.value))} className="w-full px-3 py-2 border rounded-md" autoComplete="off" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Precio unitario</label>
+              <label htmlFor="det-precio" className="block text-sm font-medium text-gray-700 mb-1">Precio unitario</label>
               <input
+                id="det-precio"
                 type="number"
                 min={0}
                 step={0.01}
@@ -364,8 +367,8 @@ function ModalDetalle({ ventaId, detalle, onClose, onSaved }: { ventaId: number;
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>
-              <input readOnly value={subtotal} className="w-full px-3 py-2 border rounded-md bg-gray-50" />
+              <label htmlFor="det-subtotal" className="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>
+              <input id="det-subtotal" readOnly value={subtotal} className="w-full px-3 py-2 border rounded-md bg-gray-50" />
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">

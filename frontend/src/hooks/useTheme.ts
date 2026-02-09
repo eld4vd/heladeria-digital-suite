@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -6,13 +6,27 @@ interface UseThemeOptions {
   scope?: 'global' | 'scoped';
 }
 
+// Cache en memoria para evitar lecturas repetidas a localStorage (rule 7.5)
+let cachedTheme: Theme | null = null;
+
 export function useTheme({ scope = 'global' }: UseThemeOptions = {}) {
+  // Lazy state initialization con try-catch (rule 5.10, 4.4)
   const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') return stored;
+    if (cachedTheme) return cachedTheme;
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark' || stored === 'light') {
+        cachedTheme = stored;
+        return stored;
+      }
+    } catch {
+      // localStorage no disponible (incógnito, iframe, etc.)
+    }
     // preferencia del sistema
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return prefersDark ? 'dark' : 'light';
+    const resolved = prefersDark ? 'dark' : 'light';
+    cachedTheme = resolved;
+    return resolved;
   });
 
   useEffect(() => {
@@ -21,7 +35,12 @@ export function useTheme({ scope = 'global' }: UseThemeOptions = {}) {
       if (theme === 'dark') root.classList.add('dark');
       else root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+      cachedTheme = theme;
+    } catch {
+      // Ignora errores de escritura
+    }
     // Notificar a quien escuche (p.ej., EmpleadoLayout) que el tema cambió
     try {
       const ev = new CustomEvent('app-theme-changed', { detail: { theme } });
@@ -31,7 +50,8 @@ export function useTheme({ scope = 'global' }: UseThemeOptions = {}) {
     }
   }, [scope, theme]);
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  // Callback estable con functional setState (rule 5.9)
+  const toggle = useCallback(() => setTheme((t) => (t === 'dark' ? 'light' : 'dark')), []);
 
   return { theme, toggle };
 }

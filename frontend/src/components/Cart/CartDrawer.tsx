@@ -65,7 +65,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     <>
       {/* Overlay con animación */}
       <div
-        className={`fixed inset-0 bg-black/60 backdrop-blur-md z-50 transition-all duration-400 ${
+        className={`fixed inset-0 bg-black/60 backdrop-blur-md z-50 transition-opacity duration-400 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -73,12 +73,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Modal flotante centrado - Diseño tipo Recibo de Heladería */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none transition-all duration-500 ${
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none transition-[transform,opacity] duration-500 ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >
         <div
-          className={`relative w-full max-w-2xl h-[85vh] max-h-[700px] pointer-events-auto transform transition-all duration-500 ${
+          className={`relative w-full max-w-2xl h-[85vh] max-h-[700px] pointer-events-auto transform transition-transform duration-500 ${
             isOpen ? 'translate-y-0 rotate-0' : 'translate-y-8 -rotate-1'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -102,10 +102,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="relative pt-5 pb-3 px-6 border-b-2 border-dashed border-amber-300">
               <button
                 onClick={onClose}
-                className="absolute top-3 right-4 p-1.5 hover:bg-amber-100 rounded-full transition-all duration-200 group"
+                className="absolute top-3 right-4 p-1.5 hover:bg-amber-100 rounded-full transition-colors duration-200 group"
                 aria-label="Cerrar carrito"
               >
-                <svg className="w-4 h-4 text-amber-800 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-amber-800 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -130,7 +130,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Content - Lista estilo recibo */}
             <div className="flex flex-col h-[calc(100%-75px)] relative">
               {/* Items List */}
-              <div className="flex-1 overflow-y-auto px-6 py-3 space-y-2">
+              <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-3 space-y-2">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-full">
                   <div className="relative">
@@ -139,7 +139,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <MdShoppingCart className="h-6 w-6 text-cyan-600" />
                     </div>
                   </div>
-                  <p className="mt-4 text-sm text-amber-800 font-medium">Cargando sabores...</p>
+                  <p className="mt-4 text-sm text-amber-800 font-medium">Cargando sabores…</p>
                 </div>
               ) : items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full px-8">
@@ -161,7 +161,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   {items.map((item) => (
                     <div key={item.id} className="relative group">
                       {/* Card de producto */}
-                      <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-cyan-500 group-hover:border-cyan-600">
+                      <div className="relative bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-cyan-500 group-hover:border-cyan-600">
                         <div className="flex gap-3 items-center">
                           {/* Imagen */}
                           <div className="relative flex-shrink-0">
@@ -172,6 +172,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                   `${import.meta.env.BASE_URL}placeholder-ice-cream.jpg`
                                 }
                                 alt={item.producto?.nombre || 'Producto'}
+                                width={64}
+                                height={64}
+                                loading="lazy"
                                 className="w-full h-full rounded object-cover"
                               />
                             </div>
@@ -183,7 +186,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               {item.producto?.nombre || 'Producto'}
                             </h3>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-mono text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                              <span className="text-xs font-mono tabular-nums text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
                                 Bs. {item.producto?.precio.toFixed(2)}
                               </span>
                               <span className="text-xs text-amber-600 font-medium">× {item.cantidad}</span>
@@ -196,10 +199,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               <button
                                 onClick={() => handleUpdateQuantity(item.id, item.cantidad, -1)}
                                 disabled={item.cantidad <= 1 || actualizarItem.isPending}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                                 aria-label="Disminuir cantidad"
                               >
-                                <svg className="w-3.5 h-3.5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3.5 h-3.5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" />
                                 </svg>
                               </button>
@@ -211,10 +214,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               <button
                                 onClick={() => handleUpdateQuantity(item.id, item.cantidad, 1)}
                                 disabled={actualizarItem.isPending}
-                                className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-full disabled:opacity-40 transition-all"
+                                className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-full disabled:opacity-40 transition-colors"
                                 aria-label="Aumentar cantidad"
                               >
-                                <svg className="w-3.5 h-3.5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3.5 h-3.5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
                                 </svg>
                               </button>
@@ -223,10 +226,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                             <button
                               onClick={() => handleRemoveItem(item.id)}
                               disabled={eliminarItem.isPending}
-                              className="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full transition-all"
+                              className="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full transition-colors"
                               aria-label="Eliminar producto"
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                               </svg>
                             </button>
@@ -234,7 +237,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                           {/* Precio total más destacado */}
                           <div className="text-right flex-shrink-0 min-w-[80px]">
-                            <p className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-900 to-orange-800 leading-none">
+                            <p className="text-xl font-black tabular-nums text-transparent bg-clip-text bg-gradient-to-br from-amber-900 to-orange-800 leading-none">
                               {item.subtotal.toFixed(2)}
                             </p>
                             <p className="text-[10px] text-amber-600 font-medium">Bolivianos</p>
@@ -263,7 +266,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <p className="text-xs text-amber-600 font-medium mb-0.5">{count} productos</p>
                       <div className="flex items-baseline gap-1">
                         <span className="text-sm text-amber-700 font-semibold">Bs.</span>
-                        <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-900 to-orange-800">
+                        <span className="text-3xl font-black tabular-nums text-transparent bg-clip-text bg-gradient-to-r from-amber-900 to-orange-800">
                           {total.toFixed(2)}
                         </span>
                       </div>
@@ -274,17 +277,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <button
                     onClick={() => setIsCheckoutOpen(true)}
                     disabled={actualizarItem.isPending || eliminarItem.isPending}
-                    className="group relative w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 hover:from-cyan-600 hover:via-blue-700 hover:to-cyan-600 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                    className="group relative w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 hover:from-cyan-600 hover:via-blue-700 hover:to-cyan-600 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-[background-color,box-shadow] duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
                   >
                     {/* Efecto de brillo animado */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                     
                     <div className="relative flex items-center justify-center gap-2.5">
-                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                       <span className="text-base tracking-wide">Confirmar Pedido</span>
-                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
                     </div>

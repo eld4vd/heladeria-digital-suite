@@ -134,7 +134,7 @@ const FAQ = () => {
                   setSelectedCategory(category.id);
                   setOpenIndex(null);
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all duration-200 border ${
+                className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-[background-color,color,border-color] duration-200 border ${
                   selectedCategory === category.id
                     ? 'bg-cyan-600 text-white border-cyan-600 shadow-md'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50 hover:border-cyan-300'
@@ -155,7 +155,7 @@ const FAQ = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl border border-slate-200 hover:border-cyan-300 transition-all duration-200 overflow-hidden shadow-sm"
+                className="bg-white rounded-xl border border-slate-200 hover:border-cyan-300 transition-[border-color] duration-200 overflow-hidden shadow-sm"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
@@ -166,15 +166,15 @@ const FAQ = () => {
                   </span>
                   <div className="flex-shrink-0">
                     {isOpen ? (
-                      <MdExpandLess className="w-5 h-5 text-cyan-600" />
+                      <MdExpandLess className="w-5 h-5 text-cyan-600" aria-hidden="true" />
                     ) : (
-                      <MdExpandMore className="w-5 h-5 text-slate-400" />
+                      <MdExpandMore className="w-5 h-5 text-slate-400" aria-hidden="true" />
                     )}
                   </div>
                 </button>
                 
                 <div
-                  className={`transition-all duration-300 ease-in-out ${
+                  className={`transition-[max-height,opacity] duration-300 ease-in-out ${
                     isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   } overflow-hidden`}
                 >
@@ -212,7 +212,7 @@ const FAQ = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/contacto"
-              className="inline-flex items-center justify-center px-6 py-3 bg-cyan-600 text-white font-semibold text-sm rounded-lg hover:bg-cyan-700 transition-all duration-200 shadow-sm"
+              className="inline-flex items-center justify-center px-6 py-3 bg-cyan-600 text-white font-semibold text-sm rounded-lg hover:bg-cyan-700 transition-colors duration-200 shadow-sm"
             >
               Contáctanos
             </a>
@@ -220,7 +220,7 @@ const FAQ = () => {
               href="https://wa.me/59112345678"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-semibold text-sm rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
+              className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-semibold text-sm rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-sm"
             >
               WhatsApp
             </a>

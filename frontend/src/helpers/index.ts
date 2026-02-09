@@ -2,7 +2,12 @@
 import type { Empleado } from '../models/Empleado';
 import type { AuthUser } from '../models/auth.model';
 
+// Cache de cookie CSRF para evitar parsear document.cookie en cada llamada (rule 7.5)
+let csrfCookieCache: string | null | undefined;
+
 export function getCSRFTokenFromCookie(): string | null {
+  if (csrfCookieCache !== undefined) return csrfCookieCache;
+
   const cookieName = import.meta.env.VITE_CSRF_COOKIE_NAME ?? 'csrf_token';
   const name = `${cookieName}=`;
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -11,10 +16,17 @@ export function getCSRFTokenFromCookie(): string | null {
   for (const cookie of cookieArray) {
     const trimmed = cookie.trim();
     if (trimmed.indexOf(name) === 0) {
-      return trimmed.substring(name.length, trimmed.length);
+      csrfCookieCache = trimmed.substring(name.length, trimmed.length);
+      return csrfCookieCache;
     }
   }
+  csrfCookieCache = null;
   return null;
+}
+
+// Invalidar cache cuando cambie el documento (ej. tras login/logout)
+export function invalidateCsrfCache(): void {
+  csrfCookieCache = undefined;
 }
 
 export const getCsrfTokenFromCookie = getCSRFTokenFromCookie;
@@ -25,6 +37,10 @@ export const mapEmpleadoToAuthUser = (empleado: Empleado): AuthUser => ({
   email: empleado.email,
 });
 
+// RegExp hoisted a nivel de módulo para evitar recreación (rule 7.9)
+const HTTP_URL_RE = /^https?:\/\//i;
+const FILE_EXT_RE = /\.[a-z0-9]{2,4}$/i;
+
 export function resolvePublicImage(
   raw?: string | null,
   options?: { folder?: string; defaultExt?: string }
@@ -32,10 +48,10 @@ export function resolvePublicImage(
   const folder = options?.folder ?? 'images/productos';
   const defaultExt = options?.defaultExt ?? 'jpg';
   if (!raw) return '';
-  if (/^https?:\/\//i.test(raw)) return raw; // URL absoluta
+  if (HTTP_URL_RE.test(raw)) return raw; // URL absoluta
   if (raw.startsWith('/')) return raw; // ruta absoluta ya resuelta
 
-  const hasExt = /\.[a-z0-9]{2,4}$/i.test(raw);
+  const hasExt = FILE_EXT_RE.test(raw);
   if (raw.startsWith('images/')) {
     return `/${raw}${hasExt ? '' : `.${defaultExt}`}`;
   }

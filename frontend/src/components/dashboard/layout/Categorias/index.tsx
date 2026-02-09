@@ -55,7 +55,7 @@ const Categorias = () => {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-sm text-slate-500">Cargando categorías...</div>;
+  if (isLoading) return <div className="p-8 text-sm text-slate-500">Cargando categorías…</div>;
   if (error)
     return (
       <div className="p-6 rounded-[22px] border border-red-200 bg-red-50 text-sm text-red-700 shadow-sm">
@@ -74,7 +74,7 @@ const Categorias = () => {
         </div>
         <button
           onClick={() => setModalAbierto(true)}
-          className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
         >
           + Agregar Categoría
         </button>
@@ -105,8 +105,8 @@ const Categorias = () => {
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {categorias?.map((categoria, idx) => (
-                <tr key={categoria.id} className="transition-all duration-200 hover:bg-slate-50/80">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-700">
+                <tr key={categoria.id} className="transition-colors duration-200 hover:bg-slate-50/80">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-700 tabular-nums">
                     {idx + 1}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
@@ -130,13 +130,13 @@ const Categorias = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleOpenEditModal(categoria)}
-                        className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       >
                         Editar
                       </button>
                       <button
                         onClick={() => handleOpenConfirmModal(categoria.id)}
-                        className="rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-bold text-rose-700 shadow-sm transition-all duration-200 hover:bg-rose-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                        className="rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-bold text-rose-700 shadow-sm transition-colors duration-200 hover:bg-rose-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
                       >
                         Eliminar
                       </button>
@@ -157,7 +157,7 @@ const Categorias = () => {
             <p className="mt-2 text-sm text-slate-500">Comienza agregando tu primera categoría para organizar los productos.</p>
             <button
               onClick={() => setModalAbierto(true)}
-              className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200/50 transition-colors duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
             >
               + Agregar primera categoría
             </button>
@@ -170,7 +170,7 @@ const Categorias = () => {
 
       {/* Modal de confirmación de eliminación */}
       {modalConfirmacionAbierto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4 overscroll-contain">
           <div className="w-full max-w-md rounded-[22px] border border-slate-200 bg-white p-7 shadow-2xl">
             <h3 className="text-xl font-bold text-slate-900">
               Confirmar Eliminación
@@ -181,16 +181,16 @@ const Categorias = () => {
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setModalConfirmacionAbierto(false)}
-                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-colors duration-200 hover:bg-slate-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-all duration-200 hover:shadow-xl disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                className="rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-200/50 transition-colors duration-200 hover:shadow-xl disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
                 disabled={deleteMutation.isPending}
               >
-                {deleteMutation.isPending ? "Eliminando..." : "Eliminar"}
+                {deleteMutation.isPending ? "Eliminando…" : "Eliminar"}
               </button>
             </div>
           </div>

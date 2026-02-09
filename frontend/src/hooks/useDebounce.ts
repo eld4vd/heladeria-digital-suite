@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 /**
  * Hook para debounce de valores
@@ -21,24 +21,31 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
 }
 
 /**
- * Hook para throttle de funciones
- * Útil para eventos de scroll, resize, etc.
+ * Hook para throttle de funciones — usa useRef para valores transitorios (rule 5.12)
+ * y useCallback para referencia de callback estable (rule 5.9)
  */
 export function useThrottle<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 500
 ): T {
-  const [ready, setReady] = useState(true);
+  const readyRef = useRef(true);
+  const callbackRef = useRef(callback);
 
-  const throttledCallback = ((...args: Parameters<T>) => {
-    if (ready) {
-      callback(...args);
-      setReady(false);
-      setTimeout(() => {
-        setReady(true);
-      }, delay);
-    }
-  }) as T;
+  // Mantener referencia actualizada sin provocar re-renders (rule 5.12)
+  callbackRef.current = callback;
+
+  const throttledCallback = useCallback(
+    ((...args: Parameters<T>) => {
+      if (readyRef.current) {
+        callbackRef.current(...args);
+        readyRef.current = false;
+        setTimeout(() => {
+          readyRef.current = true;
+        }, delay);
+      }
+    }) as T,
+    [delay]
+  );
 
   return throttledCallback;
 }

@@ -118,33 +118,38 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="p-6 overflow-y-auto flex-1 overscroll-contain">
           <form id="form-producto" onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <label htmlFor="add-prod-nombre" className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
             <input
+              id="add-prod-nombre"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
-              placeholder="Ej. Helado de Chocolate"
+              placeholder="Ej. Helado de Chocolate…"
+              autoComplete="off"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Sabor *</label>
+            <label htmlFor="add-prod-sabor" className="block text-sm font-medium text-gray-700 mb-1">Sabor *</label>
             <input
+              id="add-prod-sabor"
               value={sabor}
               onChange={(e) => setSabor(e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
-              placeholder="Ej. Chocolate"
+              placeholder="Ej. Chocolate…"
+              autoComplete="off"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
+            <label htmlFor="add-prod-precio" className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
             <input
+              id="add-prod-precio"
               type="number"
               step="0.01"
               min="0"
@@ -157,8 +162,9 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+            <label htmlFor="add-prod-stock" className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
             <input
+              id="add-prod-stock"
               type="number"
               min={0}
               value={stock}
@@ -170,15 +176,16 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
+            <label htmlFor="add-prod-cat" className="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
             <select
+              id="add-prod-cat"
               value={categoriaId}
               onChange={(e) => setCategoriaId(e.target.value ? Number(e.target.value) : '')}
               className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 bg-white"
               required
             >
               <option value="" disabled>
-                {catLoading ? 'Cargando...' : 'Selecciona una categoría'}
+                {catLoading ? 'Cargando…' : 'Selecciona una categoría'}
               </option>
               {catError && <option value="" disabled>Error al cargar</option>}
               {categoriasActivas.map((c) => (
@@ -203,8 +210,9 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <label htmlFor="add-prod-desc" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
             <textarea
+              id="add-prod-desc"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
               rows={3}
@@ -215,9 +223,11 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
 
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
+              <label htmlFor="add-prod-img" className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
               <div className="flex gap-2">
                 <input
+                  id="add-prod-img"
+                  type="url"
                   value={imagenUrlInput}
                   onChange={(e) => setImagenUrlInput(e.target.value)}
                   className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
@@ -245,6 +255,9 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
                 <img
                   src={imagenPreviewUrl}
                   alt="previsualización"
+                  width={200}
+                  height={200}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                   onError={() => setPreviewError('No se pudo cargar la imagen. Verifica que el enlace sea directo a un archivo .jpg/.png/.webp.')} 
                 />
@@ -270,7 +283,7 @@ const AgregarProducto = ({ abierto, onCerrar }: Props) => {
             disabled={createMutation.isPending}
             className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-60"
           >
-            {createMutation.isPending ? 'Guardando...' : 'Guardar'}
+            {createMutation.isPending ? 'Guardando…' : 'Guardar'}
           </button>
         </div>
       </div>

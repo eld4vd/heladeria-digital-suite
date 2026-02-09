@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { MdPhone, MdEmail, MdLocationOn, MdAccessTime } from "react-icons/md";
 
 const baseCard =
-  "group relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-lg hover:shadow-xl hover:border-gray-300 transition-all duration-300 hover:-translate-y-1 p-6 flex flex-col gap-4";
+  "group relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-lg hover:shadow-xl hover:border-gray-300 transition-[box-shadow,border-color,transform] duration-300 hover:-translate-y-1 p-6 flex flex-col gap-4";
 
 type InfoCardProps = {
   icon: ReactNode;
@@ -15,7 +15,7 @@ type InfoCardProps = {
 
 const cards: InfoCardProps[] = [
   {
-    icon: <MdPhone className="w-5 h-5" />,
+    icon: <MdPhone className="w-5 h-5" aria-hidden="true" />,
     title: "Teléfonos",
     lines: ["(+591) 777-12345", "(+591) 764-98765"],
     accent: "bg-indigo-600",
@@ -23,7 +23,7 @@ const cards: InfoCardProps[] = [
     textAccent: "text-indigo-700",
   },
   {
-    icon: <MdEmail className="w-5 h-5" />,
+    icon: <MdEmail className="w-5 h-5" aria-hidden="true" />,
     title: "Correo",
     lines: ["hola@heladeria-simple.com", "ventas@heladeria-simple.com"],
     accent: "bg-cyan-600",
@@ -31,7 +31,7 @@ const cards: InfoCardProps[] = [
     textAccent: "text-cyan-700",
   },
   {
-    icon: <MdLocationOn className="w-5 h-5" />,
+    icon: <MdLocationOn className="w-5 h-5" aria-hidden="true" />,
     title: "Dirección",
     lines: ["Plaza 25 de Mayo #123", "Zona Centro, Sucre"],
     accent: "bg-sky-600",
@@ -39,7 +39,7 @@ const cards: InfoCardProps[] = [
     textAccent: "text-sky-700",
   },
   {
-    icon: <MdAccessTime className="w-5 h-5" />,
+    icon: <MdAccessTime className="w-5 h-5" aria-hidden="true" />,
     title: "Horarios",
     lines: ["Lun - Sab: 10:00 - 21:30", "Dom: 11:00 - 20:00"],
     accent: "bg-emerald-600",

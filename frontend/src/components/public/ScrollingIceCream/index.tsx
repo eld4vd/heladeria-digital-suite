@@ -160,6 +160,8 @@ const ScrollingIceCream = () => {
                   <img
                     src={section.iceCream}
                     alt={section.title}
+                    width={384}
+                    height={384}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />

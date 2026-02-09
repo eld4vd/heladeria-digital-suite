@@ -25,6 +25,9 @@ const queryClient = new QueryClient({
 
 type ReactQueryDevtoolsComponent = ComponentType<{ initialIsOpen?: boolean; buttonPosition?: string }>;
 
+// Hoist static fallback JSX fuera del componente para evitar recreación (rule 6.3)
+const suspenseFallback = <div className="p-6">Cargando…</div>;
+
 const App = () => {
   const [Devtools, setDevtools] = useState<ReactQueryDevtoolsComponent | null>(null);
   useEffect(() => {
@@ -37,6 +40,7 @@ const App = () => {
     }
   }, []);
 
+  // Derived state durante render, sin estado adicional (rule 5.1)
   const nodeProcess = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process;
   const isDevEnvironment = (nodeProcess?.env?.NODE_ENV === 'development') || import.meta.env.DEV;
   return (
@@ -44,10 +48,11 @@ const App = () => {
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
           <CartProvider>
-            <Suspense fallback={<div className="p-6">Cargando…</div>}>
+            <Suspense fallback={suspenseFallback}>
               <MyRoutes />
             </Suspense>
             <Toaster position="top-right" gutter={8} toastOptions={{ duration: 4000 }} />
+            {/* Ternario explícito (rule 6.8) */}
             {isDevEnvironment && Devtools ? (
               <Devtools initialIsOpen={false} buttonPosition="bottom-left" />
             ) : null}

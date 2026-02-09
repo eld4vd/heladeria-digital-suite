@@ -44,7 +44,7 @@ const Detalle = () => {
       {error && !isLoading && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center space-y-4">
           <p className="text-red-600 font-semibold">No se pudo cargar el producto.</p>
-          <button onClick={() => refetch()} className="px-4 py-2 text-sm bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition-all">Reintentar</button>
+          <button onClick={() => refetch()} className="px-4 py-2 text-sm bg-cyan-600 text-white rounded-lg shadow hover:bg-cyan-700 transition-colors">Reintentar</button>
         </div>
       )}
 
@@ -118,7 +118,7 @@ interface ActionButtonProps {
 }
 
 const ActionButton = ({ onClick, children, variant = 'primary' }: ActionButtonProps) => {
-  const baseClasses = 'px-5 py-2.5 text-sm font-semibold rounded-lg border transition-all hover:shadow-md';
+  const baseClasses = 'px-5 py-2.5 text-sm font-semibold rounded-lg border transition-[background-color,box-shadow] duration-200 hover:shadow-md';
   const variantClasses =
     variant === 'ghost'
       ? 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'

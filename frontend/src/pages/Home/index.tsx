@@ -52,7 +52,7 @@ const Home = () => {
       {/* CTA Primario - Cyan sólido moderno */}
       <button
         onClick={() => navigate('/menu')}
-        className="w-full sm:flex-1 px-8 py-4 rounded-lg font-bold text-lg bg-cyan-600 text-white shadow-xl hover:bg-cyan-700 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full sm:flex-1 px-8 py-4 rounded-lg font-bold text-lg bg-cyan-600 text-white shadow-xl hover:bg-cyan-700 hover:shadow-2xl transition-[background-color,box-shadow,transform] duration-300 hover:scale-[1.02] active:scale-[0.98]"
       >
         Explorar Sabores
       </button>
@@ -60,7 +60,7 @@ const Home = () => {
       {/* CTA Secundario - Blanco limpio */}
       <button
         onClick={() => navigate('/promos')}
-        className="w-full sm:flex-1 px-8 py-4 rounded-lg font-bold text-lg bg-white text-slate-900 shadow-xl hover:bg-slate-50 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 border-white/80"
+        className="w-full sm:flex-1 px-8 py-4 rounded-lg font-bold text-lg bg-white text-slate-900 shadow-xl hover:bg-slate-50 hover:shadow-2xl transition-[background-color,box-shadow,transform] duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 border-white/80"
       >
         Ver Promociones
       </button>
@@ -82,7 +82,7 @@ const Home = () => {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-slate-800 text-center">
               <div className="w-16 h-16 border-4 border-slate-800/20 border-t-slate-800 rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-xl font-bold" style={{ fontSize: '18px' }}>Preparando tu experiencia...</p>
+              <p className="text-xl font-bold" style={{ fontSize: '18px' }}>Preparando tu experiencia…</p>
             </div>
           </div>
         </div>

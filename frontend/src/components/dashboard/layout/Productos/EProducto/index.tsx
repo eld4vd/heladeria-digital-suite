@@ -106,33 +106,38 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 					</button>
 				</div>
 
-				<div className="p-6 overflow-y-auto flex-1">
+				<div className="p-6 overflow-y-auto flex-1 overscroll-contain">
 					<form id="form-producto-editar" onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="md:col-span-2">
-							<label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+							<label htmlFor="edit-prod-nombre" className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
 							<input
+								id="edit-prod-nombre"
 								value={nombre}
 								onChange={(e) => setNombre(e.target.value)}
 								className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
-								placeholder="Ej. Helado de Chocolate"
+								placeholder="Ej. Helado de Chocolate…"
+								autoComplete="off"
 								required
 							/>
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">Sabor *</label>
+							<label htmlFor="edit-prod-sabor" className="block text-sm font-medium text-gray-700 mb-1">Sabor *</label>
 							<input
+								id="edit-prod-sabor"
 								value={sabor}
 								onChange={(e) => setSabor(e.target.value)}
 								className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
-								placeholder="Ej. Chocolate"
+								placeholder="Ej. Chocolate…"
+								autoComplete="off"
 								required
 							/>
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
+							<label htmlFor="edit-prod-precio" className="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
 							<input
+								id="edit-prod-precio"
 								type="number"
 								step="0.01"
 								min="0"
@@ -145,8 +150,9 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+							<label htmlFor="edit-prod-stock" className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
 							<input
+								id="edit-prod-stock"
 								type="number"
 								min={0}
 								value={stock}
@@ -158,15 +164,16 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
+							<label htmlFor="edit-prod-cat" className="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
 							<select
+								id="edit-prod-cat"
 								value={categoriaId}
 								onChange={(e) => setCategoriaId(e.target.value ? Number(e.target.value) : '')}
 								className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 bg-white"
 								required
 							>
 								<option value="" disabled>
-									{catLoading ? 'Cargando...' : 'Selecciona una categoría'}
+									{catLoading ? 'Cargando…' : 'Selecciona una categoría'}
 								</option>
 								{catError && <option value="" disabled>Error al cargar</option>}
 								{categoriasActivas.map((c) => (
@@ -191,8 +198,9 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 						</div>
 
 						<div className="md:col-span-2">
-							<label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+							<label htmlFor="edit-prod-desc" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
 							<textarea
+								id="edit-prod-desc"
 								value={descripcion}
 								onChange={(e) => setDescripcion(e.target.value)}
 								rows={3}
@@ -203,9 +211,11 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 
 									<div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
 										<div className="md:col-span-2">
-											<label className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
+											<label htmlFor="edit-prod-img" className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
 											<div className="flex gap-2">
 												<input
+													id="edit-prod-img"
+													type="url"
 													value={imagenUrlInput}
 													onChange={(e) => setImagenUrlInput(e.target.value)}
 													className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200"
@@ -233,6 +243,9 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 												<img
 													src={imagenPreviewUrl}
 													alt="previsualización"
+													width={200}
+													height={200}
+													loading="lazy"
 													className="w-full h-full object-cover"
 													onError={() => setPreviewError('No se pudo cargar la imagen. Verifica que el enlace sea directo a un archivo .jpg/.png/.webp.')}
 												/>
@@ -254,7 +267,7 @@ const EditarProducto = ({ abierto, onCerrar, producto }: Props) => {
 						disabled={updateMutation.isPending}
 						className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-60"
 					>
-						{updateMutation.isPending ? 'Guardando...' : 'Guardar cambios'}
+						{updateMutation.isPending ? 'Guardando…' : 'Guardar cambios'}
 					</button>
 				</div>
 			</div>

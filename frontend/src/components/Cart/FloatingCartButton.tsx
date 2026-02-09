@@ -17,6 +17,7 @@ export default function FloatingCartButton() {
     // No hacer nada cuando cambia itemCount - el drawer solo se abre manualmente
   }, [itemCount]);
 
+  // Ternario explícito para evitar renderizar "0" (rule 6.8)
   if (itemCount === 0) return null;
 
   return (
@@ -27,8 +28,8 @@ export default function FloatingCartButton() {
         aria-label="Ver carrito"
       >
         <div className="relative">
-          {/* Badge de contador estilo premium */}
-          {itemCount > 0 && (
+          {/* Badge de contador estilo premium — ternario explícito (rule 6.8) */}
+          {itemCount > 0 ? (
             <div className="absolute -top-2 -right-2 z-10">
               <div className="relative">
                 {/* Pulso de fondo */}
@@ -39,7 +40,7 @@ export default function FloatingCartButton() {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Botón principal con diseño único */}
           <div className="relative overflow-hidden">
@@ -51,15 +52,15 @@ export default function FloatingCartButton() {
             
             {/* Contenido del botón */}
             <div className="relative p-4 group-hover:scale-110 transition-transform duration-300">
-              <MdShoppingCart className="h-7 w-7 text-white drop-shadow-lg" />
+              <MdShoppingCart className="h-7 w-7 text-white drop-shadow-lg" aria-hidden="true" />
             </div>
 
             {/* Sombra y borde */}
-            <div className="absolute inset-0 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-300 border border-white/20" />
+            <div className="absolute inset-0 rounded-2xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-white/20" />
           </div>
 
           {/* Texto flotante al hover */}
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-xl whitespace-nowrap font-semibold text-sm">
               Ver mi pedido
               <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-slate-900" />

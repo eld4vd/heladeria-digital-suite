@@ -21,13 +21,14 @@ const MiniCart = () => {
         title="Carrito"
       >
         ���
-        {itemCount > 0 && (
+        {/* Ternario explícito para evitar renderizar "0" cuando itemCount es 0 (rule 6.8) */}
+        {itemCount > 0 ? (
           <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white px-1.5 rounded-full">{itemCount}</span>
-        )}
+        ) : null}
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center p-4" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center p-4 overscroll-contain" onClick={() => setOpen(false)}>
           <div
             className="w-full max-w-2xl bg-white text-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6"
             role="dialog"
@@ -40,7 +41,7 @@ const MiniCart = () => {
             </div>
 
             {isLoading ? (
-              <div className="text-sm text-gray-600 text-center py-4">Cargando...</div>
+              <div className="text-sm text-gray-600 text-center py-4">Cargando…</div>
             ) : items.length > 0 ? (
               <ul className="divide-y divide-gray-200 max-h-[55vh] overflow-auto">
                 {items.map((item) => {
@@ -52,6 +53,9 @@ const MiniCart = () => {
                           <img 
                             src={item.producto.imagenUrl} 
                             alt={item.producto.nombre} 
+                            width={56}
+                            height={56}
+                            loading="lazy"
                             className="w-full h-full object-cover" 
                             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} 
                           />

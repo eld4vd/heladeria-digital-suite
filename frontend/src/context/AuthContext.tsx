@@ -1,9 +1,9 @@
 // src/context/AuthContext.tsx
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/auth.service";
-import { getCSRFTokenFromCookie, mapEmpleadoToAuthUser } from "../helpers";
+import { getCSRFTokenFromCookie, mapEmpleadoToAuthUser, invalidateCsrfCache } from "../helpers";
 import type { AuthUser } from "../models/auth.model";
 import type { Empleado } from "../models/Empleado";
 import type { AuthContextType } from "./AuthContext.types";
@@ -88,7 +88,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true);
       setError("");
       
-      // Asegurar CSRF antes del login
+      // Asegurar CSRF antes del login — invalidar cache primero (rule 7.5)
+      invalidateCsrfCache();
       const csrf = getCSRFTokenFromCookie();
       if (!csrf) {
         try {
@@ -140,6 +141,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsAuthenticated(false);
       setError("");
       setReturnUrl("");
+      // Invalidar cache de CSRF tras logout (rule 7.5)
+      invalidateCsrfCache();
       // Evitar re-autenticación automática si la refresh cookie quedó viva
       sessionStorage.setItem('skipAutoSignIn', '1');
       navigate("/login");

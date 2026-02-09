@@ -86,12 +86,12 @@ const FloatingClock = () => {
     setIsDragging(false);
   }, []);
 
-  // Agregar oyentes de eventos globales para el arrastre
+  // Agregar oyentes de eventos globales para el arrastre — passive para touchmove (rule 4.2)
   useEffect(() => {
     if (isDragging) {
       document.addEventListener("mousemove", handleDragMove);
       document.addEventListener("mouseup", handleDragEnd);
-      document.addEventListener("touchmove", handleDragMove);
+      document.addEventListener("touchmove", handleDragMove, { passive: true });
       document.addEventListener("touchend", handleDragEnd);
     }
     return () => {
@@ -126,6 +126,9 @@ const FloatingClock = () => {
   onMouseDown={handleDragStart}
   onTouchStart={handleDragStart}
       onDoubleClick={() => setPosition(initialPosition)}
+      role="button"
+      tabIndex={0}
+      aria-label="Reloj flotante, arrastra para mover, doble click para resetear"
     >
       <div
         className={`bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-2xl p-2 ${
@@ -135,7 +138,7 @@ const FloatingClock = () => {
         }`}
       >
         <div className="text-center select-none">
-          <div className="text-2xl font-mono font-bold text-gray-800">
+          <div className="text-2xl font-mono font-bold text-gray-800 tabular-nums">
             {formatTime(currentTime)}
           </div>
           <div className="text-xs text-gray-500 mt-1">
@@ -152,6 +155,7 @@ const FloatingClock = () => {
               viewBox="0 0 12 8"
               fill="currentColor"
               className="text-gray-400"
+              aria-hidden="true"
             >
               <circle cx="2" cy="2" r="1" />
               <circle cx="6" cy="2" r="1" />

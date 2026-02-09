@@ -67,7 +67,7 @@ const Footer = () => {
                   {rotatingWords.map((word, index) => (
                     <span
                       key={word}
-                      className={`absolute left-0 top-0 text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent transition-all duration-500 ${
+                      className={`absolute left-0 top-0 text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent transition-[opacity,transform] duration-500 ${
                         index === currentWordIndex
                           ? "opacity-100 translate-y-0"
                           : index === (currentWordIndex - 1 + rotatingWords.length) % rotatingWords.length
@@ -93,9 +93,9 @@ const Footer = () => {
               <li>
                 <NavLink
                   to="/menu"
-                  className="group inline-flex items-center gap-3 text-slate-300 transition-all hover:text-cyan-400 hover:translate-x-1"
+                  className="group inline-flex items-center gap-3 text-slate-300 transition-[color,transform] hover:text-cyan-400 hover:translate-x-1"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   </span>
                   Menú
@@ -104,9 +104,9 @@ const Footer = () => {
               <li>
                 <NavLink
                   to="/"
-                  className="group inline-flex items-center gap-3 text-slate-300 transition-all hover:text-cyan-400 hover:translate-x-1"
+                  className="group inline-flex items-center gap-3 text-slate-300 transition-[color,transform] hover:text-cyan-400 hover:translate-x-1"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   </span>
                   Sobre Nosotros
@@ -115,9 +115,9 @@ const Footer = () => {
               <li>
                 <NavLink
                   to="/contacto"
-                  className="group inline-flex items-center gap-3 text-slate-300 transition-all hover:text-cyan-400 hover:translate-x-1"
+                  className="group inline-flex items-center gap-3 text-slate-300 transition-[color,transform] hover:text-cyan-400 hover:translate-x-1"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   </span>
                   Contacto
@@ -126,9 +126,9 @@ const Footer = () => {
               <li>
                 <NavLink
                   to="/promos"
-                  className="group inline-flex items-center gap-3 text-slate-300 transition-all hover:text-cyan-400 hover:translate-x-1"
+                  className="group inline-flex items-center gap-3 text-slate-300 transition-[color,transform] hover:text-cyan-400 hover:translate-x-1"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   </span>
                   Promociones
@@ -144,21 +144,21 @@ const Footer = () => {
               Contáctanos
             </h3>
             <div className="space-y-4 text-base text-slate-300">
-              <a href="#" className="group flex items-start gap-4 transition-all hover:translate-x-1">
-                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
-                  <FaMapMarkerAlt className="h-5 w-5 text-cyan-400" />
+              <a href="#" className="group flex items-start gap-4 transition-[color,transform] hover:translate-x-1">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <FaMapMarkerAlt className="h-5 w-5 text-cyan-400" aria-hidden="true" />
                 </div>
                 <span className="group-hover:text-cyan-300 transition-colors">Av. Dulce Sabor 123, Ciudad</span>
               </a>
-              <a href="tel:+1234567890" className="group flex items-center gap-4 transition-all hover:translate-x-1">
-                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
-                  <FaPhoneAlt className="h-5 w-5 text-cyan-400" />
+              <a href="tel:+1234567890" className="group flex items-center gap-4 transition-[color,transform] hover:translate-x-1">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <FaPhoneAlt className="h-5 w-5 text-cyan-400" aria-hidden="true" />
                 </div>
                 <span className="group-hover:text-cyan-300 transition-colors">+123 456 7890</span>
               </a>
-              <a href="mailto:info@heladeriadelicias.com" className="group flex items-center gap-4 transition-all hover:translate-x-1">
-                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all group-hover:bg-slate-700 group-hover:border-cyan-500">
-                  <FaEnvelope className="h-5 w-5 text-cyan-400" />
+              <a href="mailto:info@heladeriadelicias.com" className="group flex items-center gap-4 transition-[color,transform] hover:translate-x-1">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-colors group-hover:bg-slate-700 group-hover:border-cyan-500">
+                  <FaEnvelope className="h-5 w-5 text-cyan-400" aria-hidden="true" />
                 </div>
                 <span className="group-hover:text-cyan-300 transition-colors">info@heladeriadelicias.com</span>
               </a>
@@ -172,55 +172,55 @@ const Footer = () => {
                   href="https://facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-blue-600 hover:border-blue-600 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-blue-600 hover:border-blue-600 hover:scale-110"
                   aria-label="Facebook"
                 >
-                  <FaFacebookF className="w-5 h-5 text-slate-300" />
+                  <FaFacebookF className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
                 <a
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-pink-600 hover:border-pink-600 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-pink-600 hover:border-pink-600 hover:scale-110"
                   aria-label="Instagram"
                 >
-                  <FaInstagram className="w-5 h-5 text-slate-300" />
+                  <FaInstagram className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
                 <a
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-sky-500 hover:border-sky-500 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-sky-500 hover:border-sky-500 hover:scale-110"
                   aria-label="Twitter"
                 >
-                  <FaTwitter className="w-5 h-5 text-slate-300" />
+                  <FaTwitter className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
                 <a
                   href="https://tiktok.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-slate-950 hover:border-slate-950 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-slate-950 hover:border-slate-950 hover:scale-110"
                   aria-label="TikTok"
                 >
-                  <FaTiktok className="w-5 h-5 text-slate-300" />
+                  <FaTiktok className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
                 <a
                   href="https://youtube.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-red-600 hover:border-red-600 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-red-600 hover:border-red-600 hover:scale-110"
                   aria-label="YouTube"
                 >
-                  <FaYoutube className="w-5 h-5 text-slate-300" />
+                  <FaYoutube className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
                 <a
                   href="https://wa.me/1234567890"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-all hover:bg-green-600 hover:border-green-600 hover:scale-110"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 border border-slate-700 transition-[background-color,border-color,transform] hover:bg-green-600 hover:border-green-600 hover:scale-110"
                   aria-label="WhatsApp"
                 >
-                  <FaWhatsapp className="w-5 h-5 text-slate-300" />
+                  <FaWhatsapp className="w-5 h-5 text-slate-300" aria-hidden="true" />
                 </a>
               </div>
             </div>

@@ -80,16 +80,16 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
 
   return (
     <div
-      className="relative group cursor-pointer transition-all duration-300 hover:-translate-y-1"
+      className="relative group cursor-pointer transition-[transform] duration-300 hover:-translate-y-1"
       style={{ animationDelay: `${index * 100}ms` }}
       onMouseEnter={() => !prefersReducedMotion && setIsHovered(true)}
       onMouseLeave={() => !prefersReducedMotion && setIsHovered(false)}
     >
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200 hover:shadow-md hover:border-cyan-300 transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200 hover:shadow-md hover:border-cyan-300 transition-[box-shadow,border-color] duration-300">
         {promotion.isHot && (
           <div className="absolute top-3 right-3 z-10">
             <div className="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm">
-              <MdFlashOn className="w-3.5 h-3.5" />
+              <MdFlashOn className="w-3.5 h-3.5" aria-hidden="true" />
               DESTACADO
             </div>
           </div>
@@ -99,6 +99,9 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
           <img
             src={promotion.image}
             alt={promotion.title}
+            width={400}
+            height={300}
+            loading="lazy"
             className={`w-full h-full object-cover transition-transform duration-700 ${
               isHovered ? 'scale-110' : 'scale-100'
             }`}
@@ -111,7 +114,7 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
 
           <div className="absolute top-3 left-3">
             <div className={`${style.iconBg} text-white p-2.5 rounded-xl shadow-md`}>
-              <Icon className="w-5 h-5" />
+              <Icon className="w-5 h-5" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -130,13 +133,13 @@ function PromotionCard({ promotion, index, prefersReducedMotion }: PromotionCard
 
           <div className="flex justify-between items-center gap-3">
             <div className="flex items-center text-xs text-slate-500">
-              <MdAccessTime className="w-4 h-4 mr-1 shrink-0" />
+              <MdAccessTime className="w-4 h-4 mr-1 shrink-0" aria-hidden="true" />
               <span className="line-clamp-1">{promotion.validUntil}</span>
             </div>
 
             <Link
               to={`/contacto?promo=${promotion.id}`}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold text-white transition-[background-color,box-shadow] duration-200 ${
                 style.buttonBg
               } ${style.buttonHover} shadow-sm hover:shadow-md shrink-0`}
               aria-label={`Solicitar información sobre ${promotion.title}`}
@@ -278,7 +281,7 @@ function Promociones() {
               <button
                 key={filter.id}
                 onClick={() => setSelectedFilter(filter.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 border ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-[background-color,color,border-color] duration-200 border ${
                   isActive
                     ? 'bg-cyan-600 text-white border-cyan-600 shadow-md'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50 hover:border-cyan-300'
@@ -314,7 +317,7 @@ function Promociones() {
               href="https://www.instagram.com/heladeriasimple"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:from-purple-700 hover:to-pink-700 transition-colors duration-200 shadow-sm"
             >
               📱 Instagram
             </a>
@@ -322,7 +325,7 @@ function Promociones() {
               href="https://www.pedidosya.com.bo"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-rose-700 transition-all duration-200 shadow-sm"
+              className="inline-flex items-center gap-2 bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-rose-700 transition-colors duration-200 shadow-sm"
             >
               🍽️ PedidosYa
             </a>

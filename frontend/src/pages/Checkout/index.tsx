@@ -52,7 +52,7 @@ const Checkout = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8 text-gray-600">Cargando carrito...</div>
+        <div className="text-center py-8 text-gray-600">Cargando carrito…</div>
       ) : items.length > 0 ? (
         <>
           <ul className="divide-y divide-gray-200">
@@ -65,6 +65,9 @@ const Checkout = () => {
                       <img 
                         src={item.producto.imagenUrl} 
                         alt={item.producto.nombre} 
+                        width={56}
+                        height={56}
+                        loading="lazy"
                         className="w-full h-full object-cover" 
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} 
                       />
@@ -72,9 +75,9 @@ const Checkout = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate">{item.producto?.nombre || `Producto #${item.productoId}`}</div>
-                    <div className="text-sm text-gray-600">{item.cantidad} x {precioUnitario.toFixed(2)} Bs</div>
+                    <div className="text-sm text-gray-600 tabular-nums">{item.cantidad} x {precioUnitario.toFixed(2)} Bs</div>
                   </div>
-                  <div className="font-semibold">{item.subtotal.toFixed(2)} Bs</div>
+                  <div className="font-semibold tabular-nums">{item.subtotal.toFixed(2)} Bs</div>
                 </li>
               );
             })}
@@ -82,7 +85,7 @@ const Checkout = () => {
 
           <div className="mt-4 flex items-center justify-between text-lg border-t pt-4">
             <span className="font-semibold">Total</span>
-            <span className="font-bold text-emerald-600">{total.toFixed(2)} Bs</span>
+            <span className="font-bold text-emerald-600 tabular-nums">{total.toFixed(2)} Bs</span>
           </div>
 
           <div className="mt-6 space-y-4">
@@ -117,7 +120,7 @@ const Checkout = () => {
               disabled={checkout.isPending}
               className="w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {checkout.isPending ? 'Procesando...' : 'Confirmar Pedido'}
+              {checkout.isPending ? 'Procesando…' : 'Confirmar Pedido'}
             </button>
           </div>
         </>
@@ -135,10 +138,10 @@ const Checkout = () => {
 
       {mostrarOverlay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl px-8 py-10 shadow-2xl text-center animate-fade-in">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl px-8 py-10 shadow-2xl text-center animate-fade-in overscroll-contain">
             <div className="text-3xl mb-4">🍨</div>
             <h2 className="text-xl font-semibold mb-2">¡Pedido confirmado!</h2>
-            <p className="text-sm text-gray-600 mb-4">Te redirigimos al menú...</p>
+            <p className="text-sm text-gray-600 mb-4">Te redirigimos al menú…</p>
             <div className="w-40 h-1 bg-gray-200 rounded overflow-hidden mx-auto">
               <div className="h-full bg-emerald-500 animate-overlay-bar" />
             </div>
