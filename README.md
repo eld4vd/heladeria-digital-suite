@@ -1,34 +1,69 @@
+<p align="center">
+  <img src="./web/public/brand/logo-completo.webp" alt="Logo de Heladería Sucre" width="240" />
+</p>
+
 # Heladería Sucre · Digital Suite
 
-Una tienda de helados para delivery, acompañada de un panel de administración y una API propia. El proyecto conecta la experiencia del cliente con la gestión del catálogo, el inventario y los pedidos en un monorepo pnpm.
+**Del antojo al despacho, en un solo sistema.**
 
-**Prototipo de desarrollo: todos los pagos y reversos son simulados. No se realizan cobros reales ni se solicitan números de tarjeta o CVV.**
+Proyecto de ecommerce para una heladería: una tienda visual para clientes, un panel operativo para el negocio y una API que conecta ambas experiencias. Desarrollado como monorepo pnpm con **Next.js, NestJS, Prisma y PostgreSQL**.
 
-## Qué incluye
+El objetivo es cubrir el recorrido completo: presentar la marca, elegir un helado, personalizarlo con extras, revisar el pedido, simular el pago y gestionar su despacho. El catálogo y la configuración se administran desde el panel; una instalación nueva comienza vacía, salvo por la cuenta administradora inicial.
 
-### Tienda pública
+> **Estado del proyecto:** prototipo de desarrollo. Todos los pagos y reversos son simulados. No se realizan cobros reales ni se solicitan números de tarjeta o CVV. La publicación en GitHub contiene código y migraciones, no una tienda desplegada ni datos de clientes.
 
-- Inicio visual con identidad rosa y blanca, tipografía expresiva y animaciones vinculadas al scroll.
-- Páginas independientes para la heladería, contacto y catálogo.
-- Catálogo con búsqueda, categorías, sabores, tamaños, precios y ordenamiento; los filtros se construyen a partir de los productos disponibles.
-- Detalle de cada helado con tamaño, cantidad y extras opcionales con recargo.
-- Carrito persistente en el navegador y compra directa mediante «Comprar ahora», sin borrar el carrito existente.
-- Registro e inicio de sesión obligatorios al continuar al checkout; navegar y elegir productos no requieren una cuenta.
-- Checkout con datos de entrega, cálculo de precios en el servidor y pago de demostración aprobado o rechazado.
-- Perfil, direcciones guardadas, historial y consulta de pedidos asociados a la cuenta.
-- Diseño adaptable a móvil, tablet y escritorio; estados de carga, error y página no encontrada.
+[Experiencia](#experiencia-del-producto) · [Arquitectura](#arquitectura) · [Catálogo](#modelo-del-catálogo) · [Pedidos](#pedidos-pagos-e-inventario) · [Seguridad](#autenticación-y-seguridad) · [Instalación](#instalación-local) · [Comandos](#comandos-útiles)
 
-### Administración
+## Experiencia del producto
 
-- Acceso interno separado de la tienda.
-- Resumen operativo, catálogo de helados, categorías, sabores y extras.
-- Gestión de precios y existencias por tamaño del producto.
+La tienda y el panel comparten la identidad de Heladería Sucre, pero responden a necesidades distintas: **el cliente descubre y compra; la administración opera el negocio**. La vista pública utiliza rosa, blanco, fotografía editorial y animación; el dashboard mantiene una composición clara, compacta y orientada a tareas.
+
+### Para quien compra
+
+- **Descubrir:** inicio, heladería y contacto son páginas independientes del catálogo.
+- **Elegir:** búsqueda y filtros por categoría, sabor, tamaño y precio, generados a partir de los productos disponibles.
+- **Personalizar:** cada helado muestra su receta; el cliente elige tamaño, cantidad y extras opcionales con recargo.
+- **Comprar:** carrito editable y persistente o «Comprar ahora», sin borrar el carrito existente.
+- **Continuar:** registro o inicio de sesión al llegar al checkout, datos de entrega y pago de demostración aprobado o rechazado.
+- **Recuperar:** perfil, direcciones e historial de pedidos vinculados a la cuenta.
+
+### Para quien administra
+
+- Resumen operativo y catálogo de helados, categorías, sabores y extras.
+- Precios y existencias por tamaño, ajustes justificados e historial de inventario.
 - Pedidos con despacho y cancelación directamente desde el listado.
-- Inventario con ajustes justificados e historial de movimientos.
 - Clientes, intentos de pago, reportes de ventas simuladas y exportación CSV.
-- Personal administrativo e información del negocio: contacto, horarios, moneda, cobertura y tarifa de delivery.
+- Personal administrativo y configuración del local, horarios, moneda, cobertura y tarifa de delivery.
+
+Las interfaces se adaptan a móvil, tablet y escritorio. Incluyen estados de carga, errores y páginas no encontradas; la administración prioriza controles y tablas compactos.
+
+### Un recorrido de principio a fin
+
+1. **Explorar sin cuenta.** El cliente entra al catálogo y encuentra un helado por su categoría o sabor.
+2. **Elegir su pedido.** Selecciona el tamaño, la cantidad y los extras. El sabor describe la receta del producto, no exige volver a escogerla.
+3. **Continuar al checkout.** Puede usar el carrito o comprar únicamente la selección actual. Aquí inicia sesión o crea una cuenta, conservando su selección.
+4. **Revisar el importe.** Completa los datos de entrega y consulta el total calculado por la API, incluyendo el delivery.
+5. **Simular el pago.** Un resultado aprobado confirma el pedido y reserva el stock; un rechazo permite reintentar sin consumir unidades.
+6. **Despachar desde administración.** El pedido aparece en el panel; el administrador lo entrega al delivery y lo marca como despachado. Ese momento registra la venta simulada en los reportes.
+
+La cuenta se solicita al comprar, no al navegar: permite recuperar los pedidos desde otro dispositivo y evita depender de una pestaña abierta para conservar su historial.
 
 ## Arquitectura
+
+| Aplicación | Responsabilidad | Puerto local |
+| --- | --- | --- |
+| [`web/`](./web) | Tienda, catálogo, carrito, checkout y cuenta del cliente. | 3000 |
+| [`admin/`](./admin) | Operación interna: catálogo, stock, pedidos y reportes. | 3001 |
+| [`api/`](./api) | Autenticación, permisos, reglas de negocio y persistencia. | 4000 |
+
+```mermaid
+flowchart LR
+    W["Tienda · Next.js"] -->|"API REST · /api/v1"| A["API · NestJS"]
+    M["Administración · Next.js"] -->|"API REST · /api/v1"| A
+    A -->|"Prisma"| P[("PostgreSQL")]
+```
+
+### Organización del repositorio
 
 ```text
 heladeria-digital-suite/
@@ -65,6 +100,65 @@ Cada frontend expone un proxy del mismo origen en `/api/v1/...`, dirigido a Nest
 | Tailwind CSS | 4.3.3 |
 
 El repositorio incluye un único lockfile. No utiliza Turborepo, Nx ni una carpeta adicional de paquetes compartidos. La API utiliza el adaptador PostgreSQL de Prisma y genera su cliente desde `api/prisma/schema.prisma`.
+
+## Modelo del catálogo
+
+| Elemento | Función |
+| --- | --- |
+| Categoría | Agrupa productos: conos, copas, paletas, vasos u otros grupos definidos por el negocio. |
+| Helado | Tiene nombre, descripción, categoría, imagen y un sabor de receta opcional. |
+| Sabor | Registro reutilizable, relacionado con los helados y utilizado para filtrar el catálogo. Se puede crear desde el formulario del producto. No es una variante que el cliente deba escoger nuevamente. |
+| Tamaño o presentación | Define el precio base y el stock del helado. Se gestiona dentro del producto. |
+| Extra | Complemento independiente con precio e imagen opcional. El cliente lo añade durante la compra; su recargo se aplica por unidad de helado. |
+
+### Por qué se organiza así
+
+Un **helado** representa la receta; sus **tamaños** representan opciones con precio y stock propios. Por ejemplo, un mismo helado puede ofrecerse en tamaño normal o grande sin duplicar su descripción e imagen. El sabor se relaciona mediante un registro reutilizable, por lo que varios helados de chocolate se agrupan bajo el mismo filtro del catálogo.
+
+Los **extras** son complementos elegidos durante la compra, no ingredientes obligatorios del producto. Su recargo se suma por unidad. El delivery se cobra una sola vez por pedido.
+
+```text
+Total = suma de [(precio del tamaño + extras por unidad) × cantidad] + delivery
+```
+
+Los nombres de sabores se normalizan para evitar duplicados por mayúsculas o espacios; no se corrigen erratas automáticamente. Las tablas, campos y enumeraciones de negocio tienen nombres en español en PostgreSQL. Los contratos REST conservan su nomenclatura propia.
+
+Los precios se almacenan en unidades monetarias menores mediante enteros. NestJS recalcula tamaños, extras, cantidades y delivery: no confía en el total enviado por el navegador. Cada pedido conserva copias de los productos, opciones, precios y dirección para mantener su historial aunque después cambie el catálogo.
+
+## Pedidos, pagos e inventario
+
+El flujo habitual es **Pendiente de pago → Confirmado → Despachado**. Un pedido también puede cancelarse antes del despacho.
+
+| Acción | Resultado |
+| --- | --- |
+| Crear pedido | Registra la compra pendiente, sin descontar existencias. |
+| Rechazar un pago simulado | Permite reintentar sobre el mismo pedido, sin consumir stock. |
+| Aprobar un pago simulado | Confirma el pedido y reserva sus unidades mediante un descuento transaccional de stock. |
+| Despachar | Registra la venta simulada en los reportes, sin descontar unidades otra vez. |
+| Cancelar antes del despacho | Devuelve las unidades reservadas y registra el reverso del pago aprobado una sola vez. |
+
+### Consistencia de la operación
+
+**El pago y el despacho tienen responsabilidades diferentes:** aprobar el pago reserva existencias; despachar finaliza la operación y reconoce la venta. Separar ambos momentos evita vender la misma unidad dos veces o volver a descontarla al enviarla.
+
+Las claves de idempotencia permiten repetir una solicitud sin duplicar pedidos ni pagos. La confirmación y la reserva se ejecutan en una transacción: el stock se agrupa por presentación y, si falta alguna unidad, no se permiten descuentos parciales. Una cancelación antes del despacho libera la reserva y revierte el pago aprobado una sola vez.
+
+El inventario controla unidades por tamaño del helado, no gramos ni recetas. Los movimientos conservan tipo, cantidad, existencias resultantes y motivo.
+
+**Despachado significa que el pedido salió con el delivery, no que el cliente ya lo recibió.** La coordinación posterior con el repartidor queda fuera del sistema; no hay llamadas, WhatsApp ni notificaciones externas automáticas. El cliente puede cerrar el navegador y recuperar sus pedidos iniciando sesión en su cuenta.
+
+Los reportes contabilizan pedidos despachados con pago aprobado según la fecha de despacho. La migración incluida adapta los estados antiguos sin borrar pedidos ni reconstruir existencias. Si un pedido histórico carece de una fecha de salida o entrega registrada, su fecha de despacho permanece vacía: aparece en el total general, pero no en series diarias ni períodos filtrados.
+
+## Autenticación y seguridad
+
+- NestJS administra sesiones opacas revocables mediante cookies `httpOnly`, con expiración configurable y protección CSRF.
+- Las contraseñas se guardan con hash bcrypt; los endpoints validan los datos y comprueban permisos en la API.
+- La tienda exige una cuenta de cliente para crear pedidos y simular pagos. El panel requiere una cuenta administradora; el rol operador histórico no habilita acceso en esta versión.
+- Los clientes sólo acceden a sus datos y pedidos. Conocer un código o un correo no otorga acceso a compras ajenas.
+- El carrito utiliza `localStorage` y la compra directa utiliza `sessionStorage`; no guardan los datos personales de entrega. Pedidos y pagos permanecen en PostgreSQL.
+- Los orígenes permitidos son explícitos. Las páginas privadas y la administración no se indexan ni utilizan caché compartida.
+
+La tienda incluye metadatos, URLs canónicas, sitemap, robots y vistas previas sociales. La indexación sólo se habilita si se configura expresamente para un dominio HTTPS público en producción.
 
 ## Instalación local
 
@@ -181,49 +275,6 @@ Con `SEED_ON_START=true`, el primer arranque sobre una base ya migrada crea **ú
 No se precargan helados, extras, existencias, pedidos ni configuración del negocio. Inicia sesión en el panel, completa la configuración del local y del delivery y carga tu propio catálogo. El delivery comienza deshabilitado mientras no se configure y habilite desde administración. Puedes desactivar la inicialización automática con `SEED_ON_START=false` después de crear la cuenta.
 
 Las imágenes de productos y extras se guardan como URLs HTTPS. Puedes subirlas manualmente a Cloudinary y pegar su URL en los formularios, que muestran una vista previa. No hay subida automática a Cloudinary ni se necesitan sus credenciales para arrancar. Las imágenes estáticas utilizadas por las interfaces sí forman parte de cada aplicación.
-
-## Modelo del catálogo
-
-| Elemento | Función |
-| --- | --- |
-| Categoría | Agrupa productos: conos, copas, paletas, vasos u otros grupos definidos por el negocio. |
-| Helado | Tiene nombre, descripción, categoría, imagen y un sabor de receta opcional. |
-| Sabor | Registro reutilizable, relacionado con los helados y utilizado para filtrar el catálogo. Se puede crear desde el formulario del producto. No es una variante que el cliente deba escoger nuevamente. |
-| Tamaño o presentación | Define el precio base y el stock del helado. Se gestiona dentro del producto. |
-| Extra | Complemento independiente con precio e imagen opcional. El cliente lo añade durante la compra; su recargo se aplica por unidad de helado. |
-
-Los nombres de sabores se normalizan para evitar duplicados por mayúsculas o espacios; no se corrigen erratas automáticamente. Las tablas, campos y enumeraciones de negocio tienen nombres en español en PostgreSQL. Los contratos REST conservan su nomenclatura propia.
-
-Los precios se almacenan en unidades monetarias menores mediante enteros. NestJS recalcula tamaños, extras, cantidades y delivery: no confía en el total enviado por el navegador. Cada pedido conserva copias de los productos, opciones, precios y dirección para mantener su historial aunque después cambie el catálogo.
-
-## Pedidos, pagos e inventario
-
-El flujo habitual es **Pendiente de pago → Confirmado → Despachado**. Un pedido también puede cancelarse antes del despacho.
-
-| Acción | Resultado |
-| --- | --- |
-| Crear pedido | Registra la compra pendiente, sin descontar existencias. |
-| Rechazar un pago simulado | Permite reintentar sobre el mismo pedido, sin consumir stock. |
-| Aprobar un pago simulado | Confirma el pedido y reserva sus unidades mediante un descuento transaccional de stock. |
-| Despachar | Registra la venta simulada en los reportes, sin descontar unidades otra vez. |
-| Cancelar antes del despacho | Devuelve las unidades reservadas y registra el reverso del pago aprobado una sola vez. |
-
-Las claves de idempotencia y las transacciones protegen frente a dobles envíos y confirmaciones concurrentes. El stock se agrupa por presentación y no se permiten descuentos parciales cuando faltan unidades.
-
-**Despachado significa que el pedido salió con el delivery, no que el cliente ya lo recibió.** La coordinación posterior con el repartidor queda fuera del sistema; no hay llamadas, WhatsApp ni notificaciones externas automáticas. El cliente puede cerrar el navegador y recuperar sus pedidos iniciando sesión en su cuenta.
-
-Los reportes contabilizan pedidos despachados con pago aprobado según la fecha de despacho. La migración incluida adapta los estados antiguos sin borrar pedidos ni reconstruir existencias. Si un pedido histórico carece de una fecha de salida o entrega registrada, su fecha de despacho permanece vacía: aparece en el total general, pero no en series diarias ni períodos filtrados.
-
-## Autenticación y seguridad
-
-- NestJS administra sesiones opacas revocables mediante cookies `httpOnly`, con expiración configurable y protección CSRF.
-- Las contraseñas se guardan con hash bcrypt; los endpoints validan los datos y comprueban permisos en la API.
-- La tienda exige una cuenta de cliente para crear pedidos y simular pagos. El panel requiere una cuenta administradora; el rol operador histórico no habilita acceso en esta versión.
-- Los clientes sólo acceden a sus datos y pedidos. Conocer un código o un correo no otorga acceso a compras ajenas.
-- El carrito utiliza `localStorage` y la compra directa utiliza `sessionStorage`; no guardan los datos personales de entrega. Pedidos y pagos permanecen en PostgreSQL.
-- Los orígenes permitidos son explícitos. Las páginas privadas y la administración no se indexan ni utilizan caché compartida.
-
-La tienda incluye metadatos, URLs canónicas, sitemap, robots y vistas previas sociales. La indexación sólo se habilita si se configura expresamente para un dominio HTTPS público en producción.
 
 ## Comandos útiles
 
