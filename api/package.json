@@ -1,0 +1,43 @@
+{
+  "name": "@delicias/backend", "version": "1.0.0", "private": true,
+  "packageManager": "pnpm@12.9.1",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "prisma generate && node scripts/dev.mjs", "start:dev": "prisma generate && node scripts/dev.mjs", "start": "node dist/main.js",
+    "build": "prisma generate && tsc --project tsconfig.build.json --noEmitOnError", "typecheck": "prisma generate && tsc --noEmit",
+    "lint": "oxlint src prisma/seed.ts prisma.config.ts scripts", "test": "prisma generate && jest --runInBand",
+    "test:integration": "prisma generate && jest --runInBand --testPathPatterns=integration",
+    "db:generate": "prisma generate", "db:validate": "prisma validate",
+    "db:status": "prisma migrate status", "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev", "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset", "db:clean": "node scripts/clean-data.mjs", "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.1.2", "@nestjs/config": "12.0.1", "@nestjs/core": "12.1.2",
+    "@nestjs/platform-express": "12.1.2", "@nestjs/mapped-types": "12.0.0", "@nestjs/throttler": "6.7.1",
+    "@prisma/adapter-pg": "7.10.0", "@prisma/client": "7.10.0", "bcrypt": "6.0.0",
+    "class-transformer": "0.5.1", "class-validator": "0.15.1", "cookie-parser": "1.4.7",
+    "dotenv": "18.0.5", "helmet": "8.3.0", "pg": "8.23.1", "reflect-metadata": "0.2.2", "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "12.1.2", "@swc/core": "1.16.13", "@swc/jest": "0.2.39",
+    "@types/bcrypt": "6.0.0", "@types/cookie-parser": "1.4.10", "@types/express": "5.0.6",
+    "@types/jest": "30.0.0", "@types/node": "24.19.1", "@types/pg": "8.23.1",
+    "jest": "30.5.2", "oxlint": "1.86.0", "prisma": "7.10.0",
+    "tsx": "4.23.15", "typescript": "7.0.2"
+  },
+  "jest": {
+    "rootDir": "src", "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": ["@swc/jest", {
+        "jsc": {
+          "target": "es2023",
+          "parser": { "syntax": "typescript", "decorators": true },
+          "transform": { "legacyDecorator": true, "decoratorMetadata": true }
+        },
+        "module": { "type": "commonjs" }
+      }]
+    },
+    "testEnvironment": "node", "testTimeout": 30000
+  }
+}

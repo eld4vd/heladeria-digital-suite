@@ -1,0 +1,290 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RolUsuario {
+  ADMINISTRADOR
+  OPERADOR
+  CLIENTE
+
+  @@map("rol_usuario")
+}
+
+enum EstadoPedido {
+  PENDIENTE_PAGO
+  CONFIRMADO
+  DESPACHADO
+  CANCELADO
+
+  @@map("estado_pedido")
+}
+
+enum MedioPago {
+  TARJETA_DEMOSTRACION
+  QR_DEMOSTRACION
+
+  @@map("medio_pago")
+}
+
+enum EstadoPago {
+  APROBADO
+  RECHAZADO
+  REVERTIDO
+
+  @@map("estado_pago")
+}
+
+enum TipoMovimientoInventario {
+  AJUSTE
+  RESERVA
+  VENTA
+  REPOSICION
+
+  @@map("tipo_movimiento_inventario")
+}
+
+// Los modelos, campos y nombres fisicos de PostgreSQL estan en espanol.
+// Aplicar las migraciones antes de iniciar la API. Generar el cliente no renombra columnas.
+
+model Usuario {
+  id               String      @id @default(cuid())
+  nombre           String
+  correo           String      @unique
+  huellaContrasena String      @map("huella_contrasena")
+  telefono         String?
+  rol              RolUsuario  @default(CLIENTE)
+  activo           Boolean     @default(true)
+  creadoEn         DateTime    @default(now()) @map("creado_en")
+  actualizadoEn    DateTime    @updatedAt @map("actualizado_en")
+  sesiones         Sesion[]
+  direcciones      Direccion[]
+  pedidos          Pedido[]
+
+  @@map("usuarios")
+}
+
+model Sesion {
+  id          String   @id @default(cuid())
+  huellaToken String   @unique @map("huella_token")
+  tokenCsrf   String   @map("token_csrf")
+  usuarioId   String?  @map("usuario_id")
+  usuario     Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiraEn    DateTime @map("expira_en")
+  creadoEn    DateTime @default(now()) @map("creado_en")
+  pedidos     Pedido[]
+
+  @@index([expiraEn])
+  @@map("sesiones")
+}
+
+model Direccion {
+  id            String   @id @default(cuid())
+  usuarioId     String   @map("usuario_id")
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  etiqueta      String
+  direccion     String
+  ciudad        String
+  referencia    String?
+  creadoEn      DateTime @default(now()) @map("creado_en")
+  actualizadoEn DateTime @updatedAt @map("actualizado_en")
+
+  @@index([usuarioId])
+  @@map("direcciones")
+}
+
+model Categoria {
+  id               String     @id @default(cuid())
+  nombre           String
+  identificadorUrl String     @unique @map("identificador_url")
+  descripcion      String?
+  activo           Boolean    @default(true)
+  productos        Producto[]
+
+  @@map("categorias")
+}
+
+model Producto {
+  id               String         @id @default(cuid())
+  identificadorUrl String         @unique @map("identificador_url")
+  nombre           String
+  descripcion      String
+  // Sabor de la receta: informa al cliente, no es una opcion seleccionable.
+  saborId          String?        @map("sabor_id")
+  sabor            Sabor?         @relation(fields: [saborId], references: [id], onDelete: Restrict)
+  urlImagen        String         @map("url_imagen")
+  destacado        Boolean        @default(false)
+  activo           Boolean        @default(true)
+  categoriaId      String         @map("categoria_id")
+  categoria        Categoria      @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  presentaciones   Presentacion[]
+  creadoEn         DateTime       @default(now()) @map("creado_en")
+  actualizadoEn    DateTime       @updatedAt @map("actualizado_en")
+
+  @@index([categoriaId, activo])
+  @@index([saborId])
+  @@map("productos")
+}
+
+model Presentacion {
+  id                    String                 @id @default(cuid())
+  productoId            String                 @map("producto_id")
+  producto              Producto               @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  nombre                String
+  precioUnidadesMenores Int                    @map("precio_unidades_menores")
+  existencias           Int                    @default(0)
+  activo                Boolean                @default(true)
+  detalles              DetallePedido[]
+  movimientos           MovimientoInventario[]
+
+  @@index([productoId])
+  @@map("presentaciones")
+}
+
+// Un sabor fijo puede describir muchos helados; no es una opcion del checkout.
+model Sabor {
+  id                String     @id @default(cuid())
+  nombre            String
+  nombreNormalizado String     @unique @map("nombre_normalizado")
+  activo            Boolean    @default(true)
+  productos         Producto[]
+
+  @@map("sabores")
+}
+
+model Extra {
+  id                    String  @id @default(cuid())
+  nombre                String  @unique
+  urlImagen             String? @map("url_imagen")
+  precioUnidadesMenores Int     @map("precio_unidades_menores")
+  activo                Boolean @default(true)
+
+  @@map("extras")
+}
+
+model Pedido {
+  id                        String                 @id @default(cuid())
+  codigo                    String                 @unique
+  sesionId                  String                 @map("sesion_id")
+  sesion                    Sesion                 @relation(fields: [sesionId], references: [id], onDelete: Restrict)
+  usuarioId                 String?                @map("usuario_id")
+  usuario                   Usuario?               @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  claveIdempotencia         String                 @map("clave_idempotencia")
+  huellaSolicitud           String                 @map("huella_solicitud")
+  estado                    EstadoPedido           @default(PENDIENTE_PAGO)
+  nombreCliente             String                 @map("nombre_cliente")
+  correo                    String
+  telefono                  String
+  direccionEntrega          String                 @map("direccion_entrega")
+  ciudad                    String
+  referencia                String?
+  subtotalUnidadesMenores   Int                    @map("subtotal_unidades_menores")
+  costoEnvioUnidadesMenores Int                    @map("costo_envio_unidades_menores")
+  totalUnidadesMenores      Int                    @map("total_unidades_menores")
+  moneda                    String
+  creadoEn                  DateTime               @default(now()) @map("creado_en")
+  actualizadoEn             DateTime               @updatedAt @map("actualizado_en")
+  despachadoEn               DateTime?              @map("despachado_en")
+  detalles                  DetallePedido[]
+  pagos                     IntentoPago[]
+  historial                 HistorialPedido[]
+  movimientos               MovimientoInventario[]
+
+  @@unique([sesionId, claveIdempotencia])
+  @@index([usuarioId, creadoEn])
+  @@index([estado, creadoEn])
+  @@index([estado, despachadoEn])
+  @@map("pedidos")
+}
+
+model DetallePedido {
+  id                            String       @id @default(cuid())
+  pedidoId                      String       @map("pedido_id")
+  pedido                        Pedido       @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  presentacionId                String       @map("presentacion_id")
+  presentacion                  Presentacion @relation(fields: [presentacionId], references: [id], onDelete: Restrict)
+  nombreProducto                String       @map("nombre_producto")
+  nombrePresentacion            String       @map("nombre_presentacion")
+  cantidad                      Int
+  precioUnitarioUnidadesMenores Int          @map("precio_unitario_unidades_menores")
+  totalUnidadesMenores          Int          @map("total_unidades_menores")
+  identificadoresSabores        Json         @map("identificadores_sabores")
+  identificadoresExtras         Json         @map("identificadores_extras")
+  sabores                       Json
+  extras                        Json
+
+  @@index([pedidoId])
+  @@map("detalles_pedido")
+}
+
+model IntentoPago {
+  id                     String     @id @default(cuid())
+  pedidoId               String     @map("pedido_id")
+  pedido                 Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  claveIdempotencia      String     @map("clave_idempotencia")
+  huellaSolicitud        String     @map("huella_solicitud")
+  medio                  MedioPago
+  estado                 EstadoPago
+  importeUnidadesMenores Int        @map("importe_unidades_menores")
+  creadoEn               DateTime   @default(now()) @map("creado_en")
+
+  @@unique([pedidoId, claveIdempotencia])
+  @@index([creadoEn])
+  @@map("intentos_pago")
+}
+
+model HistorialPedido {
+  id             String        @id @default(cuid())
+  pedidoId       String        @map("pedido_id")
+  pedido         Pedido        @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  estadoAnterior EstadoPedido? @map("estado_anterior")
+  estadoNuevo    EstadoPedido  @map("estado_nuevo")
+  nota           String?
+  actorId        String?       @map("actor_id")
+  creadoEn       DateTime      @default(now()) @map("creado_en")
+
+  @@index([pedidoId, creadoEn])
+  @@map("historial_pedidos")
+}
+
+model MovimientoInventario {
+  id                     String                   @id @default(cuid())
+  presentacionId         String                   @map("presentacion_id")
+  presentacion           Presentacion             @relation(fields: [presentacionId], references: [id], onDelete: Restrict)
+  pedidoId               String?                  @map("pedido_id")
+  pedido                 Pedido?                  @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  tipo                   TipoMovimientoInventario
+  variacion              Int
+  existenciasResultantes Int                      @map("existencias_resultantes")
+  motivo                 String
+  actorId                String?                  @map("actor_id")
+  creadoEn               DateTime                 @default(now()) @map("creado_en")
+
+  @@index([presentacionId, creadoEn])
+  @@map("movimientos_inventario")
+}
+
+model ConfiguracionNegocio {
+  id                        String   @id @default("shop")
+  nombre                    String
+  descripcion               String
+  moneda                    String   @default("BOB")
+  idioma                    String   @default("es-BO")
+  zonaHoraria               String   @default("America/La_Paz") @map("zona_horaria")
+  direccion                 String
+  ciudad                    String
+  telefono                  String
+  correo                    String
+  horarios                  String
+  descripcionCobertura      String   @map("descripcion_cobertura")
+  costoEnvioUnidadesMenores Int      @default(0) @map("costo_envio_unidades_menores")
+  envioHabilitado           Boolean  @default(false) @map("envio_habilitado")
+  actualizadoEn             DateTime @updatedAt @map("actualizado_en")
+
+  @@map("configuracion_negocio")
+}

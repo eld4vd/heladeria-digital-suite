@@ -1,0 +1,287 @@
+/* Composición oficial del inicio, con el tema Tailwind compartido de la tienda.
+   Sólo la composición y las animaciones quedan limitadas a esta página.
+   Variación de diseño 9 / intensidad de movimiento 7 / densidad visual 4. */
+.home {
+  --home-strawberry: var(--color-brand-strawberry);
+  --home-blush: var(--color-brand-blush);
+  --home-white: var(--color-brand-white);
+  --home-ink: var(--color-brand-ink);
+  --home-berry: var(--color-brand-berry);
+  color: var(--home-ink);
+  background: var(--home-white);
+}
+.home h1, .home h2, .home h3, .home p { margin: 0; }
+.home h1, .home h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -.035em;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+.home p { font-size: clamp(1rem, 1.3vw, 1.2rem); line-height: 1.6; }
+.home ::selection { background: var(--home-berry); color: var(--home-white); }
+
+.hero { background: var(--home-strawberry); padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 6rem) 0; overflow: clip; }
+.heroInner { max-width: 1400px; margin: auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; }
+.heroCopy { padding-block: 1.5rem 2.25rem; position: relative; z-index: 2; min-width: 0; }
+.home .heroTitle { font-size: clamp(4rem, 8.1vw, 8.5rem); line-height: .98; color: var(--home-white); text-shadow: 4px 5px 0 var(--home-berry); }
+.heroTitle span { display: block; }
+.heroCopy > p { max-width: 30ch; margin-block: 1.6rem 1.75rem; font-weight: 700; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.35rem;
+  min-height: 52px;
+  padding: .9rem 1.5rem;
+  border: 2px solid var(--home-ink);
+  border-radius: 999px;
+  background: var(--home-ink);
+  color: var(--home-white);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+.button svg, .textLink svg { transition: transform .2s ease; }
+.whiteButton { background: var(--home-white); color: var(--home-ink); }
+.button:active { transform: translateY(1px); }
+.hero .button:focus-visible, .lastCall .button:focus-visible { outline-color: var(--home-ink); }
+.heroArtwork { position: relative; min-width: 0; perspective: 1200px; isolation: isolate; padding: .4rem 1.25rem; }
+.heroOrbit { position: absolute; z-index: -1; width: 90%; height: 75%; top: 11%; left: 5%; border: 2px solid color-mix(in srgb, var(--home-white) 50.2%, transparent); border-radius: 50%; transform: rotate(25deg); }
+.heroImage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 540px);
+  height: auto;
+  max-height: 620px;
+  margin-inline: auto;
+  object-fit: contain;
+  filter: drop-shadow(16px 24px 0 color-mix(in srgb, var(--home-berry) 10.2%, transparent));
+  transform: rotateY(var(--stage-yaw, 0deg)) rotateX(var(--stage-pitch, 0deg));
+  transition: transform .25s ease-out;
+}
+.heroStamp {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  top: 7%;
+  right: -3%;
+  width: clamp(105px, 11vw, 155px);
+  aspect-ratio: 1;
+  background: var(--home-white);
+  color: var(--home-berry);
+  clip-path: polygon(50% 0, 58% 12%, 71% 5%, 73% 20%, 89% 18%, 86% 33%, 100% 39%, 89% 50%, 100% 61%, 86% 67%, 89% 82%, 73% 80%, 71% 95%, 58% 88%, 50% 100%, 42% 88%, 29% 95%, 27% 80%, 11% 82%, 14% 67%, 0 61%, 11% 50%, 0 39%, 14% 33%, 11% 18%, 27% 20%, 29% 5%, 42% 12%);
+  font-weight: 900;
+  font-size: clamp(1rem, 1.7vw, 1.5rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+.sparkle, .manifestoSparkle { position: absolute; width: 55px; aspect-ratio: 1; background: var(--home-white); clip-path: polygon(50% 0, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0 50%, 37% 37%); pointer-events: none; }
+.sparkle { left: 1%; bottom: 23%; transform: rotate(-12deg); }
+.heroFootnote { max-width: 1400px; margin: 1.5rem auto 0; padding-block: 1.1rem; border-top: 1px solid color-mix(in srgb, var(--home-ink) 31.4%, transparent); display: flex; justify-content: space-between; gap: 1rem; font-size: .82rem; font-weight: 800; }
+.brandBand { display: flex; align-items: center; justify-content: center; gap: 1.25rem; padding: 1.35rem 1rem; background: var(--home-berry); color: var(--home-white); font-size: clamp(.75rem, 1.4vw, 1.1rem); line-height: 1.2; font-weight: 900; text-transform: uppercase; letter-spacing: .035em; text-align: center; }
+
+.pause { padding: clamp(3rem, 7vw, 7rem) clamp(1.25rem, 5vw, 6rem); overflow: clip; }
+.pauseInner { display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: clamp(1.5rem, 5vw, 5rem); max-width: 1400px; margin: auto; }
+.pauseArtwork { position: relative; min-width: 0; aspect-ratio: 1.2; perspective: 1200px; isolation: isolate; }
+.pauseDisc { position: absolute; z-index: -1; width: 82%; aspect-ratio: 1; top: 2%; left: 7%; border-radius: 46% 54% 60% 40% / 50% 42% 58% 50%; background: var(--home-blush); }
+.cupImage, .brownieImage { position: absolute; height: auto; object-fit: contain; filter: drop-shadow(0 16px 14px color-mix(in srgb, var(--home-berry) 12.5%, transparent)); transform: rotateY(var(--stage-yaw, 0deg)) rotateX(var(--stage-pitch, 0deg)); transition: transform .25s ease-out; }
+.cupImage { z-index: 1; width: 48%; top: 0; right: 1%; }
+.brownieImage { z-index: 2; width: 64%; left: 0; bottom: 0; }
+.home .sectionTitle { color: var(--home-berry); font-size: clamp(2.35rem, 4.3vw, 4.4rem); line-height: 1.02; }
+.pauseCopy > p { max-width: 31ch; margin-block: 1.5rem; }
+.textLink { display: inline-flex; align-items: center; min-height: 48px; gap: 1.2rem; color: var(--home-berry); font-size: 1rem; font-weight: 800; text-decoration: underline; text-underline-offset: 7px; text-decoration-thickness: 1.5px; }
+
+.manifesto { position: relative; isolation: isolate; overflow: clip; padding: clamp(3.5rem, 7vw, 7rem) 1.25rem; text-align: center; background: var(--home-blush); }
+.manifestoWave { position: absolute; z-index: 0; width: clamp(180px, 28vw, 430px); height: 150%; top: -25%; background: var(--home-white); border-radius: 46% 54% 64% 36% / 42% 52% 48% 58%; pointer-events: none; }
+.waveLeft { left: -18vw; transform: rotate(-18deg); }
+.waveRight { right: -18vw; transform: rotate(18deg); }
+.manifestoInner { position: relative; z-index: 1; max-width: 1050px; margin: auto; }
+.home .manifestoTitle { color: var(--home-berry); font-size: clamp(2.4rem, 7.4vw, 7rem); line-height: 1.03; text-shadow: 3px 3px 0 var(--home-white); }
+.manifestoInner p { max-width: 38ch; margin: 1.5rem auto 1.75rem; }
+.manifestoBurst { position: absolute; z-index: 0; top: -120px; left: -140px; width: clamp(280px, 30vw, 440px); aspect-ratio: 1; background: var(--home-strawberry); clip-path: polygon(50% 0, 58% 12%, 71% 5%, 73% 20%, 89% 18%, 86% 33%, 100% 39%, 89% 50%, 100% 61%, 86% 67%, 89% 82%, 73% 80%, 71% 95%, 58% 88%, 50% 100%, 42% 88%, 29% 95%, 27% 80%, 11% 82%, 14% 67%, 0 61%, 11% 50%, 0 39%, 14% 33%, 11% 18%, 27% 20%, 29% 5%, 42% 12%); transform: rotate(15deg); pointer-events: none; }
+.manifestoSparkle { width: clamp(70px, 11vw, 155px); bottom: 7%; right: 4%; transform: rotate(15deg); }
+
+.order { max-width: 1520px; margin: auto; padding: clamp(3.5rem, 7vw, 7rem) clamp(1.25rem, 5vw, 6rem); }
+.orderHeading { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; }
+.orderHeading > p { max-width: 31ch; padding-bottom: .35rem; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; padding: 0; margin: 3rem 0 1.5rem; gap: clamp(1.5rem, 4vw, 4rem); }
+.steps li { min-width: 0; border-top: 2px solid var(--home-berry); padding-top: 1.25rem; }
+.stepNumber { display: block; font-family: var(--font-display); font-size: clamp(2.8rem, 4.5vw, 4.5rem); line-height: 1; color: var(--home-berry); }
+.home .steps h3 { font-family: var(--font-sans); font-size: 1.25rem; font-weight: 900; line-height: 1.3; margin: 1.2rem 0 .65rem; }
+.home .steps p { font-size: 1rem; max-width: 30ch; }
+.lastCall { padding: clamp(3rem, 6vw, 5.5rem) 1.25rem; display: grid; justify-items: center; gap: 1.75rem; background: var(--home-strawberry); text-align: center; }
+.home .lastCall h2 { color: var(--home-white); font-size: clamp(2.5rem, 8vw, 8rem); line-height: 1.1; text-shadow: 3px 4px 0 var(--home-berry); }
+
+.posterLine {
+  display: block;
+  /* Cada línea limita el dibujo: las letras animadas no tapan el texto de abajo.
+     El margen adicional conserva las tildes y la sombra tipográfica existente. */
+  clip-path: inset(-.3em -.2em -.12em -.2em);
+}
+.posterWord { display: inline-block; white-space: nowrap; }
+.posterGlyph { display: inline-block; transform-origin: 50% 85%; }
+
+/* El navegador sincroniza estas escenas con el scroll en ambas direcciones.
+   Las fotos y los títulos del servidor siguen visibles sin JavaScript.
+   Sin líneas de tiempo compatibles o con movimiento reducido, la composición es estática.
+   translate/rotate/scale independientes conservan la transformación de GroundedScene. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) and (animation-range: entry 0% entry 100%) {
+    .pauseArtwork { view-timeline: --sucre-pause block; }
+    .pauseDisc {
+      animation: pauseBackdrop 1ms linear both;
+      animation-timeline: --sucre-pause;
+      animation-range: cover 0% cover 100%;
+    }
+    .cupImage {
+      animation: cupDrift 1ms linear both;
+      animation-timeline: --sucre-pause;
+      animation-range: cover 0% cover 100%;
+    }
+    .brownieImage {
+      animation: brownieDrift 1ms linear both;
+      animation-timeline: --sucre-pause;
+      animation-range: cover 0% cover 100%;
+    }
+    .manifesto { view-timeline: --sucre-manifesto block; }
+    .manifestoBurst {
+      animation: burstTurn 1ms linear both;
+      animation-timeline: --sucre-manifesto;
+      animation-range: cover 0% cover 100%;
+    }
+    .manifestoSparkle {
+      animation: sparkleTurn 1ms linear both;
+      animation-timeline: --sucre-manifesto;
+      animation-range: cover 0% cover 100%;
+    }
+    .manifestoWave {
+      animation: waveSweep 1ms linear both;
+      animation-timeline: --sucre-manifesto;
+      animation-range: cover 0% cover 100%;
+    }
+    .waveRight { animation-direction: reverse; }
+    .posterTitle { view-timeline: --sucre-title block; }
+    .posterGlyph {
+      animation: posterLetterBuild 1ms linear both;
+      animation-timeline: --sucre-title;
+      /* cover incluye el viewport, no sólo el tramo breve de entrada del título.
+         Las últimas letras se estabilizan cerca del centro, donde son visibles. */
+      animation-range: cover var(--poster-start, 12%) cover var(--poster-end, 39%);
+    }
+  }
+}
+
+@keyframes cupDrift {
+  from { translate: -5% 16%; rotate: -12deg; scale: .9; }
+  50% { translate: 0 0; rotate: 0deg; scale: 1; }
+  to { translate: 2% -10%; rotate: 8deg; scale: 1.03; }
+}
+@keyframes brownieDrift {
+  from { translate: 5% 20%; rotate: 10deg; scale: .94; }
+  50% { translate: 0 0; rotate: 0deg; scale: 1; }
+  to { translate: -2% -8%; rotate: -7deg; scale: 1.02; }
+}
+@keyframes pauseBackdrop {
+  from { translate: 0 8%; rotate: -18deg; scale: .82; }
+  to { translate: 0 -6%; rotate: 24deg; scale: 1.08; }
+}
+@keyframes burstTurn {
+  from { rotate: -35deg; scale: .85; }
+  to { rotate: 55deg; scale: 1.1; }
+}
+@keyframes sparkleTurn {
+  from { translate: 0 20%; rotate: 35deg; }
+  to { translate: 0 -20%; rotate: -45deg; }
+}
+@keyframes waveSweep {
+  from { translate: -22% 8%; rotate: -8deg; }
+  to { translate: 22% -8%; rotate: 8deg; }
+}
+@keyframes posterLetterBuild {
+  from {
+    opacity: 0;
+    translate: 0 var(--poster-rise, .8em);
+    rotate: var(--poster-tilt, 16deg);
+    scale: .82;
+    clip-path: inset(0 0 100% 0);
+  }
+  35% {
+    opacity: 1;
+    clip-path: inset(-20% -30% 30% -30%);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+    clip-path: inset(-20% -30% -45% -30%);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover { background: var(--home-berry); color: var(--home-white); transform: translateY(-3px); }
+  .button:hover svg, .textLink:hover svg { transform: translateX(4px); }
+  .textLink:hover { text-decoration-thickness: 3px; }
+}
+
+@media (max-width: 1100px) {
+  .heroInner { gap: .75rem; }
+  .heroStamp { right: -1%; }
+  .heroArtwork { padding-inline: .25rem; }
+}
+
+@media (max-width: 760px) {
+  .hero { padding-top: 1.5rem; }
+  .heroInner { grid-template-columns: 1fr; gap: 0; }
+  .heroCopy { text-align: center; padding-block: .75rem 1.25rem; }
+  .home .heroTitle { font-size: clamp(3.25rem, 12.9vw, 6rem); line-height: 1; text-shadow: 3px 4px 0 var(--home-berry); }
+  .heroCopy > p { margin: 1.1rem auto 1.25rem; font-size: 1rem; }
+  .heroArtwork { width: min(82%, 370px); margin-inline: auto; padding: .5rem 1rem; }
+  .heroImage { max-height: 390px; }
+  .heroStamp { top: 7%; right: -7%; width: 100px; font-size: 1rem; }
+  .sparkle { width: 38px; left: -3%; }
+  .heroFootnote { margin-top: 1rem; font-size: .76rem; justify-content: center; flex-wrap: wrap; gap: .3rem 1rem; text-align: center; }
+  .brandBand { gap: .75rem; padding-block: 1.1rem; }
+  .brandBand svg { width: 25px; height: 25px; }
+  .pauseInner { grid-template-columns: 1fr; gap: 1.75rem; }
+  .pauseArtwork { width: min(100%, 560px); margin-inline: auto; }
+  .pauseCopy { max-width: 500px; margin-inline: auto; width: 100%; }
+  .home .sectionTitle { font-size: clamp(2.2rem, 6.2vw, 3.3rem); }
+  .pauseCopy p { max-width: 36ch; margin-block: 1rem; }
+  .manifestoBurst { top: -180px; left: -190px; }
+  .waveLeft { left: -160px; }
+  .waveRight { right: -160px; }
+  .manifestoSparkle { right: -20px; bottom: 5%; width: 75px; }
+  .orderHeading { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+  .steps { margin-top: 2rem; grid-template-columns: 1fr; gap: 1.5rem; }
+  .steps li { display: grid; grid-template-columns: 64px 1fr; gap: 0 1rem; align-items: start; }
+  .stepNumber { grid-row: 1 / 3; font-size: 2.5rem; }
+  .home .steps h3 { margin: 0 0 .55rem; font-size: 1.15rem; }
+  .home .steps p { max-width: 40ch; }
+}
+
+@media (max-width: 380px) {
+  .home .heroTitle { font-size: 12vw; }
+  .heroArtwork { width: 86%; }
+  .heroStamp { width: 90px; right: -5%; font-size: .85rem; }
+  .brandBand { gap: .55rem; font-size: .7rem; }
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .heroImage, .cupImage, .brownieImage { transform: none; transition: none; }
+  .button:hover, .button:hover svg, .textLink:hover svg { transform: none; }
+}
+@media (forced-colors: active) {
+  .home h1, .home h2 { text-shadow: none; }
+  .heroImage { filter: none; }
+  .heroOrbit, .pauseDisc, .sparkle, .heroStamp, .manifestoBurst, .manifestoSparkle, .manifestoWave { display: none; }
+  .button { border-color: ButtonText; }
+}

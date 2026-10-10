@@ -1,0 +1,52 @@
+node_modules/
+.pnpm-store/
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+next-env.d.ts
+*.log
+.env
+.env.*
+api/src/generated/
+.local-data/
+
+# Configuración privada de herramientas y agentes; se conserva sólo en local.
+.agents/
+.codex/
+.aws/
+skills-lock.json
+
+# Documentación pública única. Los informes y guías locales no se eliminan.
+*.md
+!/README.md
+/api/docs/estructura-base-datos.txt
+
+# Preparación local para despliegue futuro; no forma parte de esta publicación.
+.dockerignore
+Dockerfile
+Dockerfile.*
+compose*.yml
+compose*.yaml
+docker-compose*.yml
+docker-compose*.yaml
+
+# Credenciales, certificados privados y respaldos locales.
+*.pem
+*.key
+*.p12
+*.pfx
+*.dump
+*.backup
+
+# Colección local para carga manual; las aplicaciones usan URLs del catálogo.
+/imagenes-catalogo/
+
+# Playwright
+/.playwright-mcp/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -1,0 +1,5 @@
+.experience { min-width: 0; }
+
+/* Limitado a la portada montada; el motor nunca transforma el contenedor de la página. */
+.smoothRoot, .nativeRoot { scroll-behavior: auto; }
+

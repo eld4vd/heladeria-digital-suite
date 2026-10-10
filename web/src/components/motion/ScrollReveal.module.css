@@ -1,0 +1,12 @@
+.reveal { min-width: 0; }
+
+/* Sin JavaScript, sin observador o con movimiento reducido: el contenido queda completamente visible. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal[data-reveal] { transition: opacity 650ms ease-out, transform 650ms cubic-bezier(.2, .7, .3, 1); }
+  .reveal[data-reveal='pending'] { opacity: 0; transform: translateY(18px); }
+  .reveal[data-reveal='visible'], .reveal:focus-within { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .reveal, .reveal[data-reveal] { opacity: 1; transform: none; transition: none; }
+}

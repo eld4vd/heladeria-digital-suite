@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "nextjs", "jsx-a11y"],
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/purity": "warn",
+    "react/set-state-in-effect": "warn",
+    "typescript/no-explicit-any": "error",
+    "jsx-a11y/prefer-tag-over-role": "warn",
+    "jsx-a11y/control-has-associated-label": ["error", { "depth": 3 }],
+    "nextjs/no-img-element": "off"
+  },
+  "env": { "browser": true, "node": true },
+  "settings": { "next": { "rootDir": "." } },
+  "overrides": [{
+    "files": ["src/components/admin/shared.tsx"],
+    "rules": {
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-static-element-interactions": "warn"
+    }
+  }],
+  "ignorePatterns": [
+    "node_modules/**", ".next/**", ".local-data/**", "out/**", "dist/**", "coverage/**",
+    "next-env.d.ts", "playwright-report/**", "test-results/**"
+  ]
+}

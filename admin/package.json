@@ -1,0 +1,33 @@
+{
+  "name": "@delicias/admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.9.1",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "node scripts/start.mjs",
+    "lint": "oxlint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "type-check": "pnpm typecheck"
+  },
+  "dependencies": {
+    "@next/env": "16.3.8",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "tailwindcss": "4.3.3",
+    "postcss": "8.5.28",
+    "typescript": "7.0.2",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "oxlint": "1.86.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@delicias/frontend", "version": "1.0.0", "private": true, "type": "module",
+  "packageManager": "pnpm@12.9.1",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "next dev --port 3000", "build": "next build", "start": "node scripts/start.mjs",
+    "lint": "oxlint .", "typecheck": "next typegen && tsc --noEmit", "type-check": "pnpm typecheck",
+    "test": "vitest run", "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@next/env": "16.3.8",
+    "next": "16.3.8", "react": "19.3.0", "react-dom": "19.3.0",
+    "lucide-react": "1.52.0", "server-only": "0.0.1", "lenis": "1.3.26"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3", "tailwindcss": "4.3.3", "postcss": "8.5.28",
+    "typescript": "7.0.2",
+    "@types/node": "24.19.1", "@types/react": "19.3.0", "@types/react-dom": "19.3.0",
+    "oxlint": "1.86.0", "vitest": "5.0.3", "vite": "8.3.2",
+    "@vitejs/plugin-react": "6.1.1", "@testing-library/react": "16.3.3",
+    "@testing-library/jest-dom": "7.0.1", "jsdom": "30.1.2", "@playwright/test": "1.63.0"
+  }
+}

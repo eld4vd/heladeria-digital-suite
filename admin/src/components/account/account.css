@@ -1,0 +1,67 @@
+@layer components {
+  .account-field > label { @apply text-sm font-semibold text-admin-ink; }
+  .account-spinner { @apply inline-block size-4 shrink-0 rounded-full border-2 border-admin-pink-300 border-t-admin-pink-800; animation: admin-spin .8s linear infinite; }
+  .account-auth { @apply mx-auto my-12 grid min-h-[660px] w-[calc(100%_-_64px)] max-w-[1080px] grid-cols-2 overflow-hidden rounded-[32px] border border-white bg-admin-surface font-sans text-admin-ink shadow-neu; }
+  .account-auth a { @apply no-underline; }
+  .account-auth button:disabled { @apply cursor-not-allowed opacity-50; }
+  .account-eyebrow { @apply mb-4 text-xs font-semibold text-admin-pink-600; }
+  .account-auth-story { @apply relative flex min-w-0 flex-col overflow-hidden border-r border-white bg-admin-pink-100 p-12; }
+  .account-auth-brand { @apply relative z-10 mb-8 block w-fit max-w-full; }
+  .account-auth-logo { @apply w-[168px] max-w-full; }
+  .account-auth-story h1 { @apply relative z-10 mb-5 mt-2 text-[clamp(36px,4vw,48px)] font-bold leading-tight tracking-[-0.04em] text-admin-ink; }
+  .account-auth-story > p:not(.account-eyebrow) { @apply relative z-10 max-w-[310px] text-sm leading-7 text-admin-pink-800; }
+  .account-auth-story > small { @apply relative z-10 mt-auto pt-36 text-xs text-admin-pink-800; }
+  .account-auth-art { @apply absolute -right-5 bottom-7 h-[200px] w-[245px] -rotate-12; }
+  .account-auth-art span { @apply absolute block size-[110px] rounded-full border border-white/70 bg-admin-pink-100 shadow-neu-pink; }
+  .account-auth-art span:first-child { @apply left-1 top-0 bg-admin-pink-200; }
+  .account-auth-art span:nth-child(2) { @apply left-[94px] top-2 bg-admin-surface shadow-neu-sm; }
+  .account-auth-art span:last-child { @apply left-[57px] top-[85px] bg-admin-pink-100; }
+  .account-auth-form-wrap { @apply flex min-w-0 items-center justify-center p-12; }
+  .account-auth-form { @apply w-full max-w-[350px]; }
+  .account-auth-form > h2 { @apply mb-3 mt-2 text-[30px] font-bold tracking-[-0.04em]; }
+  .account-auth-form > p:not(.account-eyebrow) { @apply text-sm leading-7 text-admin-muted; }
+  .account-auth-form form { @apply mb-7 mt-8 grid gap-6; }
+  .account-field { @apply grid gap-2.5 text-sm text-admin-ink; }
+  .account-field > span { @apply font-semibold; }
+  .account-field input { @apply min-h-[52px] w-full rounded-xl border border-admin-control-border bg-admin-surface px-4 py-3.5 text-sm text-admin-ink shadow-neu-inset; }
+  .account-field input::placeholder { @apply text-admin-muted; }
+  .account-field input:focus-visible { border-color: var(--color-admin-pink-600); outline: 2px solid var(--color-admin-pink-600); outline-offset: 3px; }
+  .account-password { @apply relative; }
+  .account-password input { @apply pr-20; }
+  .account-password button { @apply absolute right-2 top-1/2 min-h-11 min-w-11 -translate-y-1/2 rounded-lg border-0 bg-transparent px-2 text-xs font-semibold text-admin-pink-800; }
+  .account-button { @apply flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl border border-admin-pink-600/75 bg-admin-pink-200 px-6 py-3.5 text-sm font-semibold text-admin-pink-800 shadow-neu-pink transition-transform duration-150; }
+  .account-button:hover:not(:disabled) { @apply bg-admin-pink-300; transform: translateY(-1px); }
+  .account-button:active:not(:disabled) { @apply shadow-neu-inset; transform: translateY(0); }
+  .account-error { @apply rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-relaxed text-red-800; }
+  .account-back-store { @apply flex min-h-11 items-center justify-center rounded-xl py-2 text-sm font-medium text-admin-muted; }
+  .account-back-store:hover { @apply text-admin-pink-800 underline; }
+  .account-auth-note { @apply mt-6 text-center text-xs; }
+}
+@media (max-width: 950px) {
+  .account-auth { @apply my-8 w-[calc(100%_-_48px)]; }
+  .account-auth-story, .account-auth-form-wrap { @apply p-8; }
+  .account-auth-story h1 { @apply text-[38px]; }
+}
+@media (max-width: 700px) {
+  .account-auth { @apply my-6 min-h-0 w-[calc(100%_-_32px)] grid-cols-1 rounded-3xl; }
+  .account-auth-story { @apply min-h-[230px] border-b border-r-0 px-7 py-7; }
+  .account-auth-brand { @apply mb-5; }
+  .account-auth-logo { @apply w-32; }
+  .account-auth-story h1 { @apply m-0 max-w-[260px] text-[30px]; }
+  .account-auth-story h1 br { @apply hidden; }
+  .account-auth-story > .account-eyebrow { @apply mb-2 max-w-[230px] text-xs; }
+  .account-auth-story > p:not(.account-eyebrow), .account-auth-story > small { @apply hidden; }
+  .account-auth-art { @apply -right-4 -bottom-4 scale-[0.55] origin-bottom-right; }
+  .account-auth-form-wrap { @apply px-6 py-8; }
+  .account-auth-form { @apply max-w-none; }
+  .account-auth-form > h2 { @apply text-[28px]; }
+  .account-field input { @apply text-base; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-auth * { transition: none !important; }
+  .account-spinner { animation: none; }
+  .account-button:hover:not(:disabled) { transform: none; }
+}
+@media (forced-colors: active) {
+  .account-auth, .account-button, .account-field input { box-shadow: none; border-color: CanvasText; }
+}

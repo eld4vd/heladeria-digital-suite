@@ -1,550 +1,251 @@
-# 🍦 Heladeria Digital Suite
+# Heladería Sucre · Digital Suite
 
-Sistema completo de gestión para heladerías con punto de venta web, carrito anónimo, checkout simulado y dashboard administrativo en tiempo real. Arquitectura full-stack moderna con seguridad reforzada y actualización automática de inventario.
+Una tienda de helados para delivery, acompañada de un panel de administración y una API propia. El proyecto conecta la experiencia del cliente con la gestión del catálogo, el inventario y los pedidos en un monorepo pnpm.
 
-## ✨ Características Principales
+**Prototipo de desarrollo: todos los pagos y reversos son simulados. No se realizan cobros reales ni se solicitan números de tarjeta o CVV.**
 
-### 🌐 **Frontend Público**
-- **Catálogo interactivo** con categorías, búsqueda reactiva y filtros en tiempo real
-- **Carrito anónimo persistente** con localStorage (sin registro de usuario)
-- **Checkout simulado** con múltiples métodos de pago (QR, tarjeta, efectivo, transferencia)
-- **Actualización automática de stock** cada 30 segundos mediante polling
-- **UI/UX moderna** con Tailwind CSS, animaciones suaves y diseño responsive
+## Qué incluye
 
-### 🔐 **Dashboard Administrativo**
-- **Panel de control en tiempo real** con métricas actualizadas automáticamente cada 5 segundos
-- **Gestión de productos** con actualización automática de stock al realizar ventas
-- **Sistema de ventas manuales** para atención en caja física
-- **Reportes exportables** (CSV/PDF) con filtros por fecha y método de pago
-- **Gestión de empleados** y categorías de productos
+### Tienda pública
 
-### 🛡️ **Seguridad Reforzada**
-- **Autenticación JWT** con doble cookie (access + refresh tokens, httpOnly)
-- **Protección CSRF** con doble envío de token en cookies y headers
-- **Rate limiting** global y específico en endpoints críticos
-- **Helmet.js** con CSP, HSTS, y headers de seguridad
-- **Actualización automática de inventario** con descuento de stock transaccional
+- Inicio visual con identidad rosa y blanca, tipografía expresiva y animaciones vinculadas al scroll.
+- Páginas independientes para la heladería, contacto y catálogo.
+- Catálogo con búsqueda, categorías, sabores, tamaños, precios y ordenamiento; los filtros se construyen a partir de los productos disponibles.
+- Detalle de cada helado con tamaño, cantidad y extras opcionales con recargo.
+- Carrito persistente en el navegador y compra directa mediante «Comprar ahora», sin borrar el carrito existente.
+- Registro e inicio de sesión obligatorios al continuar al checkout; navegar y elegir productos no requieren una cuenta.
+- Checkout con datos de entrega, cálculo de precios en el servidor y pago de demostración aprobado o rechazado.
+- Perfil, direcciones guardadas, historial y consulta de pedidos asociados a la cuenta.
+- Diseño adaptable a móvil, tablet y escritorio; estados de carga, error y página no encontrada.
 
-### 🔄 **Actualización en Tiempo Real**
-- **Stock sincronizado**: Cada venta descuenta automáticamente del inventario
-- **Polling inteligente**: 
-  - Frontend público: 30s
-  - Dashboard admin: 5s
-  - Ventas: 5s
-- **Invalidación de queries** en React Query al completar transacciones
+### Administración
 
-## 🏗️ Stack Tecnológico
+- Acceso interno separado de la tienda.
+- Resumen operativo, catálogo de helados, categorías, sabores y extras.
+- Gestión de precios y existencias por tamaño del producto.
+- Pedidos con despacho y cancelación directamente desde el listado.
+- Inventario con ajustes justificados e historial de movimientos.
+- Clientes, intentos de pago, reportes de ventas simuladas y exportación CSV.
+- Personal administrativo e información del negocio: contacto, horarios, moneda, cobertura y tarifa de delivery.
 
-### Backend
-- **NestJS 10** - Framework Node.js progresivo
-- **TypeORM** - ORM con soporte para PostgreSQL
-- **PostgreSQL 17** - Base de datos relacional
-- **JWT** - Autenticación con tokens
-- **bcrypt** - Hash de contraseñas (salt 10)
-- **Helmet** - Seguridad HTTP
+## Arquitectura
 
-### Frontend
-- **React 19** - Biblioteca UI moderna
-- **Vite 6** - Build tool ultrarrápido
-- **TanStack Query (React Query)** - Gestión de estado servidor
-- **Tailwind CSS** - Framework CSS utility-first
-- **TypeScript 5** - Tipado estático
-- **React Router 7** - Navegación SPA
-
-### Infraestructura
-- **Docker + Docker Compose** - Contenerización
-- **Nginx** - Servidor web y proxy inverso
-- **Multi-stage builds** - Optimización de imágenes Docker
-
-## 📁 Estructura del Proyecto
-
-```
+```text
 heladeria-digital-suite/
-├── backend/                    # API REST con NestJS
-│   ├── src/
-│   │   ├── auth/              # Sistema de autenticación JWT
-│   │   ├── carritos/          # Gestión de carritos anónimos
-│   │   ├── carrito-items/     # Items individuales del carrito
-│   │   ├── categorias/        # Categorías de productos
-│   │   ├── productos/         # CRUD de productos con stock
-│   │   ├── ventas/            # Registro y gestión de ventas
-│   │   ├── detalles-ventas/   # Detalles de cada venta
-│   │   ├── pagos-simulados/   # Simulación de pagos
-│   │   ├── empleados/         # Gestión de usuarios admin
-│   │   ├── reportes/          # Reportes y estadísticas
-│   │   ├── seed/              # Semilla de datos inicial
-│   │   ├── common/            # Middlewares, filtros, utils
-│   │   └── config/            # Validación de variables de entorno
-│   ├── .env.local             # Configuración desarrollo local
-│   ├── .env.pruebas           # Configuración Docker local
-│   ├── .env.produccion        # Configuración producción
-│   ├── Dockerfile             # Build multi-etapa optimizado
-│   ├── docker-entrypoint.sh   # Script de inicio automático
-│ 
-│
-├── frontend/                   # SPA React + Vite
-│   ├── src/
-│   │   ├── components/        # Componentes reutilizables
-│   │   │   ├── Cart/          # Sistema de carrito
-│   │   │   ├── dashboard/     # Componentes del admin
-│   │   │   └── public/        # Componentes públicos
-│   │   ├── context/           # Context API (Auth, Cart)
-│   │   ├── hooks/             # Custom hooks con React Query
-│   │   ├── models/            # Interfaces TypeScript
-│   │   ├── pages/             # Páginas principales
-│   │   ├── routes/            # Configuración de rutas
-│   │   └── services/          # Servicios API
-│   ├── Dockerfile             # Build Nginx + React
-│   └── nginx.conf             # Configuración Nginx
-│
-├── docker-compose.yml         # Orquestación desarrollo
-├── docker-compose.prod.yml    # Orquestación producción
-└── README.md                  # Este archivo
+├── web/                 Tienda pública · Next.js
+├── admin/               Panel interno · Next.js
+├── api/                 API REST · NestJS + Prisma
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   ├── migrations/
+│   │   └── seed.ts
+│   └── src/
+├── package.json
+├── pnpm-workspace.yaml
+├── pnpm-lock.yaml
+├── .gitignore
+└── README.md
 ```
 
-## 🚀 Inicio Rápido
+Las tres aplicaciones conservan sus propios scripts y configuración. Comparten la instalación de dependencias mediante pnpm, pero la comunicación entre tienda, administración y backend se realiza por **API REST**. Los proyectos Next.js no acceden directamente a PostgreSQL ni importan módulos entre sí.
 
-### Prerrequisitos
+Cada frontend expone un proxy del mismo origen en `/api/v1/...`, dirigido a NestJS. La API es la única responsable de autenticación, permisos, validación, precios, pagos, pedidos y persistencia.
 
-- **Node.js 20+** y **npm 10+** (para desarrollo local)
-- **Docker** y **Docker Compose** (recomendado)
-- **PostgreSQL 17** (si no usas Docker)
+### Entorno del proyecto
 
-### Opción 1: Docker Compose (Recomendado)
+| Tecnología | Versión fijada |
+| --- | --- |
+| Node.js | 24.21.0 |
+| pnpm | 12.9.1 |
+| Next.js · App Router | 16.3.8 |
+| React | 19.3.0 |
+| NestJS | 12.1.2 |
+| Prisma, cliente y adaptador PostgreSQL | 7.10.0 |
+| TypeScript | 7.0.2 |
+| Tailwind CSS | 4.3.3 |
+
+El repositorio incluye un único lockfile. No utiliza Turborepo, Nx ni una carpeta adicional de paquetes compartidos. La API utiliza el adaptador PostgreSQL de Prisma y genera su cliente desde `api/prisma/schema.prisma`.
+
+## Instalación local
+
+Necesitas las versiones de Node.js y pnpm indicadas arriba, además de una instancia de PostgreSQL accesible. Estos pasos preparan una copia nueva; **no cambian la configuración de una instalación local que ya funciona**.
+
+### 1. Clonar e instalar
 
 ```bash
-# 1. Clonar el repositorio
-git clone <tu-repo>
+git clone https://github.com/eld4vd/heladeria-digital-suite.git
 cd heladeria-digital-suite
-
-# 2. Levantar toda la infraestructura
-docker-compose up -d
-
-# 3. El admin se crea automáticamente (seed habilitado en .env.pruebas)
-# Acceder a:
-# - Frontend: http://localhost
-# - Backend: http://localhost:3000/api
-# - Login: http://localhost/login
-#   Usuario: admin@heladeria.com
-#   Password: admin123
-
-# 4. Ver logs
-docker-compose logs -f backend
-
-# 5. Detener servicios
-docker-compose down
+pnpm install --frozen-lockfile
 ```
 
-### Opción 2: Desarrollo Local (sin Docker)
+La instalación se realiza una vez desde la raíz. Después puedes trabajar dentro de cada aplicación; no necesitas `pnpm --filter`.
 
-#### Backend
+### 2. Configurar las variables de entorno
+
+Los archivos privados de entorno **no están publicados**. En una copia nueva crea los siguientes archivos localmente. Estos ejemplos contienen únicamente valores públicos de desarrollo y marcadores ficticios: reemplaza el usuario, las contraseñas y el correo según tu entorno.
+
+#### `api/.env`
+
+```dotenv
+NODE_ENV=development
+PORT=4000
+DATABASE_URL="postgresql://TU_USUARIO_POSTGRES:TU_CLAVE_POSTGRES@127.0.0.1:5432/bd_heladeria?schema=public"
+FRONTEND_ORIGIN=http://localhost:3000
+ADMIN_ORIGIN=http://localhost:3001
+SESSION_DAYS=7
+SEED_ON_START=true
+DEMO_ADMIN_EMAIL=admin@example.invalid
+DEMO_ADMIN_PASSWORD=DEFINE_UNA_CLAVE_LOCAL_SEGURA
+DEMO_ADMIN_NAME=Administración
+```
+
+El usuario de `DATABASE_URL` debe tener permisos para crear y utilizar las tablas de `bd_heladeria`. Ajusta el puerto si PostgreSQL no utiliza `5432`. Si la contraseña contiene caracteres especiales, codifícalos para una URL. La contraseña del administrador inicial debe tener al menos 10 caracteres y como máximo 72 bytes.
+
+#### `web/.env.local`
+
+```dotenv
+API_INTERNAL_URL=http://127.0.0.1:4000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_ADMIN_URL=http://localhost:3001
+SEO_INDEXABLE=false
+```
+
+`NEXT_PUBLIC_SITE_URL` debe contener sólo el origen de la tienda, sin rutas ni credenciales. `SEO_INDEXABLE=false` mantiene el entorno local fuera de indexación.
+
+#### `admin/.env.local`
+
+```dotenv
+API_INTERNAL_URL=http://127.0.0.1:4000
+NEXT_PUBLIC_STORE_URL=http://localhost:3000
+```
+
+No incluyas secretos en variables con el prefijo `NEXT_PUBLIC_`: Next.js puede incorporarlas al código enviado al navegador.
+
+### 3. Preparar PostgreSQL y aplicar las migraciones
+
+Crea primero una base vacía llamada **`bd_heladeria`** con tu gestor de PostgreSQL. Si trabajas desde una consola SQL con permisos suficientes:
+
+```sql
+CREATE DATABASE bd_heladeria;
+```
+
+Después, desde la raíz del repositorio:
 
 ```bash
-cd backend
-
-# 1. Instalar dependencias
-npm install
-
-# 2. Configurar variables de entorno
-cp .env.local .env
-# Edita .env con tus credenciales de PostgreSQL
-
-# 3. Habilitar seed para crear admin (primera vez)
-# En .env, cambia: SEED_ON_BOOT=true
-
-# 4. Iniciar servidor
-npm run start:dev
-
-# El backend corre en http://localhost:3000
+cd api
+pnpm db:migrate
 ```
 
-#### Frontend
+Este comando aplica las migraciones versionadas y crea las tablas, relaciones e índices. No crea la base de datos, no importa ventas anteriores ni carga un catálogo de ejemplo.
+
+Si ya tienes datos, realiza un respaldo y detén la API antes de aplicar migraciones pendientes. No necesitas resetear la base para actualizarla.
+
+### 4. Arrancar las tres aplicaciones
+
+Abre **tres terminales**, cada una inicialmente en la raíz del repositorio.
+
+API:
 
 ```bash
-cd frontend
-
-# 1. Instalar dependencias
-npm install
-
-# 2. Configurar variables de entorno
-echo "VITE_API_URL=http://localhost:3000/api" > .env.local
-
-# 3. Iniciar servidor de desarrollo
-npm run dev
-
-# El frontend corre en http://localhost:5173
+cd api
+pnpm start:dev
 ```
 
-### 🔑 Crear Usuario Administrador
-
-#### Primera Vez
-
-El sistema incluye un **seed automático** que crea el usuario admin:
-
-1. **Configura el seed** en el archivo `.env` correspondiente:
-   ```bash
-   SEED_ON_BOOT=true
-   SEED_ADMIN_NAME=Administrador
-   SEED_ADMIN_EMAIL=admin@heladeria.com
-   SEED_ADMIN_PASSWORD=admin123
-   ```
-
-2. **Inicia la aplicación**: El admin se crea automáticamente
-
-3. **Inicia sesión** en: `http://localhost/login` o `http://localhost:5173/login`
-
-4. **(Opcional) Desactiva el seed** por seguridad:
-   ```bash
-   SEED_ON_BOOT=false
-   ```
-
-📖 **Para más detalles**: Lee [`backend/SEED_INSTRUCTIONS.md`](backend/SEED_INSTRUCTIONS.md)
-
-> ⚠️ **IMPORTANTE**: En producción, cambia las credenciales antes del deploy y desactiva el seed después del primer inicio.
-
-## ⚙️ Configuración
-
-### Variables de Entorno - Backend
-
-#### Archivos disponibles:
-- `.env.local` - Desarrollo local (sin Docker)
-- `.env.pruebas` - Docker Compose local
-- `.env.produccion` - Deployment en servidor
-
-#### Variables clave:
+Tienda:
 
 ```bash
-# Servidor
-PORT=3000
-NODE_ENV=development|production
-HOST=0.0.0.0
-
-# Base de datos
-DB_HOST=localhost              # 'db' en Docker
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=tu_password
-DB_NAME=heladeria_db
-DB_SYNCHRONIZE=true            # false en producción
-DB_LOGGING=true                # false en producción
-
-# CORS
-FRONTEND_URL=http://localhost:5173
-
-# JWT (genera secretos seguros en producción)
-JWT_ACCESS_SECRET=tu_secret_64_caracteres_minimo
-JWT_REFRESH_SECRET=otro_secret_64_caracteres
-
-# Seguridad
-COOKIE_SECURE=false            # true en producción (HTTPS)
-COOKIE_SAMESITE=lax            # strict en producción
-CSRF_ENABLED=true
-THROTTLE_TTL=60000
-THROTTLE_LIMIT=100
-
-# Seed (creación automática de admin)
-SEED_ON_BOOT=false             # true para primera vez
-SEED_ADMIN_NAME=Administrador
-SEED_ADMIN_EMAIL=admin@heladeria.com
-SEED_ADMIN_PASSWORD=admin123   # Cambiar en producción
+cd web
+pnpm dev
 ```
 
-### Variables de Entorno - Frontend
+Administración:
 
 ```bash
-# API Backend
-VITE_API_URL=http://localhost:3000/api
-
-# Nombre de la aplicación
-VITE_APP_NAME="Heladería Digital"
+cd admin
+pnpm dev
 ```
 
-### 🔐 Generar Secretos JWT Seguros
-
-```bash
-# Ejecuta en tu terminal:
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-# Copia el resultado para JWT_ACCESS_SECRET
-
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-# Copia el resultado para JWT_REFRESH_SECRET
-```
-
-## 🔒 Seguridad
-
-### Autenticación JWT de Doble Cookie
-- **Access Token**: 15 minutos, `httpOnly`, `secure` (en producción)
-- **Refresh Token**: 7 días, `httpOnly`, `secure`
-- **Renovación automática**: Transparente en el frontend con React Query
-
-### Protección CSRF
-- **Doble envío**: Cookie `csrf_token` + Header `X-CSRF-Token`
-- **Validación**: Middleware en todas las mutaciones (POST, PUT, DELETE, PATCH)
-- **Rotación**: Nuevo token en cada login/refresh
-
-### Seguridad HTTP (Helmet.js)
-- **CSP** (Content Security Policy): Políticas estrictas
-- **HSTS**: HTTP Strict Transport Security (producción)
-- **X-Frame-Options**: Prevención de clickjacking
-- **Deshabilitación de X-Powered-By**
-
-### Rate Limiting
-- **Global**: 100 peticiones por minuto
-- **Login**: 5 intentos por minuto por IP
-- **Refresh**: 10 peticiones por minuto por IP
-
-### Hash de Contraseñas
-- **bcrypt** con salt factor 10
-- **Prevención de rehashing**: Validación en hooks `@BeforeUpdate`
-- **No se devuelven passwords** en ningún endpoint
-
-## 🎯 Flujos de Usuario
-
-### 👤 Cliente Web (Público)
-
-1. **Explorar catálogo**: Navega categorías, busca productos, ve detalles
-2. **Agregar al carrito**: Sin necesidad de registro (cliente temporal UUID)
-3. **Checkout**: Elige método de pago (QR/tarjeta/efectivo/transferencia)
-4. **Confirmación**: Se registra la venta y se descuenta el stock automáticamente
-5. **Actualización**: El inventario se refleja en tiempo real (30s polling)
-
-### 👨‍💼 Empleado Admin
-
-1. **Login seguro**: Autenticación JWT con cookies httpOnly
-2. **Dashboard**: Métricas en tiempo real (actualización cada 5s)
-3. **Gestión de productos**: 
-   - CRUD completo
-   - Control de stock actualizado automáticamente
-   - Ver ventas en tiempo real
-4. **Ventas manuales**: Registro desde caja física con descuento de stock transaccional
-5. **Reportes**: Exportar ventas diarias en CSV/PDF con filtros avanzados
-6. **Gestión de empleados**: Crear/editar usuarios del sistema
-
-## 🛠️ Scripts de Desarrollo
-
-### Backend
-```bash
-npm run start:dev      # Desarrollo con hot-reload
-npm run build          # Compilar a dist/
-npm run start:prod     # Producción desde dist/
-npm run lint           # Lint con ESLint
-npm run test           # Tests unitarios con Jest
-npm run test:e2e       # Tests end-to-end
-```
-
-### Frontend
-```bash
-npm run dev            # Vite dev server (http://localhost:5173)
-npm run build          # Build de producción
-npm run preview        # Preview del build
-npm run lint           # Lint con ESLint + TypeScript
-```
-
-### Docker
-```bash
-# Desarrollo local
-docker-compose up -d                    # Levantar servicios
-docker-compose logs -f backend          # Ver logs del backend
-docker-compose logs -f frontend         # Ver logs del frontend
-docker-compose restart backend          # Reiniciar backend (recargar .env)
-docker-compose down                     # Detener servicios
-docker-compose down -v                  # Detener y borrar volúmenes (limpia BD)
-
-# Producción
-docker-compose -f docker-compose.prod.yml up -d
-docker-compose -f docker-compose.prod.yml logs -f
-docker-compose -f docker-compose.prod.yml down
-```
-
-## 📡 API Endpoints Principales
-
-### Autenticación
-```
-POST   /api/auth/login          # Login con rate limiting
-POST   /api/auth/refresh        # Renovar tokens (requiere CSRF)
-POST   /api/auth/logout         # Cerrar sesión
-GET    /api/auth/me             # Perfil del usuario actual
-GET    /api/auth/csrf           # Obtener token CSRF
-```
-
-### Catálogo Público
-```
-GET    /api/categorias          # Listar categorías
-GET    /api/productos           # Listar productos con stock
-GET    /api/productos/:id       # Detalle de producto
-```
-
-### Carrito y Checkout
-```
-POST   /api/carritos            # Crear carrito anónimo
-GET    /api/carritos/:id        # Obtener carrito
-POST   /api/carritos/:id/items  # Agregar item
-PATCH  /api/carrito-items/:id   # Actualizar cantidad
-DELETE /api/carrito-items/:id   # Eliminar item
-POST   /api/carritos/:id/checkout # Finalizar compra (descuenta stock)
-```
-
-### Dashboard Admin (requiere autenticación)
-```
-GET    /api/productos           # Gestión de inventario
-POST   /api/productos           # Crear producto (requiere CSRF)
-PATCH  /api/productos/:id       # Actualizar producto
-DELETE /api/productos/:id       # Eliminar producto
-
-GET    /api/ventas              # Listar ventas (actualización cada 5s)
-POST   /api/ventas              # Crear venta manual
-GET    /api/ventas/:id          # Detalle de venta
-
-GET    /api/reportes/calendario # Calendario de ventas
-GET    /api/reportes/dia        # Reporte diario con exportación
-```
-
-
-## 🚢 Deployment en Producción
-
-### Preparación
-
-1. **Edita `backend/.env.produccion`**:
-   ```bash
-   # Cambiar TODAS estas variables:
-   DB_PASSWORD=una_password_muy_segura
-   JWT_ACCESS_SECRET=genera_un_secret_aleatorio_64_chars
-   JWT_REFRESH_SECRET=genera_otro_secret_aleatorio_64_chars
-   FRONTEND_URL=https://tudominio.com
-   SEED_ADMIN_EMAIL=admin@tudominio.com
-   SEED_ADMIN_PASSWORD=PasswordSegura123!
-   
-   # Primera vez: true, después: false
-   SEED_ON_BOOT=true
-   
-   # Producción
-   NODE_ENV=production
-   COOKIE_SECURE=true
-   COOKIE_SAMESITE=strict
-   DB_SYNCHRONIZE=false
-   ```
+| Aplicación | Dirección |
+| --- | --- |
+| Tienda | http://localhost:3000 |
+| Login administrativo | http://localhost:3001/login |
+| Dashboard | http://localhost:3001 |
+| API REST | http://localhost:4000/api/v1 |
 
-2. **SSL/TLS**: Configura certificados en `/etc/letsencrypt/` (Let's Encrypt)
+`pnpm start:dev` ya ejecuta `prisma generate` antes de iniciar NestJS. No necesitas añadir `pnpm db:generate` al arranque habitual. En PowerShell con restricciones de ejecución de scripts puedes utilizar `pnpm.cmd`.
 
-### Deploy
+### 5. Administrador inicial y primeros productos
 
-```bash
-# 1. En el servidor, clona el repositorio
-git clone <tu-repo>
-cd heladeria-digital-suite
+Con `SEED_ON_START=true`, el primer arranque sobre una base ya migrada crea **únicamente el administrador inicial**, usando `DEMO_ADMIN_EMAIL`, `DEMO_ADMIN_PASSWORD` y `DEMO_ADMIN_NAME`. Si ya existe un administrador, el arranque no modifica su cuenta ni su contraseña.
 
-# 2. Edita .env.produccion con tus valores reales
+No se precargan helados, extras, existencias, pedidos ni configuración del negocio. Inicia sesión en el panel, completa la configuración del local y del delivery y carga tu propio catálogo. El delivery comienza deshabilitado mientras no se configure y habilite desde administración. Puedes desactivar la inicialización automática con `SEED_ON_START=false` después de crear la cuenta.
 
-# 3. Levanta con Docker Compose
-docker-compose -f docker-compose.prod.yml up -d
+Las imágenes de productos y extras se guardan como URLs HTTPS. Puedes subirlas manualmente a Cloudinary y pegar su URL en los formularios, que muestran una vista previa. No hay subida automática a Cloudinary ni se necesitan sus credenciales para arrancar. Las imágenes estáticas utilizadas por las interfaces sí forman parte de cada aplicación.
 
-# 4. Verifica que el admin se creó
-docker-compose -f docker-compose.prod.yml logs backend | grep "ADMIN"
-
-# 5. Accede y cambia la contraseña del admin
+## Modelo del catálogo
 
-# 6. IMPORTANTE: Desactiva el seed
-nano backend/.env.produccion
-# Cambia: SEED_ON_BOOT=false
-docker-compose -f docker-compose.prod.yml restart backend
-```
-
-### Mantenimiento
-
-```bash
-# Ver logs
-docker-compose -f docker-compose.prod.yml logs -f
-
-# Backup de base de datos
-docker exec -t postgres pg_dump -U postgres heladeria_db > backup_$(date +%Y%m%d).sql
-
-# Restaurar backup
-cat backup_20241212.sql | docker exec -i postgres psql -U postgres heladeria_db
-
-# Actualizar código
-git pull
-docker-compose -f docker-compose.prod.yml up -d --build
-```
-
----
-
-## 🧪 Testing con Postman/API
-
-### Flujo de Autenticación
-
-El sistema usa **cookies httpOnly** y **tokens CSRF**, por lo que es más fácil usar el frontend. Pero si necesitas testear con Postman:
-
-1. **Obtener CSRF Token**:
-   ```
-   GET http://localhost:3000/api/auth/csrf
-   ```
-   Guarda el `csrfToken` de la respuesta.
-
-2. **Login**:
-   ```
-   POST http://localhost:3000/api/auth/login
-   Headers: 
-     Content-Type: application/json
-     X-CSRF-Token: <token-del-paso-1>
-   Body:
-   {
-     "email": "admin@heladeria.com",
-     "password": "admin123"
-   }
-   ```
-   Postman guardará las cookies automáticamente.
-
-3. **Endpoints protegidos**:
-   Incluye siempre `X-CSRF-Token` en el header para POST/PUT/DELETE/PATCH.
-
-> 💡 **Recomendación**: Usa el frontend para operaciones normales. Postman es útil solo para debugging de la API.
-
----
-
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
----
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT. Ver archivo `LICENSE` para más detalles.
-
----
-
-## 👨‍💻 Autor
-
-Desarrollado por [eld4vd](https://github.com/eld4vd)
-
----
-
-## 🆘 Soporte y Problemas Comunes
-
-### ❓ "No puedo crear usuarios desde Postman"
-**Solución**: Usa el seed para crear el primer admin. El sistema usa cookies httpOnly que Postman no maneja bien.
-
-### ❓ "El admin no se crea con el seed"
-**Verifica**:
-1. `SEED_ON_BOOT=true` en el `.env` correcto
-2. La base de datos está vacía (no hay empleados)
-3. Los logs del backend: `docker-compose logs backend`
-
-### ❓ "Error CSRF token inválido"
-**Solución**: 
-1. Obtén un nuevo token con `GET /api/auth/csrf`
-2. Incluye el header `X-CSRF-Token` en todas las mutaciones
-3. Asegúrate de que Postman maneje cookies automáticamente
-
-### ❓ "Stock no se actualiza en tiempo real"
-**Verifica**:
-1. React Query está configurado con `refetchInterval: 5000`
-2. El backend descuenta stock en `carritos.service.ts`
-3. Las queries se invalidan después del checkout
-
----
+| Elemento | Función |
+| --- | --- |
+| Categoría | Agrupa productos: conos, copas, paletas, vasos u otros grupos definidos por el negocio. |
+| Helado | Tiene nombre, descripción, categoría, imagen y un sabor de receta opcional. |
+| Sabor | Registro reutilizable, relacionado con los helados y utilizado para filtrar el catálogo. Se puede crear desde el formulario del producto. No es una variante que el cliente deba escoger nuevamente. |
+| Tamaño o presentación | Define el precio base y el stock del helado. Se gestiona dentro del producto. |
+| Extra | Complemento independiente con precio e imagen opcional. El cliente lo añade durante la compra; su recargo se aplica por unidad de helado. |
+
+Los nombres de sabores se normalizan para evitar duplicados por mayúsculas o espacios; no se corrigen erratas automáticamente. Las tablas, campos y enumeraciones de negocio tienen nombres en español en PostgreSQL. Los contratos REST conservan su nomenclatura propia.
+
+Los precios se almacenan en unidades monetarias menores mediante enteros. NestJS recalcula tamaños, extras, cantidades y delivery: no confía en el total enviado por el navegador. Cada pedido conserva copias de los productos, opciones, precios y dirección para mantener su historial aunque después cambie el catálogo.
+
+## Pedidos, pagos e inventario
+
+El flujo habitual es **Pendiente de pago → Confirmado → Despachado**. Un pedido también puede cancelarse antes del despacho.
+
+| Acción | Resultado |
+| --- | --- |
+| Crear pedido | Registra la compra pendiente, sin descontar existencias. |
+| Rechazar un pago simulado | Permite reintentar sobre el mismo pedido, sin consumir stock. |
+| Aprobar un pago simulado | Confirma el pedido y reserva sus unidades mediante un descuento transaccional de stock. |
+| Despachar | Registra la venta simulada en los reportes, sin descontar unidades otra vez. |
+| Cancelar antes del despacho | Devuelve las unidades reservadas y registra el reverso del pago aprobado una sola vez. |
+
+Las claves de idempotencia y las transacciones protegen frente a dobles envíos y confirmaciones concurrentes. El stock se agrupa por presentación y no se permiten descuentos parciales cuando faltan unidades.
+
+**Despachado significa que el pedido salió con el delivery, no que el cliente ya lo recibió.** La coordinación posterior con el repartidor queda fuera del sistema; no hay llamadas, WhatsApp ni notificaciones externas automáticas. El cliente puede cerrar el navegador y recuperar sus pedidos iniciando sesión en su cuenta.
+
+Los reportes contabilizan pedidos despachados con pago aprobado según la fecha de despacho. La migración incluida adapta los estados antiguos sin borrar pedidos ni reconstruir existencias. Si un pedido histórico carece de una fecha de salida o entrega registrada, su fecha de despacho permanece vacía: aparece en el total general, pero no en series diarias ni períodos filtrados.
+
+## Autenticación y seguridad
+
+- NestJS administra sesiones opacas revocables mediante cookies `httpOnly`, con expiración configurable y protección CSRF.
+- Las contraseñas se guardan con hash bcrypt; los endpoints validan los datos y comprueban permisos en la API.
+- La tienda exige una cuenta de cliente para crear pedidos y simular pagos. El panel requiere una cuenta administradora; el rol operador histórico no habilita acceso en esta versión.
+- Los clientes sólo acceden a sus datos y pedidos. Conocer un código o un correo no otorga acceso a compras ajenas.
+- El carrito utiliza `localStorage` y la compra directa utiliza `sessionStorage`; no guardan los datos personales de entrega. Pedidos y pagos permanecen en PostgreSQL.
+- Los orígenes permitidos son explícitos. Las páginas privadas y la administración no se indexan ni utilizan caché compartida.
+
+La tienda incluye metadatos, URLs canónicas, sitemap, robots y vistas previas sociales. La indexación sólo se habilita si se configura expresamente para un dominio HTTPS público en producción.
+
+## Comandos útiles
+
+| Carpeta | Comando | Uso |
+| --- | --- | --- |
+| Raíz | `pnpm install --frozen-lockfile` | Instalar las dependencias respetando el lockfile. |
+| `web` o `admin` | `pnpm dev` | Iniciar Next.js en desarrollo. |
+| `api` | `pnpm start:dev` | Generar el cliente Prisma, compilar y arrancar la API con recarga. |
+| `api` | `pnpm db:migrate` | Aplicar las migraciones existentes. |
+| `api` | `pnpm db:status` | Consultar el estado de las migraciones. |
+| `api` | `pnpm db:generate` | Regenerar únicamente el cliente Prisma; no cambia tablas. |
+| `api` | `pnpm db:seed` | Crear manualmente el administrador inicial de forma idempotente. |
+| `api` | `pnpm db:studio` | Abrir Prisma Studio para consultar o editar datos. |
+| Cada aplicación | `pnpm lint` / `pnpm typecheck` | Revisar el código y los tipos. |
+| Cada aplicación | `pnpm build` y luego `pnpm start` | Generar y ejecutar su compilación. |
+
+Los atajos de la raíz `dev:web`, `dev:admin`, `dev:api`, `build`, `lint` y `typecheck` son opcionales. No sustituyen el trabajo dentro de cada carpeta.
+
+## Alcance de esta publicación
+
+Este repositorio publica el código de las dos aplicaciones Next.js, la API NestJS, el esquema y las migraciones Prisma, la configuración pnpm y los recursos estáticos utilizados. El README es la guía pública central.
+
+Quedan fuera de Git los archivos `.env`, credenciales, dependencias instaladas, compilaciones, cachés, respaldos, colecciones de imágenes para carga manual, snapshots de la base de datos, agentes, skills y documentación interna. Estos archivos pueden conservarse localmente sin publicarse. La base de datos y sus registros **no se incluyen** en el repositorio.
+
+Los archivos de Docker y despliegue VPS no forman parte de esta publicación; el arranque descrito aquí es local con pnpm y PostgreSQL. No se incluyen pasarela de pago real, facturación fiscal, caja presencial, mesas, inventario por recetas, GPS ni aplicación de repartidores. La recuperación de contraseñas por correo tampoco está implementada.

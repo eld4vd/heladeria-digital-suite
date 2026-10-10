@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "oxc"],
+  "env": { "node": true, "jest": true },
+  "categories": { "correctness": "error" },
+  "rules": {
+    "typescript/no-explicit-any": "off",
+    "eslint/no-unused-vars": "error"
+  },
+  "ignorePatterns": ["node_modules/**", "dist/**", "src/generated/**", "coverage/**", ".local-data/**"]
+}
